@@ -32,16 +32,30 @@ app.post('/api/auth/pi', async (req, res) => {
       }
     });
 
+    if (!verifyResponse.ok) {
+      const errText = await verifyResponse.text();
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Token verification failed',
+        status: verifyResponse.status,
+        error: errText
+      });
+    }
+
     const userData = await verifyResponse.json();
 
     if (userData.username) {
-      // שמור session או החזר מידע למשתמש
       res.json({ success: true, user: userData });
     } else {
-      res.status(401).json({ success: false, message: 'Invalid token' });
+      res.status(401).json({ success: false, message: 'Username missing in response' });
     }
+
   } catch (err) {
-    res.status(500).json({ success: false, message: 'Server error', error: err.message });
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error', 
+      error: err.message 
+    });
   }
 });
 
