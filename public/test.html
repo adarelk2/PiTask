@@ -1,0 +1,21 @@
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script>
+  Pi.init({
+    version: "2.0",
+    sandbox: true, // true = מצב בדיקות (sandbox)
+  });
+
+  async function authenticateUser() {
+    try {
+      const scopes = ['username'];
+      const result = await Pi.authenticate(scopes, onIncompletePaymentFound);
+      console.log('✅ Auth result:', result);
+    } catch (error) {
+      console.error('❌ Auth failed:', error);
+    }
+  }
+
+  function onIncompletePaymentFound(payment) {
+    console.log('Incomplete payment:', payment);
+  }
+</script>
