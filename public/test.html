@@ -2,43 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Pi Login</title>
+  <title>Pi SDK Test</title>
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 <body>
-  <button id="loginBtn">🔐 Login with Pi</button>
+  <h2>🔐 Login with Pi</h2>
+  <button onclick="authenticateUser()">Login</button>
+
+  <pre id="output" style="background:#f5f5f5;padding:1em;margin-top:1em;"></pre>
 
   <script>
-    // אתחול Pi SDK
+    const output = document.getElementById('output');
+    const log = (msg) => {
+      output.textContent += (typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2)) + '\n';
+    };
+
     Pi.init({
       version: "2.0",
-      sandbox: true
+      sandbox: true // חובה אם אתה ניגש מ-sandbox.minepi.com
     });
+    log("✅ Pi.init called");
 
-    document.getElementById('loginBtn').addEventListener('click', async () => {
+    async function authenticateUser() {
+      log("🔁 Authenticating...");
       try {
         const scopes = ['username'];
         const result = await Pi.authenticate(scopes, onIncompletePaymentFound);
-        
-        // שולח את ה-accessToken לשרת
-        const response = await fetch('/api/auth/pi', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        log("✅ Got token:");
+        log(result);
+
+        // שליחת ה-token לשרת
+        const serverRes = await fetch("/api/auth/pi", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ accessToken: result.accessToken })
         });
 
-        const serverResponse = await response.json();
-        console.log('✅ Server Response:', serverResponse);
+        const serverData = await serverRes.json();
+        log("📥 Server response:");
+        log(serverData);
 
-        // אפשר לנתב את המשתמש לעמוד אחר אם תרצה:
-        // window.location.href = '/dashboard';
-      } catch (error) {
-        console.error('❌ Auth/Login error:', error);
+      } catch (err) {
+        log("❌ Auth error:");
+        log(err.message || err);
       }
-    });
+    }
 
     function onIncompletePaymentFound(payment) {
-      console.warn('⚠️ Incomplete payment:', payment);
+      log("⚠️ Incomplete payment:");
+      log(payment);
     }
   </script>
 </body>
