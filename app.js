@@ -24,6 +24,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.post('/api/auth/pi', async (req, res) => {
   const { accessToken } = req.body;
 
+  if (!accessToken) {
+    return res.status(400).json({ success: false, message: 'No access token received' });
+  }
+
   try {
     const verifyResponse = await fetch('https://api.minepi.com/me', {
       method: 'GET',
@@ -32,30 +36,36 @@ app.post('/api/auth/pi', async (req, res) => {
       }
     });
 
+    const rawText = await verifyResponse.text();
+
     if (!verifyResponse.ok) {
-      const errText = await verifyResponse.text();
-      return res.status(401).json({ 
-        success: false, 
+      return res.status(verifyResponse.status).json({
+        success: false,
         message: 'Token verification failed',
         status: verifyResponse.status,
-        error: errText
+        error: rawText
       });
     }
 
-    const userData = await verifyResponse.json();
+    let userData;
+    try {
+      userData = JSON.parse(rawText);
+    } catch (jsonErr) {
+      return res.status(500).json({
+        success: false,
+        message: 'Could not parse JSON from Pi response',
+        raw: rawText
+      });
+    }
 
     if (userData.username) {
       res.json({ success: true, user: userData });
     } else {
-      res.status(401).json({ success: false, message: 'Username missing in response' });
+      res.status(401).json({ success: false, message: 'username missing', user: userData });
     }
 
   } catch (err) {
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error', 
-      error: err.message 
-    });
+    res.status(500).json({ success: false, message: 'Server error', error: err.message });
   }
 });
 
