@@ -21,9 +21,28 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.post('/log', (req, res) => {
-  console.log('[Pi Browser LOG]:', req.body.message);
-  res.sendStatus(200);
+app.post('/api/auth/pi', async (req, res) => {
+  const { accessToken } = req.body;
+
+  try {
+    const verifyResponse = await fetch('https://api.minepi.com/me', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+
+    const userData = await verifyResponse.json();
+
+    if (userData.username) {
+      // שמור session או החזר מידע למשתמש
+      res.json({ success: true, user: userData });
+    } else {
+      res.status(401).json({ success: false, message: 'Invalid token' });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Server error', error: err.message });
+  }
 });
 
 // Routes
