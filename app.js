@@ -25,7 +25,7 @@ app.post('/api/auth/pi', async (req, res) => {
   const { accessToken } = req.body;
 
   if (!accessToken) {
-    return res.status(400).json({ success: false, message: 'No access token received' });
+    return res.status(400).json({ success: false, message: 'No access token provided' });
   }
 
   try {
@@ -50,24 +50,34 @@ app.post('/api/auth/pi', async (req, res) => {
     let userData;
     try {
       userData = JSON.parse(rawText);
-    } catch (jsonErr) {
+    } catch (parseErr) {
       return res.status(500).json({
         success: false,
-        message: 'Could not parse JSON from Pi response',
+        message: 'Invalid JSON returned from Pi API',
         raw: rawText
       });
     }
 
-    if (userData.username) {
-      res.json({ success: true, user: userData });
-    } else {
-      res.status(401).json({ success: false, message: 'username missing', user: userData });
+    if (!userData || !userData.username) {
+      return res.status(401).json({
+        success: false,
+        message: 'User data invalid or missing username',
+        userData
+      });
     }
 
+    // 🎉 הצלחה!
+    res.json({ success: true, user: userData });
+
   } catch (err) {
-    res.status(500).json({ success: false, message: 'Server error', error: err.message });
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: err.message
+    });
   }
 });
+
 
 // Routes
 app.use('/', indexRouter);
