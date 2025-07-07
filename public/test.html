@@ -1,38 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Pi SDK Test</title>
+  <meta charset="UTF-8" />
+  <title>Pi SDK Debug</title>
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 <body>
   <h1>Pi SDK Test</h1>
-
-  <!-- ✅ כפתור התחברות -->
   <button onclick="authenticateUser()">🔐 Authenticate with Pi</button>
 
-  <pre id="output"></pre>
+  <pre id="output" style="background:#f5f5f5;padding:1em;border:1px solid #ccc;"></pre>
 
   <script>
+    const output = document.getElementById('output');
+
+    function log(msg) {
+      const text = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
+      output.textContent += text + '\n';
+      alert(msg); // ✅ גם alert בטלפון
+      sendLogToServer(msg);
+    }
+
+    function sendLogToServer(message) {
+      fetch('/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+      }).catch(err => {
+        output.textContent += 'Could not send to server: ' + err + '\n';
+      });
+    }
+
+    // 🟢 אתחול ה-SDK
     Pi.init({
       version: "2.0",
-      sandbox: true,
+      sandbox: true
     });
+    log("✅ Pi.init() called");
 
     async function authenticateUser() {
-      const output = document.getElementById('output');
+      log('🔁 Starting authentication...');
       try {
-        output.textContent = 'Authenticating...';
         const scopes = ['username'];
         const result = await Pi.authenticate(scopes, onIncompletePaymentFound);
-        output.textContent = '✅ Auth result:\n' + JSON.stringify(result, null, 2);
+        log('✅ Auth success:');
+        log(result);
       } catch (error) {
-        output.textContent = '❌ Auth failed:\n' + error;
+        log('❌ Auth failed:');
+        log(error.message || error);
       }
     }
 
     function onIncompletePaymentFound(payment) {
-      console.log('Incomplete payment:', payment);
+      log('⚠️ Incomplete payment:');
+      log(payment);
     }
   </script>
 </body>

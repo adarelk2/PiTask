@@ -21,6 +21,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.post('/log', (req, res) => {
+  console.log('[Pi Browser LOG]:', req.body.message);
+  res.sendStatus(200);
+});
+
 // Routes
 app.use('/', indexRouter);
 
