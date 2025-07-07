@@ -29,7 +29,7 @@ app.post('/api/auth/pi', async (req, res) => {
   }
 
   try {
-    const verifyResponse = await fetch('https://api.minepi.com/me', {
+    const verifyResponse = await fetch('https://api.minepi.com/sandbox/me', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`
