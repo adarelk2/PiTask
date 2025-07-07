@@ -14,12 +14,15 @@
   <script>
     const output = document.getElementById('output');
     const log = (msg) => {
-      output.textContent += (typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2)) + '\n';
+      const formatted = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
+      output.textContent += formatted + '\n';
+      console.log(msg);
     };
 
+    // ✅ אתחול ה-SDK במצב sandbox
     Pi.init({
       version: "2.0",
-      sandbox: true // חובה אם אתה ניגש מ-sandbox.minepi.com
+      sandbox: true
     });
     log("✅ Pi.init called");
 
@@ -31,11 +34,14 @@
         log("✅ Got token:");
         log(result);
 
-        // שליחת ה-token לשרת
+        // ⬅️ שליחת accessToken + user לשרת
         const serverRes = await fetch("/api/auth/pi", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ accessToken: result.accessToken })
+          body: JSON.stringify({
+            accessToken: result.accessToken,
+            user: result.user
+          })
         });
 
         const serverData = await serverRes.json();

@@ -22,8 +22,19 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.post('/api/auth/pi', async (req, res) => {
-  const { accessToken } = req.body;
+  const { accessToken, user } = req.body;
 
+  const isSandbox = !process.env.PI_ENV || process.env.PI_ENV === 'sandbox';
+
+  if (isSandbox) {
+    // 🧪 Development: אל תנסה לקרוא ל-API, פשוט תשתמש במידע מה-frontend
+    if (!user || !user.username) {
+      return res.status(400).json({ success: false, message: 'Missing user data in sandbox' });
+    }
+    return res.json({ success: true, user, env: 'sandbox' });
+  }
+
+  // 🔐 Production - אימות מול Pi API
   if (!accessToken) {
     return res.status(400).json({ success: false, message: 'No access token provided' });
   }
@@ -66,8 +77,7 @@ app.post('/api/auth/pi', async (req, res) => {
       });
     }
 
-    // 🎉 הצלחה!
-    res.json({ success: true, user: userData });
+    res.json({ success: true, user: userData, env: 'production' });
 
   } catch (err) {
     res.status(500).json({
@@ -77,7 +87,6 @@ app.post('/api/auth/pi', async (req, res) => {
     });
   }
 });
-
 
 // Routes
 app.use('/', indexRouter);
