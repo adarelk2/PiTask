@@ -36,9 +36,11 @@ class Controller {
     }
 
     getController = (_controller) => {
-        const ClassRef = require(path.join(__dirname, '../controllers/Home')); // TEMP: force load Home
+        const filePath = path.join(__dirname, '../controllers', _controller + '.js');
+        const ClassRef = require(filePath);
         return new ClassRef(this.req, this.res);
     }
+    
 
     print(){
         const controller = this.req.params.controller;
