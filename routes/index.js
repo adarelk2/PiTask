@@ -1,11 +1,25 @@
 const express = require('express');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 const Application = require('../core/Application');
 
 // Handles '/' and '/:controller'
 router.get('/:controller?', (req, res) => {
-  const app = new Application(req, res);
-  app.init();
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.redirect('/auth/login');
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // נשמר לשימוש בתוך Application
+    const app = new Application(req, res);
+    app.init();
+  } catch (err) {
+    console.log('Invalid JWT:', err.message);
+    return res.redirect('/auth/login');
+  }
 });
 
 module.exports = router;

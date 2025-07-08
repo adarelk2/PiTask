@@ -1,18 +1,18 @@
 const BaseController = require('../core/BaseController');
 
-class Policy extends BaseController {
+class White_Paper extends BaseController {
     constructor(_req, _res) {
         super(_req, _res);
     }
 
     print() 
     {
-        this.render('policy', {
-            title: 'TaskPi - Policy',
+        this.render('white_paper', {
+            title: 'TaskPi - White Paper',
             user: this.req.user, // או כל אובייקט משתמש רלוונטי
             headerTitle:"TaskPi"
           });
     }
 }
 
-module.exports = Policy;
+module.exports = White_Paper;
