@@ -4,31 +4,43 @@ class Application {
   constructor(req, res) {
     this.req = req;
     this.res = res;
-    this.controllerName = req.params.controller || 'home';
+
+    this.controllerName = (req.params.controller || 'home').toLowerCase();
     this.methodName = req.query.method || 'print';
     this.params = req.query.params || {};
     this.errors = [];
+
     this.controllerLoader = new Controller(req, res);
   }
 
   init = () => {
     if (!this.isValidRequest()) {
+      console.error("❌ Request is not valid:", this.errors);
       return this.res.status(500).render('error', { errors: this.errors });
     }
 
-    const controllerInstance = this.controllerLoader.getController(this.controllerName);
+    try {
+      const controllerInstance = this.controllerLoader.getController(this.controllerName);
 
-    if (typeof controllerInstance[this.methodName] === 'function') {
-      controllerInstance[this.methodName](this.params);
-    } else {
-      this.res.render('error', { errors: [`Method '${this.methodName}' not found`] });
+      const method = controllerInstance[this.methodName];
+      if (typeof method === 'function') {
+        method.call(controllerInstance, this.params);
+      } else {
+        throw new Error(`Method '${this.methodName}' not found on controller '${this.controllerName}'`);
+      }
+
+    } catch (err) {
+      console.error("❌ Exception during controller execution:", err);
+      this.res.status(500).render('error', {
+        errors: [`Internal Error: ${err.message}`]
+      });
     }
   }
 
   isValidRequest = () => {
     const exists = this.controllerLoader.isControllerExist(this.controllerName);
     if (!exists) {
-      this.errors.push(`Controller '${this.controllerName}' not found`);
+      this.errors.push(`Error 444 - '${this.controllerName}' not found`);
       return false;
     }
 

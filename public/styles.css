@@ -1,0 +1,56 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  h1, h2, h3 { color: #5d2c91; }
+  .container {
+    padding: 1rem;
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  .btn-purple{
+    background-color: #5d2c91 !important; /* סגול של Pi */
+    color:#fff;
+  }
+  .btn-purple:hover{
+    color:#ffe600;
+  }
+  .task {
+    background-color: #f9f9f9;
+    margin: 1rem 0;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .task h2 {
+    font-size: 1.2rem;
+    margin: 0 0 0.5rem 0;
+  }
+  
+  .task p {
+    margin: 0.2rem 0;
+  }
+  .navbar-purple {
+    background-color: #5d2c91 !important; /* סגול של Pi */
+  }
+  
+  .navbar-purple .navbar-brand,
+  .navbar-purple .nav-link,
+  .navbar-purple .navbar-text {
+    color: #fff !important;
+  }
+  
+  .navbar-purple .nav-link:hover,
+  .navbar-purple .dropdown-item:hover {
+    color: #ffe600 !important; /* צהוב Pi */
+  }
+  
+  @media (min-width: 768px) {
+    .container {
+      max-width: 800px;
+    }
+  }
+  

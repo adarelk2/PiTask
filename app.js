@@ -1,18 +1,25 @@
-const createError = require('http-errors');
+require('dotenv').config(); // ✅ קודם כל!
+
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const hbs = require('hbs');
 
-const indexRouter = require('./routes/index');
+hbs.registerHelper('eq', function (a, b) {
+  return a === b;
+});
 
-const app = express();
+// ✨ ייבוא ראוטים
+const indexRouter = require('./routes/index');
+const authRouter = require('./routes/auth'); // מחבר את כל auth כולל Pi
+
+const app = express(); // ❗ הגדרה של האפליקציה
 
 // View engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-hbs.registerPartials(path.join(__dirname, 'views', 'partials')); // ✅ registers header/footer
+hbs.registerPartials(path.join(__dirname, 'views', 'partials'));
 
 // Middleware
 app.use(logger('dev'));
@@ -21,82 +28,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.post('/api/auth/pi', async (req, res) => {
-  const { accessToken, user } = req.body;
-
-  const isSandbox = !process.env.PI_ENV || process.env.PI_ENV === 'sandbox';
-
-  if (isSandbox) {
-    // 🧪 Development: אל תנסה לקרוא ל-API, פשוט תשתמש במידע מה-frontend
-    if (!user || !user.username) {
-      return res.status(400).json({ success: false, message: 'Missing user data in sandbox' });
-    }
-    return res.json({ success: true, user, env: 'sandbox' });
-  }
-
-  // 🔐 Production - אימות מול Pi API
-  if (!accessToken) {
-    return res.status(400).json({ success: false, message: 'No access token provided' });
-  }
-
-  try {
-    const verifyResponse = await fetch('https://api.minepi.com/me', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`
-      }
-    });
-
-    const rawText = await verifyResponse.text();
-
-    if (!verifyResponse.ok) {
-      return res.status(verifyResponse.status).json({
-        success: false,
-        message: 'Token verification failed',
-        status: verifyResponse.status,
-        error: rawText
-      });
-    }
-
-    let userData;
-    try {
-      userData = JSON.parse(rawText);
-    } catch (parseErr) {
-      return res.status(500).json({
-        success: false,
-        message: 'Invalid JSON returned from Pi API',
-        raw: rawText
-      });
-    }
-
-    if (!userData || !userData.username) {
-      return res.status(401).json({
-        success: false,
-        message: 'User data invalid or missing username',
-        userData
-      });
-    }
-
-    res.json({ success: true, user: userData, env: 'production' });
-
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: 'Server error',
-      error: err.message
-    });
-  }
-});
-
-// Routes
+// ✨ חיבור ראוטים
+app.use('/auth', authRouter);
 app.use('/', indexRouter);
 
-// Catch 404 and forward to error handler
+// טיפול ב-404
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// Error handler
+// טיפול בשגיאות
 app.use(function(err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
