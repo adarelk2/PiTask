@@ -1,18 +1,17 @@
-const Controller = require("../core/Controller");
+const BaseController = require('../core/BaseController');
 
-class Terms extends Controller {
+class Terms extends BaseController {
     constructor(_req, _res) {
         super(_req, _res);
     }
 
     print() 
     {
-        const response = {title: 'TaskPi',
-        headerData: { username: '' },
-        contentData: { text: 'Welcome to your dashboard' },
-        footerData: { year: new Date().getFullYear()}}
-        
-        this.view.render("terms", response);
+        this.render('terms', {
+            title: 'TaskPi - Terms',
+            user: this.req.user, // או כל אובייקט משתמש רלוונטי
+            headerTitle:"TaskPi"
+          });
     }
 }
 
