@@ -2,57 +2,60 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Pi SDK Debug</title>
+  <title>Pi SDK Test</title>
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 <body>
-  <h1>Pi SDK Test</h1>
-  <button onclick="authenticateUser()">🔐 Authenticate with Pi</button>
+  <h2>🔐 Login with Pi</h2>
+  <button onclick="authenticateUser()">Login</button>
 
-  <pre id="output" style="background:#f5f5f5;padding:1em;border:1px solid #ccc;"></pre>
+  <pre id="output" style="background:#f5f5f5;padding:1em;margin-top:1em;"></pre>
 
   <script>
     const output = document.getElementById('output');
+    const log = (msg) => {
+      const formatted = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
+      output.textContent += formatted + '\n';
+      console.log(msg);
+    };
 
-    function log(msg) {
-      const text = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
-      output.textContent += text + '\n';
-      alert(msg); // ✅ גם alert בטלפון
-      sendLogToServer(msg);
-    }
-
-    function sendLogToServer(message) {
-      fetch('/log', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message })
-      }).catch(err => {
-        output.textContent += 'Could not send to server: ' + err + '\n';
-      });
-    }
-
-    // 🟢 אתחול ה-SDK
+    // ✅ אתחול ה-SDK במצב sandbox
     Pi.init({
       version: "2.0",
       sandbox: true
     });
-    log("✅ Pi.init() called");
+    log("✅ Pi.init called");
 
     async function authenticateUser() {
-      log('🔁 Starting authentication...');
+      log("🔁 Authenticating...");
       try {
         const scopes = ['username'];
         const result = await Pi.authenticate(scopes, onIncompletePaymentFound);
-        log('✅ Auth success:');
+        log("✅ Got token:");
         log(result);
-      } catch (error) {
-        log('❌ Auth failed:');
-        log(error.message || error);
+
+        // ⬅️ שליחת accessToken + user לשרת
+        const serverRes = await fetch("/api/auth/pi", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            accessToken: result.accessToken,
+            user: result.user
+          })
+        });
+
+        const serverData = await serverRes.json();
+        log("📥 Server response:");
+        log(serverData);
+
+      } catch (err) {
+        log("❌ Auth error:");
+        log(err.message || err);
       }
     }
 
     function onIncompletePaymentFound(payment) {
-      log('⚠️ Incomplete payment:');
+      log("⚠️ Incomplete payment:");
       log(payment);
     }
   </script>
