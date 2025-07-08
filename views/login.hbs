@@ -1,1 +1,75 @@
-login page
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login | TaskPi</title>
+</head>
+<body>
+  <h1>🔐 Connect to Pi Network</h1>
+
+  <button onclick="authenticate()">Connect Wallet</button>
+  <pre id="output"></pre>
+
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <script>
+    const output = document.getElementById('output');
+    const log = msg => {
+      const formatted = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
+      output.textContent += formatted + '\\n';
+    };
+
+    const isSandbox = "{{env}}" === "sandbox";
+    console.log(isSandbox)
+    Pi.init({ version: "2.0", sandbox: isSandbox });
+
+    async function authenticate() {
+      try {
+        if (isSandbox) {
+            alert();
+          log("🧪 Sandbox mode: sending fake user to /auth/login");
+
+          const res = await fetch('/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              user: { username: 'bob' }
+            })
+          });
+
+          const data = await res.json();
+          log(data);
+
+          if (data.success || res.redirected) {
+            window.location.href = '/';
+          } else {
+            alert('Sandbox login failed');
+          }
+
+        } else {
+          const result = await Pi.authenticate(['username']);
+          log(result);
+
+          const res = await fetch('/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              accessToken: result.accessToken
+            })
+          });
+
+          const data = await res.json();
+          log(data);
+
+          if (data.success || res.redirected) {
+            window.location.href = '/';
+          } else {
+            alert('Login failed');
+          }
+        }
+
+      } catch (e) {
+        log(e);
+      }
+    }
+  </script>
+</body>
+</html>
