@@ -35,7 +35,7 @@ router.post('/login', async (req, res) => {
         balance: 0
       });
     }
-
+  
     const token = jwt.sign(piUser, process.env.JWT_SECRET || 'secret-key', {
       expiresIn: '1h'
     });
@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true,
       secure: true,       // 💡 חובה בגלל iframe ב-HTTPS
-      sameSite: 'None',   // 💡 חובה כדי ש־iframe יוכל לגשת
+      sameSite: 'none',   // 💡 חובה כדי ש־iframe יוכל לגשת
       maxAge: 3600000
     });
 
