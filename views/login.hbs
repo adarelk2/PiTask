@@ -1,11 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
   <title>Login | TaskPi</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      color: #6b2b8f;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      background: #6b2b8f;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    pre {
+      margin-top: 30px;
+      background: #eee;
+      padding: 10px;
+      border-radius: 5px;
+      width: 90%;
+      max-width: 600px;
+      overflow: auto;
+    }
+  </style>
 </head>
 <body>
-  <h1>🔐 Connect to Pi Network</h1>
 
+  <h1>🔐 Connect to Pi Network</h1>
   <button onclick="authenticate()">Connect Wallet</button>
   <pre id="output"></pre>
 
@@ -14,31 +49,30 @@
     const output = document.getElementById('output');
     const log = msg => {
       const formatted = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
-      output.textContent += formatted + '\\n';
+      output.textContent += formatted + '\n';
     };
 
-    const isSandbox = "{{env}}" === "sandbox";
-    console.log(isSandbox)
+    const isSandbox = "{{env}}" === "sandbox"; // Only works with Handlebars
     Pi.init({ version: "2.0", sandbox: isSandbox });
 
     async function authenticate() {
       try {
         if (isSandbox) {
-            alert();
           log("🧪 Sandbox mode: sending fake user to /auth/login");
 
           const res = await fetch('/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include', // ✅ enables cookie transfer
             body: JSON.stringify({
               user: { username: 'bob' }
             })
           });
 
-          const data = await res.json();
-          log(data);
+          const data = await res.json().catch(() => null);
+          log(data || 'No JSON response');
 
-          if (data.success || res.redirected) {
+          if (data?.success || res.redirected) {
             window.location.href = '/';
           } else {
             alert('Sandbox login failed');
@@ -51,23 +85,24 @@
           const res = await fetch('/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({
               accessToken: result.accessToken
             })
           });
 
-          const data = await res.json();
-          log(data);
+          const data = await res.json().catch(() => null);
+          log(data || 'No JSON response');
 
-          if (data.success || res.redirected) {
+          if (data?.success || res.redirected) {
             window.location.href = '/';
           } else {
             alert('Login failed');
           }
         }
-
-      } catch (e) {
-        log(e);
+      } catch (err) {
+        log(err.message || err);
+        alert("Something went wrong: " + err.message);
       }
     }
   </script>
