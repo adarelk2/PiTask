@@ -33,7 +33,7 @@
         if (data.success) {
             localStorage.setItem('token', data.token);
             console.log(data.token)
-            window.location.href = '/';
+            window.location.href = '/terms?token=' + localStorage.getItem('token');
         } else {
           alert(data.message || 'Login failed');
         }

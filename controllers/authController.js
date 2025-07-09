@@ -59,10 +59,6 @@ exports.verifyToken = async (req, res) => {
     res.json({
       success: true,
       token, // זה ה־JWT
-      user: {
-        id: user.id,
-        username: user.username
-      }
     });
 
   } catch (err) {
