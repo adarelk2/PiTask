@@ -1,66 +1,10 @@
+
 const express = require('express');
-const jwt = require('jsonwebtoken');
-const axios = require('axios');
-const UserModel = require('../models/UserModel');
 const router = express.Router();
+const authController = require('../controllers/authController');
 
-const userModel = new UserModel();
-
-router.get('/login', (req, res) => {
-  res.render('login');
-});
-
-router.post('/login', async (req, res) => {
-  const { accessToken } = req.body;
-  console.log('🔑 Received accessToken:', accessToken);
-
-  try {
-    const PI_API = process.env.PI_ENV === 'sandbox'
-  ? 'https://sandbox.minepi.com/me'
-  : 'https://api.minepi.com/me';
-
-    const response = await axios.get(PI_API, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    });
-
-    const piUser = response.data;
-    console.log('✅ Pi user data:', piUser);
-
-    const existing = await userModel.filter({ id: piUser.uid });
-
-    if (!existing.length) {
-      await userModel.insert({
-        id: piUser.uid,
-        username: piUser.username,
-        pi_wallet_address: '',
-        level: 1,
-        balance: 0,
-        accuracy: null
-      });
-    }
-
-    const token = jwt.sign(
-      { id: piUser.uid, username: piUser.username },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
-
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 1000
-    });
-
-    res.json({
-      success: true,
-      message: existing.length ? 'Logged in' : 'Registered + Logged in',
-      user: { id: piUser.uid, username: piUser.username }
-    });
-
-  } catch (err) {
-    console.error('❌ Pi auth error:', err.response?.data || err.message);
-    return res.status(401).json({ success: false, message: 'Invalid Pi accessToken' });
-  }
-});
+router.get('/login', authController.showLogin);
+router.post('/verify-token', authController.verifyToken);
+router.get('/auth/callback', authController.authCallback);
 
 module.exports = router;

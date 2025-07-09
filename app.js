@@ -1,41 +1,36 @@
-require('dotenv').config(); // ✅ קודם כל!
 
+require('dotenv').config();
 const express = require('express');
+const session = require('express-session');
 const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const hbs = require('hbs');
-
-hbs.registerHelper('eq', function (a, b) {
-  return a === b;
-});
-const indexRouter = require('./routes/index');
-const authRouter = require('./routes/auth');
 
 const app = express();
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
-hbs.registerPartials(path.join(__dirname, 'views', 'partials'));
-
-app.use(logger('dev'));
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(session({ secret: 'taskpi_secret', resave: false, saveUninitialized: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/auth', authRouter);
-app.use('/', indexRouter);
+// View engine
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'hbs');
 
-app.use(function(req, res, next) {
-  next(createError(404));
+// Routes
+const authRoutes = require('./routes/auth');
+app.use('/', authRoutes);
+
+// Default route
+app.get('/', (req, res) => {
+  res.redirect('/login');
 });
 
-app.use(function(err, req, res, next) {
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.status(err.status || 500);
-  res.render('error');
+app.get('/dashboard', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+  res.send(`<h2>Welcome ${req.session.user.username}</h2>`);
 });
 
-module.exports = app;
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

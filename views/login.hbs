@@ -1,70 +1,40 @@
+
 <!DOCTYPE html>
 <html>
 <head>
   <title>Login with Pi</title>
-  <script src="https://sandbox.minepi.com/sdk/pi-sdk.js"></script>
-  <style>
-    #log {
-      margin-top: 20px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      background-color: #f4f4f4;
-      font-family: monospace;
-      white-space: pre-line;
-    }
-  </style>
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 <body>
   <h1>Login with Pi</h1>
-  <button id="pi-login">Login with Pi</button>
-  <div id="log"></div>
+  <button id="pi-login">Login</button>
+
   <script>
-    const log = (msg) => {
-      const logBox = document.getElementById('log');
-      logBox.textContent += `\n${msg}`;
-    };
+    const Pi = window.Pi;
+    Pi.init({ version: '2.0', sandbox: true });
 
-    const scopes = ['username'];
-
-    if (!window.Pi) {
-      log('❌ Pi SDK not available — are you outside the Pi app?');
-    } else {
-      Pi.init({ version: "2.0" });
-
-      document.getElementById('pi-login').addEventListener('click', async () => {
-        log('🔄 Starting Pi authentication...');
-        try {
-          const result = await Pi.authenticate(scopes, onIncompletePaymentFound);
-          const accessToken = result.accessToken;
-          const user = result.user;
-
-          log(`✅ Pi authenticated: ${user.username}`);
-          log(`🔒 Sending accessToken to server...`);
-
-          const response = await fetch('/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ accessToken })
-          });
-
-          const data = await response.json();
-
-          if (data.success) {
-            log(`✅ Logged in as ${data.user.username}`);
-            log('➡️ Redirecting to home...');
-            window.location.href = '/';
-          } else {
-            log(`❌ Login failed: ${data.message || 'Unknown error'}`);
-          }
-        } catch (error) {
-          log(`🔥 Error: ${error.message || error}`);
+    document.getElementById('pi-login').addEventListener('click', async () => {
+      try {
+        const scopes = ['username', 'payments', 'wallet_address'];
+        const authResult = await Pi.authenticate(scopes, onIncompletePaymentFound);
+        const response = await fetch('/verify-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ accessToken: authResult.accessToken })
+        });
+        const data = await response.json();
+        if (data.success) {
+          window.location.href = '/dashboard';
+        } else {
+          alert('Login failed');
         }
-      });
-    }
+      } catch (err) {
+        console.error(err);
+      }
+    });
 
     function onIncompletePaymentFound(payment) {
-      log('⚠️ Incomplete payment found (not handled):');
-      log(JSON.stringify(payment, null, 2));
+      console.log('Incomplete payment found', payment);
     }
   </script>
 </body>
