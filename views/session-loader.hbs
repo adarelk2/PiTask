@@ -8,6 +8,7 @@
     if (!token) {
       window.location = '/auth/login';
     } else {
+        alert(token)
       // שלח לשרת את הטוקן
       fetch('/auth/session-verify', {
         method: 'POST',
@@ -16,6 +17,9 @@
         },
         body: JSON.stringify({ token })
       }).then(res => {
+        console.log("here 20")
+        console.log(res);
+        
         if (res.ok) {
           window.location = '/'; // או /dashboard או מה שצריך
         } else {
