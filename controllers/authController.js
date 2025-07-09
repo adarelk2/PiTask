@@ -20,9 +20,6 @@ exports.verifyToken = async (req, res) => {
       }
     });
 
-    console.log('me response:', response);
-
-
     let { username, wallet_address } = response.data;
 
     if (!wallet_address) {
