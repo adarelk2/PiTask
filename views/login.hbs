@@ -56,19 +56,20 @@
     };
 
     let authResult = null;
-
+    console.log("im here 59")
     Pi.init({ version: "2.0", sandbox: true });
 
     async function authenticate() {
       try {
         Pi.authenticate(["username"], function (result) {
           authResult = result;
-          log("✅ Pi authentication complete:");
+            console.log("im here 66")
+          console.log(authResult)
           log(result);
         });
       } catch (err) {
-        log("❌ Pi authentication failed:");
-        log(err.message || err);
+        console.log("❌ Pi authentication failed:");
+        console.log(err.message || err);
         alert("Authentication error: " + err.message);
       }
     }
@@ -88,8 +89,8 @@
         });
 
         const data = await res.json().catch(() => null);
-        log("📨 Server response:");
-        log(data || 'No JSON response');
+        console.log("📨 Server response:");
+        console.log(data || 'No JSON response');
 
         if (data?.success || res.redirected) {
           window.location.href = '/';
@@ -98,8 +99,8 @@
         }
 
       } catch (err) {
-        log("❌ Server error:");
-        log(err.message || err);
+        console.log("❌ Server error:");
+        console.log(err.message || err);
         alert("Server error: " + err.message);
       }
     }
