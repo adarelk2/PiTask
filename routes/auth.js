@@ -11,7 +11,6 @@ router.post('/login', async (req, res) => {
   const { accessToken, user } = req.body;
   const isSandbox = !process.env.PI_ENV || process.env.PI_ENV === 'sandbox';
   if (isSandbox) {
-    console.log("14 here");
     const piUser = {
       id: '11111111-1111-1111-1111-111111111111',
       username: 'alice'

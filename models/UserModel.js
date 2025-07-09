@@ -5,7 +5,7 @@ class UserModel extends Model
   constructor() 
   {
     super('users', {
-      id: ['n', 'id'],
+      id: ['s', 'id'],
       username: ['s', 'username'],
       pi_wallet_address: ['s', 'pi_wallet_address'],
       level: ['n', 'level'],
