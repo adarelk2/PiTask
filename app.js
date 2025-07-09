@@ -19,6 +19,7 @@ const app = express(); // ❗ הגדרה של האפליקציה
 // View engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
+app.set('trust proxy', 1);
 hbs.registerPartials(path.join(__dirname, 'views', 'partials'));
 
 // Middleware
