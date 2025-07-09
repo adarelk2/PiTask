@@ -19,7 +19,7 @@ exports.verifyToken = async (req, res) => {
       }
     });
 
-    console.log('me response:', response.data);
+    console.log('me response:', response);
 
 
     const { username, wallet_address } = response.data;
