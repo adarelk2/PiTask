@@ -21,6 +21,11 @@
   <div id="log"></div>
 
   <script>
+    if (!window.Pi) {
+  alert('❌ Pi SDK not available — are you outside the Pi app?');
+}
+
+
     const log = (msg) => {
       const logBox = document.getElementById('log');
       logBox.textContent += `\n${msg}`;
