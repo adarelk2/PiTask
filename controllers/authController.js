@@ -1,22 +1,28 @@
 
-const jwt = require('jsonwebtoken');
+const axios = require('axios');
 require('dotenv').config();
 
 exports.showLogin = (req, res) => {
   res.render('login');
 };
 
-exports.verifyToken = (req, res) => {
+exports.verifyToken = async (req, res) => {
   const { accessToken } = req.body;
   try {
-    const decoded = jwt.verify(accessToken, process.env.PI_API_KEY, {
-      algorithms: ['ES256']
+    const response = await axios.get('https://api.minepi.com/v2/me', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
     });
+
+    const { uid, username, wallet_address } = response.data;
+
     req.session.user = {
-      uid: decoded.uid,
-      username: decoded.username,
-      wallet: decoded.wallet_address,
+      uid,
+      username,
+      wallet: wallet_address
     };
+
     res.json({ success: true, user: req.session.user });
   } catch (err) {
     console.error('Token verification failed:', err);
