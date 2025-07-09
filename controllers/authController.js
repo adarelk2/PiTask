@@ -10,7 +10,7 @@ exports.showLogin = (req, res) => {
 
 exports.verifyToken = async (req, res) => {
   const { accessToken } = req.body;
-
+  console.log("im here");
   try {
     const response = await axios.get('https://api.minepi.com/v2/me', {
       headers: {
