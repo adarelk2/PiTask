@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
+const hbs = require('hbs'); // הוסף את זה
 
 const app = express();
 
@@ -13,6 +14,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
+// ⬇️ הרשמה של תיקיית ה-partials ⬇️
+hbs.registerPartials(path.join(__dirname, 'views/partials'));
+hbs.registerHelper('eq', function (a, b) {
+  return a === b;
+});
 // Routes
 const authRoutes = require('./routes/auth');
 app.use('/', authRoutes);
@@ -28,4 +34,4 @@ app.get('/dashboard', (req, res) => {
   res.send(`<h2>Welcome ${req.session.user.username}</h2>`);
 });
 
-module.exports = app; // 👈 חשוב!
+module.exports = app;
