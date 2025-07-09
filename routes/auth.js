@@ -15,7 +15,7 @@ router.post('/login', async (req, res) => {
   // נניח שזה היוזר
   const piUser = {
     id: 'c2a3ee58-92fc-4cf9-bb2e-5a4a6de71c88',
-    username: 'bob'
+    username: 'alice'
   };
 
   // יצירת JWT
