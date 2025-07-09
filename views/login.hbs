@@ -59,24 +59,26 @@
     log("✅ Pi SDK initialized");
 
     window.addEventListener("message", function (event) {
-      log("📩 Received message from: " + event.origin);
+    log("📩 Received message from: " + event.origin);
 
-      const payload = event.data?.payload;
+    const data = event.data;
+    log("🧪 Raw message event.data:");
+    log(data);
 
-      // try to extract accessToken
-      if (payload?.accessToken) {
-        log("🎯 Access token received:");
-        log(payload);
-
+    const payload = data?.payload;
+    if (payload?.accessToken) {
+        log("🎯 Access token found! Proceeding to server.");
         authResult = {
-          accessToken: payload.accessToken,
-          user: { username: "sandbox_user" },
-          signature: payload.signature || "fake-sig"
+        accessToken: payload.accessToken,
+        user: { username: "sandbox_user" },
+        signature: payload.signature || "sandbox-signature"
         };
-
         sendToServer();
-      }
+    } else {
+        log("⚠️ No accessToken found in payload");
+    }
     });
+
 
     function startPiLogin() {
       log("➡ Calling Pi.authenticate...");
