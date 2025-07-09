@@ -21,17 +21,9 @@ hbs.registerHelper('eq', function (a, b) {
 });
 // Routes
 const authRoutes = require('./routes/auth');
-app.use('/', authRoutes);
+const indexRoutes = require('./routes/index');
+app.use('/auth', authRoutes);
 
-app.get('/', (req, res) => {
-  res.redirect('/login');
-});
-
-app.get('/dashboard', (req, res) => {
-  if (!req.session.user) {
-    return res.redirect('/login');
-  }
-  res.send(`<h2>Welcome ${req.session.user.username}</h2>`);
-});
+app.use('/', indexRoutes);
 
 module.exports = app;

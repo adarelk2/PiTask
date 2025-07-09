@@ -3,7 +3,6 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const Application = require('../core/Application');
 
-// Handles '/' and '/:controller'
 router.get('/:controller?', (req, res) => {
   const token = req.cookies.token;
 
@@ -13,7 +12,7 @@ router.get('/:controller?', (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // נשמר לשימוש בתוך Application
+    req.user = decoded; // נשתמש בזה בתוך Application
     const app = new Application(req, res);
     app.init();
   } catch (err) {

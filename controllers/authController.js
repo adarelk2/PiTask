@@ -20,7 +20,7 @@ exports.verifyToken = async (req, res) => {
     console.log('me response:', response.data);
 
 
-    const { uid, username, wallet_address } = response.data;
+    const { username, wallet_address } = response.data;
 
     if (!wallet_address) {
       return res.status(400).json({
@@ -29,18 +29,17 @@ exports.verifyToken = async (req, res) => {
       });
     }
 
-    let users = await userModel.filter({ id: uid });
+    let users = await userModel.filter({ username:username});
 
     if (users.length === 0) {
       await userModel.insert({
-        id: uid,
         username,
         pi_wallet_address: wallet_address,
         level: 1,
         accuracy: 1.0,
         balance: 0
       });
-      users = await userModel.filter({ id: uid });
+      users = await userModel.filter({ id: username });
     }
 
     const user = users[0];
