@@ -54,31 +54,33 @@
       logEl.textContent += out + '\n';
       console.log('[TaskPi]', msg);
     };
-
+    console.log("test")
     Pi.init({ version: "2.0", sandbox: true });
     log("✅ Pi SDK initialized");
 
     window.addEventListener("message", function (event) {
     log("📩 Received message from: " + event.origin);
-
-    const data = event.data;
     log("🧪 Raw message event.data:");
-    log(data);
+    log(event.data);
 
-    const payload = data?.payload;
-    if (payload?.accessToken) {
-        log("🎯 Access token found! Proceeding to server.");
+    const { id, payload } = event.data;
+
+    // הודעה 2 – זו עם ה־accessToken
+    if (id === 2 && payload?.accessToken) {
+        log("🎯 Access token found in message ID 2:");
+        log(payload);
+
         authResult = {
         accessToken: payload.accessToken,
-        user: { username: "sandbox_user" },
+        user: { username: "sandbox_user" }, // אין username אמיתי ב־sandbox
         signature: payload.signature || "sandbox-signature"
         };
+
         sendToServer();
     } else {
-        log("⚠️ No accessToken found in payload");
+        log(`⚠️ Message ID ${id} ignored or missing accessToken`);
     }
     });
-
 
     function startPiLogin() {
       log("➡ Calling Pi.authenticate...");
