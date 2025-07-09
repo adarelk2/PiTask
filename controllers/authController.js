@@ -20,7 +20,12 @@ exports.verifyToken = async (req, res) => {
     });
 
     const { uid, username, wallet_address } = response.data;
-
+    if (!wallet_address) {
+      return res.status(400).json({
+        success: false,
+        message: 'You must allow access to your wallet address to log in.'
+      });
+    }
     // Check if user exists
     let users = await userModel.filter({ id: uid });
 
