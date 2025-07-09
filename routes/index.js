@@ -5,19 +5,19 @@ const Application = require('../core/Application');
 
 // ✅ Auth Middleware כתוסף פנימי
 function requireAuth(req, res, next) {
-  console.log("im here 8");
-  console.log(req);
-  console.log("img here 10");
-  const authHeader = req.headers.authorization || req.cookies?.token;
+  const authHeader = req.headers.authorization;
+  const cookieToken = req.cookies?.token;
 
   let token = null;
+
   if (authHeader?.startsWith?.('Bearer ')) {
     token = authHeader.split(' ')[1];
-  } else if (typeof authHeader === 'string') {
-    token = authHeader;
+  } else if (typeof cookieToken === 'string') {
+    token = cookieToken;
   }
 
   if (!token) {
+    console.warn('🔒 Missing token');
     return res.redirect('/auth/login');
   }
 
@@ -26,9 +26,11 @@ function requireAuth(req, res, next) {
     req.user = decoded;
     next();
   } catch (err) {
+    console.warn('🔒 Invalid token');
     return res.redirect('/auth/login');
   }
 }
+
 
 // ✅ הראוטר הראשי
 router.get('/:controller?', requireAuth, (req, res) => {

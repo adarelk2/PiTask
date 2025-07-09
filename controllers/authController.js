@@ -5,14 +5,11 @@ const userModel = new UserModel();
 require('dotenv').config();
 
 exports.showLogin = (req, res) => {
-  console.log(res.cookies);
   res.render('login');
 };
 
 exports.verifyToken = async (req, res) => {
   const { accessToken } = req.body;
-  console.log("im here");
-  console.log(req.body);
   try {
     const response = await axios.get('https://api.minepi.com/v2/me', {
       headers: {
