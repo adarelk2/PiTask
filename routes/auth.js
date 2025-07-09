@@ -91,7 +91,8 @@ router.post('/login', async (req, res) => {
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,             // 💡 חובה עבור cross-site
+      sameSite: 'None',         // 💡 חובה עבור iframe / Pi sandbox
       maxAge: 3600000
     });
 
