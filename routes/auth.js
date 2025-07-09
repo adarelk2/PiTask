@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true,
       secure: true,       // 💡 חובה בגלל iframe ב-HTTPS
-      sameSite: 'none',   // 💡 חובה כדי ש־iframe יוכל לגשת
+      sameSite: 'None',   // 💡 חובה כדי ש־iframe יוכל לגשת
       maxAge: 3600000
     });
 
