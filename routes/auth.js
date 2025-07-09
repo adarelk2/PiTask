@@ -9,45 +9,8 @@ const userModel = new UserModel();
 // POST /auth/login
 router.post('/login', async (req, res) => {
   const { accessToken, user } = req.body;
-  const isSandbox = !process.env.PI_ENV || process.env.PI_ENV === 'sandbox';
-  console.log("here 13");
-
-  if (isSandbox) {
-    console.log("here 14");
-    const piUser = {
-      id: '11111111-1111-1111-1111-111111111111',
-      username: 'alice'
-    };
-
-    // בדיקה במסד
-    const existingUsers = await userModel.select({ username: piUser.username });
-    console.log("here 24");
-    console.log(existingUsers);
-
-    if (existingUsers.length === 0) {
-      await userModel.insert({
-        id: null, // ייווצר אוטומטית (אם auto-increment)
-        username: piUser.username,
-        pi_wallet_address: null,
-        level: 1,
-        accuracy: null,
-        balance: 0
-      });
-    }
-
-    const token = jwt.sign(piUser, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'None',
-      maxAge: 3600000
-    });
-    
-    
-
-    return res.redirect('/');
-  }
+  // const isSandbox = !process.env.PI_ENV || process.env.PI_ENV === 'sandbox';
+  console.log("here 15");
 
   if (!accessToken) {
     return res.status(400).send('Missing access token');
@@ -95,7 +58,7 @@ router.post('/login', async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true,
       secure: true,             // 💡 חובה עבור cross-site
-      sameSite: 'None',         // 💡 חובה עבור iframe / Pi sandbox
+      sameSite: 'none',         // 💡 חובה עבור iframe / Pi sandbox
       maxAge: 3600000
     });
 
