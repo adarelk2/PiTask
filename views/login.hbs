@@ -47,93 +47,51 @@
 
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
   <script>
-    let authResult = null;
     const logEl = document.getElementById('log');
-    const log = msg => {
+    const log = (msg) => {
       const formatted = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
       console.log('[TaskPi]', formatted);
       logEl.textContent += formatted + '\n';
     };
 
-    Pi.init({ version: "2.0", sandbox: true });
-    log("✅ Pi SDK initialized");
-
-    window.addEventListener("message", function (event) {
-      log("📩 Received message from: " + event.origin);
-
-      let data = event.data;
-
-      // ✅ Try to parse if it's string
-      if (typeof data === 'string') {
-        try {
-          data = JSON.parse(data);
-          log("🧪 Parsed JSON from string:");
-        } catch (e) {
-          log("❌ Failed to parse event.data");
-          return;
-        }
-      }
-
-      log("🧪 Parsed event data:");
-      log(data);
-
-      const { id, payload } = data;
-
-      if (id === 2 && payload?.accessToken) {
-        log("🎯 Access token found in message ID 2:");
-        log(payload);
-
-        authResult = {
-          accessToken: payload.accessToken,
-          user: { username: "sandbox_user" },
-          signature: payload.signature || "sandbox-signature"
-        };
-
-        sendToServer();
-      } else {
-        log(`⚠️ Message ID ${id} ignored or missing accessToken`);
-      }
-    });
+    Pi.init({ version: "2.0" }); // 🔐 Production mode (no sandbox)
+    log("✅ Pi SDK initialized (production)");
 
     function startPiLogin() {
-      log("➡ Calling Pi.authenticate...");
-      Pi.authenticate(["username"], () => {
-        log("⏳ Waiting for Pi iframe message...");
-      });
-    }
+      log("➡ Starting Pi.authenticate...");
+      Pi.authenticate(["username", "payments"], async function (auth) {
+        try {
+          if (!auth?.accessToken || !auth?.signature) {
+            log("❌ Missing auth data from Pi");
+            return alert("Login failed: missing credentials.");
+          }
 
-    async function sendToServer() {
-      console.log("[TaskPi] – 🚀 sendToServer called");
+          const res = await fetch('/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              accessToken: auth.accessToken,
+              signature: auth.signature
+            })
+          });
 
-      if (!authResult || !authResult.accessToken) {
-        log("❌ Missing authResult");
-        return;
-      }
+          const data = await res.json().catch(() => null);
+          log("📨 Server response:");
+          log(data || 'No JSON');
 
-      log("📦 Sending to server:");
-      log(authResult);
+          if (data?.success || res.redirected) {
+            window.location.href = '/';
+          } else {
+            alert("Login failed.");
+          }
 
-      try {
-        const res = await fetch('/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify(authResult)
-        });
-
-        const data = await res.json().catch(() => null);
-        log("📨 Server response:");
-        log(data || 'No JSON');
-
-        if (data?.success || res.redirected) {
-          window.location.href = '/';
-        } else {
-          alert("Login failed.");
+        } catch (err) {
+          log("❌ Error sending to server:");
+          log(err.message);
+          alert("Error: " + err.message);
         }
-      } catch (err) {
-        log("❌ Error sending to server:");
-        log(err.message);
-      }
+      });
     }
   </script>
 </body>
