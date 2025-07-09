@@ -1,6 +1,5 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const fetch = require('node-fetch');
 const UserModel = require('../models/UserModel');
 
 const router = express.Router();
@@ -8,44 +7,28 @@ const userModel = new UserModel();
 
 // POST /auth/login
 router.post('/login', async (req, res) => {
-  const { accessToken, user } = req.body;
-  // const isSandbox = !process.env.PI_ENV || process.env.PI_ENV === 'sandbox';
-  console.log("here 15");
+  console.log("🔐 POST /auth/login");
 
-  if (!accessToken) {
-    return res.status(400).send('Missing access token');
+  const { user } = req.body;
+
+  // בדיקה בסיסית
+  if (!user?.username) {
+    return res.status(400).send('Missing mock user data');
   }
 
+  const piUser = {
+    id: '11111111-1111-1111-1111-111111111111', // אפשר גם לייצר דינאמית
+    username: user.username
+  };
+
   try {
-    const response = await fetch('https://api.minepi.com/me', {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    });
-
-    if (!response.ok) {
-      const raw = await response.text();
-      return res.status(401).send('Invalid Pi token: ' + raw);
-    }
-
-    const userData = await response.json();
-
-    if (!userData?.username) {
-      return res.status(400).send('No username returned from Pi');
-    }
-
-    const realUser = {
-      id: 'pi-' + userData.username,
-      username: userData.username
-    };
-
     // בדיקה במסד
-    const existingUsers = await userModel.select({ username: realUser.username });
+    const existingUsers = await userModel.select({ username: piUser.username });
+
     if (existingUsers.length === 0) {
       await userModel.insert({
-        id: null,
-        username: realUser.username,
+        id: null, // ייווצר אוטומטית (אם auto-increment או UUID ב-DB)
+        username: piUser.username,
         pi_wallet_address: null,
         level: 1,
         accuracy: null,
@@ -53,30 +36,32 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    const token = jwt.sign(realUser, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(piUser, process.env.JWT_SECRET || 'secret-key', {
+      expiresIn: '1h'
+    });
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: true,             // 💡 חובה עבור cross-site
-      sameSite: 'none',         // 💡 חובה עבור iframe / Pi sandbox
+      secure: true,       // 💡 חובה בגלל iframe ב-HTTPS
+      sameSite: 'None',   // 💡 חובה כדי ש־iframe יוכל לגשת
       maxAge: 3600000
     });
 
-    res.redirect('/');
+    // החזרה פשוטה – תומך גם במעקב מהלקוח
+    return res.json({ success: true });
+
   } catch (err) {
-    console.error('Pi API error:', err.message);
-    res.status(500).send('Server error: ' + err.message);
+    console.error('Login error:', err.message);
+    return res.status(500).send('Server error');
   }
 });
 
-// GET /auth/login – מציג את עמוד ההתחברות עם env
+// GET /auth/login – עמוד ההתחברות
 router.get('/login', (req, res) => {
-  res.render('login', {
-    env: process.env.PI_ENV || 'sandbox'
-  });
+  res.render('login');
 });
 
-// GET /auth/login – מציג את עמוד ההתחברות עם env
+// GET /auth/logout – ניקוי העוגייה
 router.get('/logout', (req, res) => {
   res.clearCookie('token');
   res.redirect('/auth/login');
