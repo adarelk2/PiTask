@@ -10,7 +10,10 @@ const userModel = new UserModel();
 router.post('/login', async (req, res) => {
   const { accessToken, user } = req.body;
   const isSandbox = !process.env.PI_ENV || process.env.PI_ENV === 'sandbox';
+  console.log("here 13");
+
   if (isSandbox) {
+    console.log("here 14");
     const piUser = {
       id: '11111111-1111-1111-1111-111111111111',
       username: 'alice'
@@ -18,6 +21,9 @@ router.post('/login', async (req, res) => {
 
     // בדיקה במסד
     const existingUsers = await userModel.select({ username: piUser.username });
+    console.log("here 24");
+    console.log(existingUsers);
+
     if (existingUsers.length === 0) {
       await userModel.insert({
         id: null, // ייווצר אוטומטית (אם auto-increment)
