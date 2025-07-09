@@ -11,9 +11,8 @@ router.post('/login', async (req, res) => {
   const { accessToken, user } = req.body;
   console.log("im here");
   const isSandbox = !process.env.PI_ENV || process.env.PI_ENV === 'sandbox';
-
+  console.log(process.env);
   if (isSandbox) {
-    console.log("im here 16");
     const piUser = {
       id: '11111111-1111-1111-1111-111111111111',
       username: 'alice'
@@ -101,7 +100,6 @@ router.post('/login', async (req, res) => {
 
 // GET /auth/login – מציג את עמוד ההתחברות עם env
 router.get('/login', (req, res) => {
-  console.log("104");
   res.render('login', {
     env: process.env.PI_ENV || 'sandbox'
   });
@@ -109,7 +107,6 @@ router.get('/login', (req, res) => {
 
 // GET /auth/login – מציג את עמוד ההתחברות עם env
 router.get('/logout', (req, res) => {
-  console.log("im here");
   res.clearCookie('token');
   res.redirect('/auth/login');
 });
