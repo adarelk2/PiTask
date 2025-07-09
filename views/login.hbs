@@ -1,39 +1,121 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Test Pi Auth</title>
+  <meta charset="UTF-8" />
+  <title>TaskPi Login (Sandbox)</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      color: #6b2b8f;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      background: #6b2b8f;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    pre {
+      margin-top: 20px;
+      background: #eee;
+      padding: 10px;
+      border-radius: 5px;
+      width: 90%;
+      max-width: 600px;
+      overflow: auto;
+      text-align: left;
+    }
+  </style>
 </head>
 <body>
-  <h1>Pi Login Test</h1>
-  <button onclick="startLogin()">🔐 Login with Pi</button>
 
+  <h1>🔐 Login with Pi Network</h1>
+  <button onclick="startLogin()">Connect</button>
   <pre id="log"></pre>
 
-  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-  <script>
-    Pi.init({ version: "2.0", sandbox: true });
+  <!-- Load Pi SDK at the END to ensure DOM is ready -->
+  <script src="https://sdk.minepi.com/pi-sdk.js" defer></script>
+  <script defer>
+    document.addEventListener("DOMContentLoaded", function () {
+      const logEl = document.getElementById('log');
+      const log = (msg) => {
+        const formatted = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
+        console.log('[TaskPi]', formatted);
+        logEl.textContent += formatted + '\n';
+      };
 
-    const log = msg => {
-      console.log(msg);
-      document.getElementById("log").textContent += (typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2)) + '\n';
-    };
+      // Init SDK
+      try {
+        Pi.init({ version: "2.0", sandbox: true });
+        log("✅ Pi SDK initialized (sandbox)");
+      } catch (err) {
+        log("❌ Pi.init failed: " + err.message);
+      }
 
-    function startLogin() {
-      log("➡ Calling Pi.authenticate...");
-      Pi.authenticate(["username"], function (result) {
-        log("✅ Callback triggered:");
-        log(result);
+      window.startLogin = async function () {
+        log("➡ Calling Pi.authenticate...");
 
-        if (!result || !result.accessToken) {
-          log("❌ No access token received.");
-          alert("Login failed or cancelled.");
+        if (typeof Pi.authenticate !== "function") {
+          log("❌ Pi.authenticate is not available");
           return;
         }
 
-        alert("Login successful! Username: " + result.user?.username);
-      });
-    }
+        Pi.authenticate(["username"], async function (result) {
+          try {
+            log("✅ Callback triggered!");
+
+            if (!result) {
+              log("⚠ No result returned.");
+              return;
+            }
+
+            log("🎯 Auth result:");
+            log(result);
+
+            const { user, accessToken, signature } = result;
+
+            if (!user?.username || !accessToken) {
+              log("❌ Missing username or accessToken");
+              return;
+            }
+
+            // 🔁 Send to server
+            const res = await fetch('/auth/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify(result)
+            });
+
+            const data = await res.json().catch(() => null);
+            log("📨 Server response:");
+            log(data || 'No JSON');
+
+            if (data?.success || res.redirected) {
+              window.location.href = '/';
+            } else {
+              alert("Login failed");
+            }
+
+          } catch (err) {
+            log("🔥 Error in callback:");
+            log(err.message);
+          }
+        });
+      };
+    });
   </script>
 </body>
 </html>
