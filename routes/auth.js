@@ -2,13 +2,17 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 
-// POST /auth/login
-router.get('/login', async (req, res) => {
-    res.render('login',{})
+// GET /auth/login — הצגת טופס ההתחברות
+router.get('/login', (req, res) => {
+  res.render('login', {});
+});
+
+// POST /auth/login — עיבוד התחברות
+router.post('/login', async (req, res) => {
   const { accessToken } = req.body;
 
-  // ✅ כאן אמור להיות אימות אמיתי מול Pi SDK.
-  // כרגע נניח שזה היוזר:
+  // ⚠️ כאן אמור להיות אימות אמיתי מול Pi SDK
+  // נניח שזה היוזר
   const piUser = {
     id: 'c2a3ee58-92fc-4cf9-bb2e-5a4a6de71c88',
     username: 'bob'
@@ -21,13 +25,14 @@ router.get('/login', async (req, res) => {
     { expiresIn: '1h' }
   );
 
-  // שמירה ב-cookie
+  // הגדרת העוגייה
   res.cookie('token', jwtToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     maxAge: 60 * 60 * 1000
   });
 
+  // שליחת תגובה אחת בלבד
   res.json({ success: true, message: 'Logged in', user: piUser });
 });
 
