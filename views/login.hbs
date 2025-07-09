@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Login | TaskPi (Sandbox Workaround)</title>
+  <title>TaskPi Login</title>
   <style>
     body {
       font-family: sans-serif;
@@ -20,10 +20,10 @@
     button {
       padding: 10px 20px;
       font-size: 16px;
-      border: none;
       background: #6b2b8f;
       color: white;
-      border-radius: 5px;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
       margin-top: 10px;
     }
@@ -31,78 +31,68 @@
       margin-top: 20px;
       background: #eee;
       padding: 10px;
-      border-radius: 5px;
+      border-radius: 6px;
       width: 90%;
       max-width: 600px;
       overflow: auto;
-      text-align: left;
     }
   </style>
 </head>
 <body>
 
   <h1>🔐 Login with Pi Network</h1>
-  <button onclick="startPiAuth()">Connect with Pi</button>
+  <button onclick="startPiLogin()">Connect</button>
   <pre id="log"></pre>
 
-  <script src="https://sdk.minepi.com/pi-sdk.js" defer></script>
-  <script defer>
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <script>
     let authResult = null;
 
     const logEl = document.getElementById('log');
     const log = (msg) => {
-      const formatted = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
-      console.log('[TaskPi]', formatted);
-      logEl.textContent += formatted + '\n';
+      const out = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
+      logEl.textContent += out + '\n';
+      console.log('[TaskPi]', msg);
     };
 
-    document.addEventListener("DOMContentLoaded", function () {
-      try {
-        Pi.init({ version: "2.0", sandbox: true });
-        log("✅ Pi SDK initialized (sandbox)");
-      } catch (err) {
-        log("❌ Pi.init failed: " + err.message);
-      }
+    Pi.init({ version: "2.0", sandbox: true });
+    log("✅ Pi SDK initialized");
 
-      // מאזין להודעות מה־iframe של Pi SDK
-      window.addEventListener("message", function (event) {
-        if (event.origin !== "https://sandbox.minepi.com") return;
+    window.addEventListener("message", function (event) {
+      log("📩 Received message from: " + event.origin);
 
-        const payload = event.data?.payload;
-        if (!payload?.accessToken) return;
+      const payload = event.data?.payload;
 
-        log("📦 Intercepted Pi auth payload:");
+      // try to extract accessToken
+      if (payload?.accessToken) {
+        log("🎯 Access token received:");
         log(payload);
 
-        // נבנה אובייקט התחברות מדומה
         authResult = {
           accessToken: payload.accessToken,
-          user: { username: "sandbox_user" }, // זמני – כי ה-iframe לא שולח username
-          signature: payload.signature || "sandbox-signature"
+          user: { username: "sandbox_user" },
+          signature: payload.signature || "fake-sig"
         };
 
         sendToServer();
-      });
+      }
     });
 
-    function startPiAuth() {
+    function startPiLogin() {
       log("➡ Calling Pi.authenticate...");
-      try {
-        Pi.authenticate(["username"], function () {
-          log("⏳ Waiting for Pi iframe message...");
-          // אנחנו לא סומכים על callback, אלא על postMessage
-        });
-      } catch (err) {
-        log("❌ Pi.authenticate error:");
-        log(err.message);
-      }
+
+      Pi.authenticate(["username"], () => {
+        log("⏳ Waiting for token from Pi iframe...");
+      });
     }
 
     async function sendToServer() {
-      if (!authResult?.accessToken) {
-        alert("No accessToken available.");
+      if (!authResult || !authResult.accessToken) {
+        log("❌ No access token to send.");
         return;
       }
+
+      log("🚀 Sending POST /auth/login...");
 
       try {
         const res = await fetch('/auth/login', {
@@ -119,12 +109,10 @@
         if (data?.success || res.redirected) {
           window.location.href = '/';
         } else {
-          alert("Login failed.");
+          alert('Login failed');
         }
-
       } catch (err) {
-        log("❌ Server error:");
-        log(err.message);
+        log("❌ Error sending to server: " + err.message);
         alert("Server error: " + err.message);
       }
     }
