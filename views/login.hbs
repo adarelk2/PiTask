@@ -58,29 +58,43 @@
     Pi.init({ version: "2.0", sandbox: true });
     log("✅ Pi SDK initialized");
 
-    window.addEventListener("message", function (event) {
-    log("📩 Received message from: " + event.origin);
-    log("🧪 Raw message event.data:");
-    log(event.data);
+window.addEventListener("message", function (event) {
+  log("📩 Received message from: " + event.origin);
 
-    const { id, payload } = event.data;
+  let data = event.data;
 
-    // הודעה 2 – זו עם ה־accessToken
-    if (id === 2 && payload?.accessToken) {
-        log("🎯 Access token found in message ID 2:");
-        log(payload);
-
-        authResult = {
-        accessToken: payload.accessToken,
-        user: { username: "sandbox_user" }, // אין username אמיתי ב־sandbox
-        signature: payload.signature || "sandbox-signature"
-        };
-
-        sendToServer();
-    } else {
-        log(`⚠️ Message ID ${id} ignored or missing accessToken`);
+  // ✅ בדיקה: האם צריך לפרסר JSON?
+  if (typeof data === 'string') {
+    try {
+      data = JSON.parse(data);
+      log("🧪 Parsed JSON from string:");
+    } catch (e) {
+      log("❌ Failed to parse message data as JSON:", data);
+      return;
     }
-    });
+  }
+
+  log("🧪 Parsed event data:");
+  log(data);
+
+  const { id, payload } = data;
+
+  if (id === 2 && payload?.accessToken) {
+    log("🎯 Access token found in message ID 2:");
+    log(payload);
+
+    authResult = {
+      accessToken: payload.accessToken,
+      user: { username: "sandbox_user" },
+      signature: payload.signature || "sandbox-signature"
+    };
+
+    sendToServer();
+  } else {
+    log(`⚠️ Message ID ${id} ignored or missing accessToken`);
+  }
+});
+
 
     function startPiLogin() {
       log("➡ Calling Pi.authenticate...");
