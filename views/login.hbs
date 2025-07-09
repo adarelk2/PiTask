@@ -3,46 +3,64 @@
 <head>
   <title>Login with Pi</title>
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <style>
+    #log {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background-color: #f4f4f4;
+      font-family: monospace;
+      white-space: pre-line;
+    }
+  </style>
 </head>
 <body>
   <h1>Login with Pi</h1>
   <button id="pi-login">Login with Pi</button>
 
+  <div id="log"></div>
+
   <script>
-    const scopes = ['username', 'payments'];
-    const appId = 'dugcamn1rvkisxkn52ozjdolc4basxnkuq2hhdokpksi026gj9jgg0nvnrsx3kdd'; // 🔁 החלף לפי Pi Dev Portal
+    const log = (msg) => {
+      const logBox = document.getElementById('log');
+      logBox.textContent += `\n${msg}`;
+    };
+
+    const scopes = ['username']; // מספיק עבור התחברות בלבד
 
     document.getElementById('pi-login').addEventListener('click', async () => {
+      log('🔄 Starting Pi authentication...');
       try {
         const result = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
         const accessToken = result.accessToken;
         const user = result.user;
 
-        // שליחת accessToken לשרת שלך
+        log(`✅ Pi authenticated: ${user.username}`);
+        log(`🔒 Sending accessToken to server...`);
+
         const response = await fetch('/auth/login', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ accessToken })
         });
 
         const data = await response.json();
+
         if (data.success) {
-          alert('Welcome ' + data.user.username);
-          window.location.href = '/'; // 🔁 ניתוב לאחר התחברות
+          log(`✅ Logged in as ${data.user.username}`);
+          log('➡️ Redirecting to home...');
+          window.location.href = '/';
         } else {
-          alert('Login failed');
+          log(`❌ Login failed: ${data.message || 'Unknown error'}`);
         }
       } catch (error) {
-        console.error(error);
-        alert('Pi login failed');
+        log(`🔥 Error: ${error.message || error}`);
       }
     });
 
     function onIncompletePaymentFound(payment) {
-      console.log('Found incomplete payment:', payment);
-      // אפשר לטפל בזה או להתעלם
+      log('⚠️ Incomplete payment found (not handled):');
+      log(JSON.stringify(payment, null, 2));
     }
   </script>
 </body>
