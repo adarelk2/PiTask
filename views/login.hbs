@@ -7,6 +7,7 @@
 <body>
   <h1>Login with Pi</h1>
   <button id="pi-login">Login</button>
+  <button id="reset-session">Reset Session</button>
 
   <script>
     const Pi = window.Pi;
@@ -42,6 +43,26 @@
     function onIncompletePaymentFound(payment) {
       console.log('Incomplete payment found', payment);
     }
+
+    // Reset Session Button – clears site data and reloads
+    document.getElementById('reset-session').addEventListener('click', () => {
+      try {
+        localStorage.clear();
+        sessionStorage.clear();
+        indexedDB.databases().then(dbs => {
+          dbs.forEach(db => indexedDB.deleteDatabase(db.name));
+        });
+        document.cookie.split(";").forEach(c => {
+          document.cookie = c
+            .replace(/^ +/, "")
+            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+        alert('Session cleared. Reloading...');
+        setTimeout(() => location.reload(), 1000);
+      } catch (e) {
+        console.error('Failed to reset session:', e);
+      }
+    });
   </script>
 </body>
 </html>
