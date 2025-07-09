@@ -13,14 +13,15 @@ hbs.registerHelper('eq', function (a, b) {
 
 const app = express(); // ❗ הגדרה של האפליקציה
 
+// ✅ CORS להגנה + cookie cross-origin
 app.use(cors({
   origin: 'https://sandbox.minepi.com',
   credentials: true
 }));
+
 // ✨ ייבוא ראוטים
 const indexRouter = require('./routes/index');
-const authRouter = require('./routes/auth'); // מחבר את כל auth כולל Pi
-
+const authRouter = require('./routes/auth');
 
 // View engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -33,11 +34,13 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
-// ✨ חיבור ראוטים
+// ✅ טוען ראוטים לפני קבצים סטטיים – חשוב!
 app.use('/auth', authRouter);
 app.use('/', indexRouter);
+
+// ✅ רק אחרי הראוטים
+app.use(express.static(path.join(__dirname, 'public')));
 
 // טיפול ב-404
 app.use(function(req, res, next) {
