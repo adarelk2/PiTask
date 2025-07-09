@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,6 +16,12 @@
       try {
         const scopes = ['username', 'payments', 'wallet_address'];
         const authResult = await Pi.authenticate(scopes, onIncompletePaymentFound);
+
+        if (authResult.cancelled) {
+          alert('You cancelled the login.');
+          return;
+        }
+
         const response = await fetch('/verify-token', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -26,10 +31,11 @@
         if (data.success) {
           window.location.href = '/dashboard';
         } else {
-          alert('Login failed');
+          alert(data.message || 'Login failed');
         }
       } catch (err) {
         console.error(err);
+        alert('An unexpected error occurred during login.');
       }
     });
 

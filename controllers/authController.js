@@ -1,4 +1,3 @@
-
 const axios = require('axios');
 const UserModel = require('../models/UserModel');
 const userModel = new UserModel();
@@ -12,7 +11,6 @@ exports.verifyToken = async (req, res) => {
   const { accessToken } = req.body;
 
   try {
-    // Verify accessToken using Pi API
     const response = await axios.get('https://api.minepi.com/v2/me', {
       headers: {
         Authorization: `Bearer ${accessToken}`
@@ -20,17 +18,17 @@ exports.verifyToken = async (req, res) => {
     });
 
     const { uid, username, wallet_address } = response.data;
+
     if (!wallet_address) {
       return res.status(400).json({
         success: false,
         message: 'You must allow access to your wallet address to log in.'
       });
     }
-    // Check if user exists
+
     let users = await userModel.filter({ id: uid });
 
     if (users.length === 0) {
-      // User not found → Register new user
       await userModel.insert({
         id: uid,
         username,
@@ -44,7 +42,6 @@ exports.verifyToken = async (req, res) => {
 
     const user = users[0];
 
-    // Save session
     req.session.user = {
       id: user.id,
       username: user.username,
