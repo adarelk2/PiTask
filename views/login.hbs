@@ -2,49 +2,83 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>Login | TaskPi</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 50px;
+    }
+    h1 { color: #6b2b8f; }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      background: #6b2b8f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    pre {
+      width: 90%;
+      max-width: 600px;
+      background: #eee;
+      padding: 10px;
+      margin-top: 20px;
+      border-radius: 6px;
+      text-align: left;
+      white-space: pre-wrap;
+    }
+  </style>
 </head>
 <body>
 
-  <h1>🔐 Login with Pi Network</h1>
-
+  <h1>🔐 Login with Pi</h1>
   <button onclick="startPiLogin()">Connect</button>
   <button onclick="disconnectPi()">Disconnect</button>
-  <pre id="log"></pre>
+  <pre id="log">📲 Ready…</pre>
 
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
   <script>
     const logEl = document.getElementById('log');
     const log = msg => {
-      const formatted = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
-      console.log('[TaskPi]', formatted);
-      logEl.textContent += formatted + '\n';
+      const text = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
+      logEl.textContent += '\n' + text;
     };
 
     if (typeof Pi === 'undefined') {
-      log("❌ Pi SDK not loaded");
+      log("❌ Pi SDK not loaded – not in Pi Browser?");
     } else {
-      Pi.init({ version: "2.0" }); // Production only
+      Pi.init({ version: "2.0" });
       log("✅ Pi SDK initialized (production)");
     }
 
     function startPiLogin() {
+      log("🔘 Connect button clicked");
+
       if (typeof Pi === 'undefined') {
-        alert("Pi SDK not loaded. Make sure you're in the Pi Browser.");
+        log("❌ Pi SDK not found");
+        alert("You must be inside the Pi Browser");
         return;
       }
 
       log("➡ Calling Pi.authenticate...");
 
-      try {
-        Pi.authenticate(["username", "payments"], async function (auth) {
-          if (!auth?.accessToken || !auth?.signature) {
-            log("❌ Missing Pi auth result");
-            return alert("Login failed.");
-          }
+      Pi.authenticate(["username", "payments"], async function (auth) {
+        log("🔁 Pi.authenticate callback triggered");
+        log(auth);
 
-          log("🔐 Got Pi auth:");
-          log(auth);
+        if (!auth?.accessToken || !auth?.signature) {
+          log("❌ Missing credentials");
+          alert("Login failed.");
+          return;
+        }
 
+        try {
+          log("📤 Sending to /auth/login...");
           const res = await fetch('/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -57,24 +91,25 @@
 
           const data = await res.json().catch(() => null);
           log("📨 Server response:");
-          log(data || 'No JSON');
+          log(data || "No JSON");
 
-          if (data?.success || res.redirected) {
+          if (data?.success) {
+            log("✅ Login successful! Redirecting...");
             window.location.href = '/';
           } else {
+            log("❌ Server rejected login");
             alert("Login failed.");
           }
-
-        });
-      } catch (e) {
-        log("❌ Pi.authenticate error:");
-        log(e.message);
-        alert("Something went wrong with Pi SDK");
-      }
+        } catch (err) {
+          log("❌ Error sending to server:");
+          log(err.message);
+          alert("Server error: " + err.message);
+        }
+      });
     }
 
     function disconnectPi() {
-      log("🔄 Clearing session data and reloading...");
+      log("🔄 Disconnect clicked. Clearing storage...");
       sessionStorage.clear();
       localStorage.clear();
       location.reload();
