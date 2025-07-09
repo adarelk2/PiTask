@@ -14,7 +14,7 @@ router.post('/login', async (req, res) => {
   // ⚠️ כאן אמור להיות אימות אמיתי מול Pi SDK
   // נניח שזה היוזר
   const piUser = {
-    id: 'c2a3ee58-92fc-4cf9-bb2e-5a4a6de71c88',
+    id: '11111111-1111-1111-1111-111111111111',
     username: 'alice'
   };
 
