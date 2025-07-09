@@ -1,5 +1,7 @@
 
 const axios = require('axios');
+const UserModel = require('../models/UserModel');
+const userModel = new UserModel();
 require('dotenv').config();
 
 exports.showLogin = (req, res) => {
@@ -8,7 +10,9 @@ exports.showLogin = (req, res) => {
 
 exports.verifyToken = async (req, res) => {
   const { accessToken } = req.body;
+
   try {
+    // Verify accessToken using Pi API
     const response = await axios.get('https://api.minepi.com/v2/me', {
       headers: {
         Authorization: `Bearer ${accessToken}`
@@ -17,16 +21,36 @@ exports.verifyToken = async (req, res) => {
 
     const { uid, username, wallet_address } = response.data;
 
+    // Check if user exists
+    let users = await userModel.filter({ id: uid });
+
+    if (users.length === 0) {
+      // User not found → Register new user
+      await userModel.insert({
+        id: uid,
+        username,
+        pi_wallet_address: wallet_address,
+        level: 1,
+        accuracy: 1.0,
+        balance: 0
+      });
+      users = await userModel.filter({ id: uid });
+    }
+
+    const user = users[0];
+
+    // Save session
     req.session.user = {
-      uid,
-      username,
-      wallet: wallet_address
+      id: user.id,
+      username: user.username,
+      wallet: user.pi_wallet_address,
+      level: user.level
     };
 
     res.json({ success: true, user: req.session.user });
   } catch (err) {
-    console.error('Token verification failed:', err);
-    res.status(401).json({ success: false, message: 'Invalid token' });
+    console.error('Token verification failed or DB error:', err);
+    res.status(401).json({ success: false, message: 'Invalid token or DB error' });
   }
 };
 
