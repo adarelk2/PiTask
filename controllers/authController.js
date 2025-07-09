@@ -1,5 +1,6 @@
 const axios = require('axios');
 const UserModel = require('../models/UserModel');
+const jwt = require('jsonwebtoken');
 const userModel = new UserModel();
 require('dotenv').config();
 
