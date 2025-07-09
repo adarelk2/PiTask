@@ -62,15 +62,15 @@ exports.verifyToken = async (req, res) => {
 //       maxAge: 60 * 60 * 1000
 //     });
 
-
-    // ✅ שמור אותו ב-cookie
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60 * 24 * 7
+    res.json({
+      success: true,
+      token, // זה ה־JWT
+      user: {
+        id: user.id,
+        username: user.username
+      }
     });
 
-    res.status(200).json({ success: true, message: ''});
   } catch (err) {
     console.error('Token verification failed or DB error:', err);
     res.status(401).json({ success: false, message: 'Invalid token or DB error' });

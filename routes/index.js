@@ -3,26 +3,17 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const Application = require('../core/Application');
 
-router.get('/:controller?', (req, res) => {
-  if(process.env.NODE_ENV == "staging")
-  {
-    let id = "11111111-1111-1111-1111-111111111111";
-    let username = "alice"
-        // יצירת JWT
-        const token = jwt.sign(
-          { id: id, username: username },
-          process.env.JWT_SECRET,
-          { expiresIn: '1h' }
-        );
+// ✅ Auth Middleware כתוסף פנימי
+function requireAuth(req, res, next) {
+  console.log(req.headers);
+  const authHeader = req.headers.authorization || req.cookies?.token;
 
-            // ✅ שמור אותו ב-cookie
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60 * 24 * 7
-    });
+  let token = null;
+  if (authHeader?.startsWith?.('Bearer ')) {
+    token = authHeader.split(' ')[1];
+  } else if (typeof authHeader === 'string') {
+    token = authHeader;
   }
-  const token = req.cookies.token;
 
   if (!token) {
     return res.redirect('/auth/login');
@@ -30,13 +21,30 @@ router.get('/:controller?', (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // נשתמש בזה בתוך Application
-    const app = new Application(req, res);
-    app.init();
+    req.user = decoded;
+    next();
   } catch (err) {
-    console.log('Invalid JWT:', err.message);
     return res.redirect('/auth/login');
   }
+}
+
+// ✅ הראוטר הראשי
+router.get('/:controller?', requireAuth, (req, res) => {
+  if (process.env.NODE_ENV == "staging") {
+    const id = "11111111-1111-1111-1111-111111111111";
+    const username = "alice";
+    const token = jwt.sign({ id, username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    // תוכל להחזיר את זה ב-JSON או לשמור ב-localStorage
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 60 * 24 * 7
+    });
+  }
+
+  const app = new Application(req, res);
+  app.init();
 });
 
 module.exports = router;
