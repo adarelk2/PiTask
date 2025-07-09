@@ -52,31 +52,36 @@
       output.textContent += formatted + '\n';
     };
 
-    // 🔧 יוזמה ב־sandbox mode
     Pi.init({ version: "2.0", sandbox: true });
 
     async function authenticate() {
       try {
-        log("🧪 Sandbox mode: sending fake user to /auth/login");
+        Pi.authenticate(["username"], async function (authResult) {
+          const { user, accessToken, signature } = authResult;
 
-        const res = await fetch('/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include', // ✅ כדי לשמור cookie
-          body: JSON.stringify({
-            user: { username: 'alice' } // אפשר גם bob
-          })
+          log("🔐 Authenticated user:");
+          log(authResult);
+
+          const res = await fetch('/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              user,
+              accessToken,
+              signature
+            })
+          });
+
+          const data = await res.json().catch(() => null);
+          log(data || 'No JSON response');
+
+          if (data?.success || res.redirected) {
+            window.location.href = '/';
+          } else {
+            alert('Sandbox login failed');
+          }
         });
-
-        const data = await res.json().catch(() => null);
-        log(data || 'No JSON response');
-
-        if (data?.success || res.redirected) {
-          window.location.href = '/';
-        } else {
-          alert('Sandbox login failed');
-        }
-
       } catch (err) {
         log(err.message || err);
         alert("Something went wrong: " + err.message);

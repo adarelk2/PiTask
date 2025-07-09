@@ -1,4 +1,3 @@
-// routes/auth.js
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const UserModel = require('../models/UserModel');
@@ -8,16 +7,17 @@ const userModel = new UserModel();
 
 // POST /auth/login
 router.post('/login', async (req, res) => {
-  console.log("\uD83D\uDD10 POST /auth/login");
+  console.log("🔐 POST /auth/login");
 
-  const { user } = req.body;
+  const { user, signature, accessToken } = req.body;
 
-  if (!user?.username) {
-    return res.status(400).send('Missing mock user data');
+  if (!user?.username || !signature || !accessToken) {
+    return res.status(400).send('Missing Pi Network user data');
   }
 
+  // (בדמו לא מאמתים את החתימה - רק בmainnet)
   const piUser = {
-    id: '11111111-1111-1111-1111-111111111111',
+    id: user.uid || '11111111-1111-1111-1111-111111111111', // fallback
     username: user.username
   };
 
