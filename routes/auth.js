@@ -12,4 +12,24 @@ router.get('/logout', (req, res) => {
   res.redirect('/auth/login');
 });
 
+// הנתיב עצמו
+router.get('/getUserByToken', requireAuth, (req, res) => {
+  res.json({ user: req.user });
+});
+
+// Middleware
+function requireAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith('Bearer ')) return res.sendStatus(401);
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch {
+    return res.sendStatus(401);
+  }
+}
+
 module.exports = router;
