@@ -34,15 +34,18 @@ class Model {
 
   async insert(data) {
     const valid = this.getValidFields(data);
+  
+    if (valid.length === 0) throw new Error("No valid fields to insert");
+  
     const columns = valid.map(([, col]) => col);
     const values = valid.map(([, , value]) => value);
     const placeholders = columns.map(() => '?').join(', ');
-
+  
     const query = `INSERT INTO ${this.table} (${columns.join(', ')}) VALUES (${placeholders})`;
     const [result] = await this.db.query(query, values);
-    return result.insertId;
+    return result.insertId || result; // אם אין insertId נחזיר את כל התוצאה
   }
-
+  
   async update(where, data) {
     const valid = this.getValidFields(data);
     const setClause = valid.map(([, col]) => `${col} = ?`).join(', ');
