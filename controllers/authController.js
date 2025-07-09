@@ -44,12 +44,27 @@ exports.verifyToken = async (req, res) => {
 
     const user = users[0];
 
-    req.session.user = {
-      id: user.id,
-      username: user.username,
-      wallet: user.pi_wallet_address,
-      level: user.level
-    };
+    // יצירת JWT
+    const token = jwt.sign(
+      { id: user.id, username: user.username },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+//     // שמירת העוגייה
+//     res.cookie('token', token, {
+//       httpOnly: true,
+//       secure: process.env.NODE_ENV === 'production',
+//       maxAge: 60 * 60 * 1000
+//     });
+
+
+    // ✅ שמור אותו ב-cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 60 * 24 * 7
+    });
 
     res.json({ success: true, user: req.session.user });
   } catch (err) {
