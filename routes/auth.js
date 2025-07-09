@@ -16,23 +16,24 @@ router.post('/login', async (req, res) => {
   }
 
   try {
-    // ✅ אימות מול Pi כדי לשלוף את המשתמש האמיתי
     const response = await axios.get('https://api.minepi.com/me', {
       headers: {
         Authorization: `Bearer ${accessToken}`
       }
     });
 
-    const piResponse = response.data;
-    const username = piResponse.username;
+    console.log("🌐 Response from Pi API /me:");
+    console.log(response.data);
+
+    const username = response.data?.username;
 
     if (!username) {
-      return res.status(403).send('Pi did not return a username');
+      return res.status(403).send('❌ Pi API did not return a username');
     }
 
-    console.log("✅ Verified Pi user:", username);
+    console.log("✅ Pi user verified:", username);
 
-    const existingUsers = await userModel.select({ username });
+    let existingUsers = await userModel.select({ username });
 
     if (existingUsers.length === 0) {
       await userModel.insert({
@@ -43,9 +44,10 @@ router.post('/login', async (req, res) => {
         accuracy: null,
         balance: 0
       });
+      existingUsers = await userModel.select({ username });
     }
 
-    const userRecord = existingUsers[0] || { id: null, username };
+    const userRecord = existingUsers[0];
 
     const token = jwt.sign({
       id: userRecord.id || '11111111-1111-1111-1111-111111111111',
