@@ -70,7 +70,7 @@ exports.verifyToken = async (req, res) => {
       maxAge: 1000 * 60 * 60 * 24 * 7
     });
 
-    res.json({ success: true, user: req.session.user });
+    res.redirect('/');
   } catch (err) {
     console.error('Token verification failed or DB error:', err);
     res.status(401).json({ success: false, message: 'Invalid token or DB error' });
