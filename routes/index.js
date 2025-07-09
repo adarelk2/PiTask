@@ -7,6 +7,7 @@ const Application = require('../core/Application');
 function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization;
   const cookieToken = req.cookies?.token;
+  const queryToken = req.query?.token; // ✅ חדש
 
   let token = null;
 
@@ -14,6 +15,8 @@ function requireAuth(req, res, next) {
     token = authHeader.split(' ')[1];
   } else if (typeof cookieToken === 'string') {
     token = cookieToken;
+  } else if (typeof queryToken === 'string') {
+    token = queryToken; // ✅ ייבחר אם אין שום דבר אחר
   }
 
   if (!token) {
@@ -30,6 +33,7 @@ function requireAuth(req, res, next) {
     return res.redirect('/auth/login');
   }
 }
+
 
 
 // ✅ הראוטר הראשי
