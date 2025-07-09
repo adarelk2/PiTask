@@ -2,69 +2,48 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Login | TaskPi</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #f9f9f9;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }
-    h1 {
-      color: #6b2b8f;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      background: #6b2b8f;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    pre {
-      margin-top: 20px;
-      background: #eee;
-      padding: 10px;
-      border-radius: 6px;
-      width: 90%;
-      max-width: 600px;
-      overflow: auto;
-      text-align: left;
-    }
-  </style>
 </head>
 <body>
 
   <h1>🔐 Login with Pi Network</h1>
+
   <button onclick="startPiLogin()">Connect</button>
+  <button onclick="disconnectPi()">Disconnect</button>
   <pre id="log"></pre>
 
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
   <script>
     const logEl = document.getElementById('log');
-    const log = (msg) => {
+    const log = msg => {
       const formatted = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
       console.log('[TaskPi]', formatted);
       logEl.textContent += formatted + '\n';
     };
 
-    Pi.init({ version: "2.0" }); // 🔐 Production mode (no sandbox)
-    log("✅ Pi SDK initialized (production)");
+    if (typeof Pi === 'undefined') {
+      log("❌ Pi SDK not loaded");
+    } else {
+      Pi.init({ version: "2.0" }); // Production only
+      log("✅ Pi SDK initialized (production)");
+    }
 
     function startPiLogin() {
-      log("➡ Starting Pi.authenticate...");
-      Pi.authenticate(["username", "payments"], async function (auth) {
-        try {
+      if (typeof Pi === 'undefined') {
+        alert("Pi SDK not loaded. Make sure you're in the Pi Browser.");
+        return;
+      }
+
+      log("➡ Calling Pi.authenticate...");
+
+      try {
+        Pi.authenticate(["username", "payments"], async function (auth) {
           if (!auth?.accessToken || !auth?.signature) {
-            log("❌ Missing auth data from Pi");
-            return alert("Login failed: missing credentials.");
+            log("❌ Missing Pi auth result");
+            return alert("Login failed.");
           }
+
+          log("🔐 Got Pi auth:");
+          log(auth);
 
           const res = await fetch('/auth/login', {
             method: 'POST',
@@ -86,12 +65,19 @@
             alert("Login failed.");
           }
 
-        } catch (err) {
-          log("❌ Error sending to server:");
-          log(err.message);
-          alert("Error: " + err.message);
-        }
-      });
+        });
+      } catch (e) {
+        log("❌ Pi.authenticate error:");
+        log(e.message);
+        alert("Something went wrong with Pi SDK");
+      }
+    }
+
+    function disconnectPi() {
+      log("🔄 Clearing session data and reloading...");
+      sessionStorage.clear();
+      localStorage.clear();
+      location.reload();
     }
   </script>
 </body>
