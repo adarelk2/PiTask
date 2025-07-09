@@ -10,7 +10,8 @@ router.post('/login', async (req, res) => {
   console.log("🔐 POST /auth/login");
 
   const { user, signature, accessToken } = req.body;
-
+  console.log("im here13");
+  console.log(req.body);
   if (!user?.username || !signature || !accessToken) {
     return res.status(400).send('Missing Pi Network user data');
   }
@@ -23,7 +24,7 @@ router.post('/login', async (req, res) => {
 
   try {
     const existingUsers = await userModel.select({ username: piUser.username });
-
+    console.log(existingUsers);
     if (existingUsers.length === 0) {
       await userModel.insert({
         id: null,
