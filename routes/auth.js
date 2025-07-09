@@ -9,12 +9,9 @@ const userModel = new UserModel();
 // POST /auth/login
 router.post('/login', async (req, res) => {
   const { accessToken, user } = req.body;
-  console.log("im her12e");
-  console.log(process.env);
-  console.log("out 14");
   const isSandbox = !process.env.PI_ENV || process.env.PI_ENV === 'sandbox';
-  console.log(process.env);
   if (isSandbox) {
+    console.log("14 here");
     const piUser = {
       id: '11111111-1111-1111-1111-111111111111',
       username: 'alice'
