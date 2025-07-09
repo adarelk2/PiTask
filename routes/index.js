@@ -5,7 +5,9 @@ const Application = require('../core/Application');
 
 // ✅ Auth Middleware כתוסף פנימי
 function requireAuth(req, res, next) {
+  console.log("im here 8");
   console.log(req.headers);
+  console.log("img here 10");
   const authHeader = req.headers.authorization || req.cookies?.token;
 
   let token = null;
