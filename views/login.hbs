@@ -29,8 +29,10 @@
           body: JSON.stringify({ accessToken: authResult.accessToken })
         });
         const data = await response.json();
+        console.log(data);
         if (data.success) {
-          window.location.href = '/dashboard';
+            alert("you login");
+          window.location.href = '/';
         } else {
           alert(data.message || 'Login failed');
         }
