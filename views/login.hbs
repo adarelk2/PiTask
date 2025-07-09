@@ -26,7 +26,10 @@
       logBox.textContent += `\n${msg}`;
     };
 
-    const scopes = ['username']; // מספיק עבור התחברות בלבד
+    const scopes = ['username'];
+
+    // ✅ חובה לקרוא ל-init לפני הכול
+    Pi.init({ version: "2.0" });
 
     document.getElementById('pi-login').addEventListener('click', async () => {
       log('🔄 Starting Pi authentication...');
