@@ -25,10 +25,10 @@
       color: white;
       border-radius: 5px;
       cursor: pointer;
-      margin-top: 20px;
+      margin-top: 10px;
     }
     pre {
-      margin-top: 30px;
+      margin-top: 20px;
       background: #eee;
       padding: 10px;
       border-radius: 5px;
@@ -41,7 +41,10 @@
 <body>
 
   <h1>🔐 Connect to Pi Network</h1>
-  <button onclick="authenticate()">Connect Wallet</button>
+
+  <button onclick="authenticate()">Step 1: Pi Authenticate</button>
+  <button onclick="sendToServer()">Step 2: Send to Server</button>
+
   <pre id="output"></pre>
 
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
@@ -52,39 +55,52 @@
       output.textContent += formatted + '\n';
     };
 
+    let authResult = null;
+
     Pi.init({ version: "2.0", sandbox: true });
 
     async function authenticate() {
       try {
-        Pi.authenticate(["username"], async function (authResult) {
-          const { user, accessToken, signature } = authResult;
-
-          log("🔐 Authenticated user:");
-          log(authResult);
-
-          const res = await fetch('/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({
-              user,
-              accessToken,
-              signature
-            })
-          });
-
-          const data = await res.json().catch(() => null);
-          log(data || 'No JSON response');
-
-          if (data?.success || res.redirected) {
-            window.location.href = '/';
-          } else {
-            alert('Sandbox login failed');
-          }
+        Pi.authenticate(["username"], function (result) {
+          authResult = result;
+          log("✅ Pi authentication complete:");
+          log(result);
         });
       } catch (err) {
+        log("❌ Pi authentication failed:");
         log(err.message || err);
-        alert("Something went wrong: " + err.message);
+        alert("Authentication error: " + err.message);
+      }
+    }
+
+    async function sendToServer() {
+      if (!authResult) {
+        alert("You must authenticate with Pi first.");
+        return;
+      }
+
+      try {
+        const res = await fetch('/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(authResult)
+        });
+
+        const data = await res.json().catch(() => null);
+        log("📨 Server response:");
+        log(data || 'No JSON response');
+
+        if (data?.success || res.redirected) {
+          window.location.href = '/';
+        } else {
+          alert('Login failed');
+        }
+
+      } catch (err) {
+        log("❌ Server error:");
+        log(err.message || err);
+        alert("Server error: " + err.message);
       }
     }
   </script>
