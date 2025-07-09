@@ -3,7 +3,7 @@ const Model = require('../core/Model');
 class TaskModel extends Model {
   constructor() {
     super('tasks', {
-      id: ['n', 'id'],
+      id: ['s', 'id'],
       publisher_id: ['s', 'publisher_id'],
       title: ['s', 'title'],
       description: ['s', 'description'],
