@@ -26,9 +26,9 @@ router.post('/session-verify', (req, res) => {
 
     // שים את הטוקן כ-cookie עבור SSR
     res.cookie('token', token, {
-      httpOnly: true,
+      httpOnly: false, // ✅ כדי שיישלח מהלקוח (לא אידיאלי אבל הכרחי כאן)
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60 * 24 // יום
+      maxAge: 1000 * 60 * 60 * 24
     });
 
     res.sendStatus(200);
