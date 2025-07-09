@@ -23,7 +23,7 @@
           return;
         }
 
-        const response = await fetch('/verify-token', {
+        const response = await fetch('/auth/verify-token', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ accessToken: authResult.accessToken })
