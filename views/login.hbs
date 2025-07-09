@@ -17,15 +17,8 @@
 <body>
   <h1>Login with Pi</h1>
   <button id="pi-login">Login with Pi</button>
-
   <div id="log"></div>
-
   <script>
-    if (!window.Pi) {
-  alert('❌ Pi SDK not available — are you outside the Pi app?');
-}
-
-
     const log = (msg) => {
       const logBox = document.getElementById('log');
       logBox.textContent += `\n${msg}`;
@@ -33,38 +26,41 @@
 
     const scopes = ['username'];
 
-    // ✅ חובה לקרוא ל-init לפני הכול
-    Pi.init({ version: "2.0" });
+    if (!window.Pi) {
+      log('❌ Pi SDK not available — are you outside the Pi app?');
+    } else {
+      Pi.init({ version: "2.0" });
 
-    document.getElementById('pi-login').addEventListener('click', async () => {
-      log('🔄 Starting Pi authentication...');
-      try {
-        const result = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
-        const accessToken = result.accessToken;
-        const user = result.user;
+      document.getElementById('pi-login').addEventListener('click', async () => {
+        log('🔄 Starting Pi authentication...');
+        try {
+          const result = await Pi.authenticate(scopes, onIncompletePaymentFound);
+          const accessToken = result.accessToken;
+          const user = result.user;
 
-        log(`✅ Pi authenticated: ${user.username}`);
-        log(`🔒 Sending accessToken to server...`);
+          log(`✅ Pi authenticated: ${user.username}`);
+          log(`🔒 Sending accessToken to server...`);
 
-        const response = await fetch('/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ accessToken })
-        });
+          const response = await fetch('/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ accessToken })
+          });
 
-        const data = await response.json();
+          const data = await response.json();
 
-        if (data.success) {
-          log(`✅ Logged in as ${data.user.username}`);
-          log('➡️ Redirecting to home...');
-          window.location.href = '/';
-        } else {
-          log(`❌ Login failed: ${data.message || 'Unknown error'}`);
+          if (data.success) {
+            log(`✅ Logged in as ${data.user.username}`);
+            log('➡️ Redirecting to home...');
+            window.location.href = '/';
+          } else {
+            log(`❌ Login failed: ${data.message || 'Unknown error'}`);
+          }
+        } catch (error) {
+          log(`🔥 Error: ${error.message || error}`);
         }
-      } catch (error) {
-        log(`🔥 Error: ${error.message || error}`);
-      }
-    });
+      });
+    }
 
     function onIncompletePaymentFound(payment) {
       log('⚠️ Incomplete payment found (not handled):');

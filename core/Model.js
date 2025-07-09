@@ -4,7 +4,7 @@ class Model {
   constructor(tableName, fields = {}) {
     if (!tableName) throw new Error("Model requires a table name");
     this.table = tableName;
-    this.fields = fields; // { key: [type, columnName] }
+    this.fields = fields;
     this.db = db;
   }
 
@@ -34,7 +34,6 @@ class Model {
 
   async insert(data) {
     const valid = this.getValidFields(data);
-
     const columns = valid.map(([, col]) => col);
     const values = valid.map(([, , value]) => value);
     const placeholders = columns.map(() => '?').join(', ');
