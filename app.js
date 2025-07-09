@@ -5,16 +5,22 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const hbs = require('hbs');
+const cors = require('cors');
 
 hbs.registerHelper('eq', function (a, b) {
   return a === b;
 });
 
+const app = express(); // ❗ הגדרה של האפליקציה
+
+app.use(cors({
+  origin: 'https://sandbox.minepi.com',
+  credentials: true
+}));
 // ✨ ייבוא ראוטים
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth'); // מחבר את כל auth כולל Pi
 
-const app = express(); // ❗ הגדרה של האפליקציה
 
 // View engine setup
 app.set('views', path.join(__dirname, 'views'));
