@@ -29,7 +29,7 @@ router.post('/login', async (req, res) => {
     if (piResponse.username !== user.username) {
       return res.status(403).send('Invalid Pi user');
     }
-    console.log("here 32");
+    console.log("here 322");
     console.log(piResponse);
     // ✅ משתמש תקין, צור JWT והמשך כמו קודם
     const piUser = {
