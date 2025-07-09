@@ -1,1 +1,49 @@
-login page
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login with Pi</title>
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+</head>
+<body>
+  <h1>Login with Pi</h1>
+  <button id="pi-login">Login with Pi</button>
+
+  <script>
+    const scopes = ['username', 'payments'];
+    const appId = 'dugcamn1rvkisxkn52ozjdolc4basxnkuq2hhdokpksi026gj9jgg0nvnrsx3kdd'; // 🔁 החלף לפי Pi Dev Portal
+
+    document.getElementById('pi-login').addEventListener('click', async () => {
+      try {
+        const result = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
+        const accessToken = result.accessToken;
+        const user = result.user;
+
+        // שליחת accessToken לשרת שלך
+        const response = await fetch('/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ accessToken })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          alert('Welcome ' + data.user.username);
+          window.location.href = '/'; // 🔁 ניתוב לאחר התחברות
+        } else {
+          alert('Login failed');
+        }
+      } catch (error) {
+        console.error(error);
+        alert('Pi login failed');
+      }
+    });
+
+    function onIncompletePaymentFound(payment) {
+      console.log('Found incomplete payment:', payment);
+      // אפשר לטפל בזה או להתעלם
+    }
+  </script>
+</body>
+</html>

@@ -1,39 +1,68 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
+const UserModel = require('../models/UserModel');
 const router = express.Router();
 
-// GET /auth/login — הצגת טופס ההתחברות
+const userModel = new UserModel();
+
+// GET /auth/login – עמוד התחברות
 router.get('/login', (req, res) => {
-  res.render('login', {});
+  res.render('login');
 });
 
-// POST /auth/login — עיבוד התחברות
+// POST /auth/login – עיבוד גישה דרך Pi SDK
 router.post('/login', async (req, res) => {
   const { accessToken } = req.body;
 
-  // ⚠️ כאן אמור להיות אימות אמיתי מול Pi SDK
-  // נניח שזה היוזר
-  const piUser = {
-    id: '11111111-1111-1111-1111-111111111111',
-    username: 'alice'
-  };
+  try {
+    // בקשה ל-Pi לקבלת פרטי משתמש
+    const response = await axios.get('https://api.minepi.com/me', {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
 
-  // יצירת JWT
-  const jwtToken = jwt.sign(
-    { id: piUser.id, username: piUser.username },
-    process.env.JWT_SECRET,
-    { expiresIn: '1h' }
-  );
+    const piUser = response.data; // מכיל uid, username
 
-  // הגדרת העוגייה
-  res.cookie('token', jwtToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 60 * 60 * 1000
-  });
+    // בדיקה אם המשתמש קיים במערכת
+    const existing = await userModel.filter({ id: piUser.uid });
 
-  // שליחת תגובה אחת בלבד
-  res.json({ success: true, message: 'Logged in', user: piUser });
+    if (!existing.length) {
+      // הרשמה חדשה
+      await userModel.insert({
+        id: piUser.uid,
+        username: piUser.username,
+        pi_wallet_address: '', // אם אין לך דרך להביא את זה – תשאיר ריק
+        level: 1,
+        balance: 0,
+        accuracy: null
+      });
+    }
+
+    // יצירת JWT
+    const token = jwt.sign(
+      { id: piUser.uid, username: piUser.username },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    // שמירת העוגייה
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 1000
+    });
+
+    // תשובה
+    res.json({
+      success: true,
+      message: existing.length ? 'Logged in' : 'Registered + Logged in',
+      user: { id: piUser.uid, username: piUser.username }
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(401).json({ success: false, message: 'Invalid Pi accessToken' });
+  }
 });
 
 module.exports = router;
