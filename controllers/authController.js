@@ -4,6 +4,7 @@ const userModel = new UserModel();
 require('dotenv').config();
 
 exports.showLogin = (req, res) => {
+  console.log(res.cookies);
   res.render('login');
 };
 
