@@ -15,7 +15,11 @@ router.post('/login', async (req, res) => {
   console.log('🔑 Received accessToken:', accessToken);
 
   try {
-    const response = await axios.get('https://api.minepi.com/me', {
+    const PI_API = process.env.PI_ENV === 'sandbox'
+  ? 'https://sandbox.minepi.com/me'
+  : 'https://api.minepi.com/me';
+
+    const response = await axios.get(PI_API, {
       headers: { Authorization: `Bearer ${accessToken}` }
     });
 
