@@ -17,6 +17,9 @@ exports.verifyToken = async (req, res) => {
       }
     });
 
+    console.log('me response:', response.data);
+
+
     const { uid, username, wallet_address } = response.data;
 
     if (!wallet_address) {
