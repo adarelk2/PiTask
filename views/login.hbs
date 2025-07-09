@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TaskPi Login (Sandbox)</title>
+  <title>Login | TaskPi (Sandbox Workaround)</title>
   <style>
     body {
       font-family: sans-serif;
@@ -25,7 +25,7 @@
       color: white;
       border-radius: 5px;
       cursor: pointer;
-      margin-top: 15px;
+      margin-top: 10px;
     }
     pre {
       margin-top: 20px;
@@ -42,21 +42,21 @@
 <body>
 
   <h1>🔐 Login with Pi Network</h1>
-  <button onclick="startLogin()">Connect</button>
+  <button onclick="startPiAuth()">Connect with Pi</button>
   <pre id="log"></pre>
 
-  <!-- Load Pi SDK at the END to ensure DOM is ready -->
   <script src="https://sdk.minepi.com/pi-sdk.js" defer></script>
   <script defer>
-    document.addEventListener("DOMContentLoaded", function () {
-      const logEl = document.getElementById('log');
-      const log = (msg) => {
-        const formatted = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
-        console.log('[TaskPi]', formatted);
-        logEl.textContent += formatted + '\n';
-      };
+    let authResult = null;
 
-      // Init SDK
+    const logEl = document.getElementById('log');
+    const log = (msg) => {
+      const formatted = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
+      console.log('[TaskPi]', formatted);
+      logEl.textContent += formatted + '\n';
+    };
+
+    document.addEventListener("DOMContentLoaded", function () {
       try {
         Pi.init({ version: "2.0", sandbox: true });
         log("✅ Pi SDK initialized (sandbox)");
@@ -64,58 +64,70 @@
         log("❌ Pi.init failed: " + err.message);
       }
 
-      window.startLogin = async function () {
-        log("➡ Calling Pi.authenticate...");
+      // מאזין להודעות מה־iframe של Pi SDK
+      window.addEventListener("message", function (event) {
+        if (event.origin !== "https://sandbox.minepi.com") return;
 
-        if (typeof Pi.authenticate !== "function") {
-          log("❌ Pi.authenticate is not available");
-          return;
+        const payload = event.data?.payload;
+        if (!payload?.accessToken) return;
+
+        log("📦 Intercepted Pi auth payload:");
+        log(payload);
+
+        // נבנה אובייקט התחברות מדומה
+        authResult = {
+          accessToken: payload.accessToken,
+          user: { username: "sandbox_user" }, // זמני – כי ה-iframe לא שולח username
+          signature: payload.signature || "sandbox-signature"
+        };
+
+        sendToServer();
+      });
+    });
+
+    function startPiAuth() {
+      log("➡ Calling Pi.authenticate...");
+      try {
+        Pi.authenticate(["username"], function () {
+          log("⏳ Waiting for Pi iframe message...");
+          // אנחנו לא סומכים על callback, אלא על postMessage
+        });
+      } catch (err) {
+        log("❌ Pi.authenticate error:");
+        log(err.message);
+      }
+    }
+
+    async function sendToServer() {
+      if (!authResult?.accessToken) {
+        alert("No accessToken available.");
+        return;
+      }
+
+      try {
+        const res = await fetch('/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(authResult)
+        });
+
+        const data = await res.json().catch(() => null);
+        log("📨 Server response:");
+        log(data || 'No JSON');
+
+        if (data?.success || res.redirected) {
+          window.location.href = '/';
+        } else {
+          alert("Login failed.");
         }
 
-        Pi.authenticate(["username"], async function (result) {
-          try {
-            log("✅ Callback triggered!");
-
-            if (!result) {
-              log("⚠ No result returned.");
-              return;
-            }
-
-            log("🎯 Auth result:");
-            log(result);
-
-            const { user, accessToken, signature } = result;
-
-            if (!user?.username || !accessToken) {
-              log("❌ Missing username or accessToken");
-              return;
-            }
-
-            // 🔁 Send to server
-            const res = await fetch('/auth/login', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              credentials: 'include',
-              body: JSON.stringify(result)
-            });
-
-            const data = await res.json().catch(() => null);
-            log("📨 Server response:");
-            log(data || 'No JSON');
-
-            if (data?.success || res.redirected) {
-              window.location.href = '/';
-            } else {
-              alert("Login failed");
-            }
-
-          } catch (err) {
-            log("🔥 Error in callback:");
-            log(err.message);
-          }
-        });
-      };
-    });
+      } catch (err) {
+        log("❌ Server error:");
+        log(err.message);
+        alert("Server error: " + err.message);
+      }
+    }
   </script>
 </body>
 </html>
