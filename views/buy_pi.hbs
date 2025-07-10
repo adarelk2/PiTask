@@ -39,13 +39,12 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  // ודא ש-Pi נטען
   if (!window.Pi) {
     console.warn("Pi SDK not available");
     return;
   }
 
-  // init
+  // Init SDK
   window.Pi.init({
     version: "2.0",
     sandbox: true
@@ -66,34 +65,43 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      // Authenticate with payments scope
+      // Authenticate
       const authResult = await window.Pi.authenticate(['payments']);
       console.log("Authenticated:", authResult);
 
-      // Create payment
-        const paymentData = {
-        amount: 10,
+      const paymentData = {
+        amount: parseFloat(amount),
         memo: "Buy Pi in sandbox",
         metadata: {
-            type: "buy_pi",
-            userId: "{{user.id}}"
+          type: "buy_pi",
+          userId: "{{user.id}}"
         },
-        recipient: "adarelk1" // החלף ב-ID האמיתי שלך
-        };
-
+        recipient: "adarelk1" // ודא שזה ה-username של החשבון שלך בפורטל Pi
+      };
 
       await window.Pi.createPayment(paymentData, {
         onReadyForServerApproval: async function (paymentId) {
           console.log("Sandbox Payment ID:", paymentId);
-          await fetch("/auth/sandbox-approve", {
+
+          const res = await fetch("/auth/sandbox-approve", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ paymentId })
           });
+
+          const result = await res.json();
+
+          if (result.status === "sandbox-approved") {
+            console.log("✅ Server approved, resolving payment...");
+            window.Pi.resolve(paymentId); // ✅ זה מה שהיה חסר
+          } else {
+            console.warn("❌ Server rejected payment.");
+            window.Pi.reject(paymentId, "Server rejected the payment.");
+          }
         },
         onReadyForServerCompletion: function (paymentId, txid) {
-          console.log("Ready for completion", paymentId, txid);
-          alert("Payment completed!");
+          console.log("✅ Payment completed!", paymentId, txid);
+          alert("Payment completed successfully!");
         },
         onCancel: function () {
           alert("Payment was cancelled.");
