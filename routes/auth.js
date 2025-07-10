@@ -61,18 +61,25 @@ router.post('/approve-production', async (req, res) => {
 
 // שלב 2: השלמת התשלום (עכשיו דורש txid מהלקוח)
 router.post('/complete-production', async (req, res) => {
+  console.log("im here 64");
   const { paymentId, txid } = req.body;
 
   if (!paymentId || !txid) {
+    console.log("im here 68");
+
     return res.status(400).json({ error: 'Missing paymentId or txid' });
   }
+  console.log("im here 72");
 
   try {
+  console.log("im here 75");
+
     // מניעת כפילות
     const existing = await completedPaymentModel.select({ payment_id: paymentId });
     if (existing.length > 0) {
       return res.status(409).json({ error: 'Payment already processed' });
     }
+    console.log("im here 82");
 
     const headers = {
       Authorization: `Key ${PI_API_KEY}`,
@@ -87,9 +94,13 @@ router.post('/complete-production', async (req, res) => {
 
     const amount = completeRes.data.amount || 0;
     const sessionUser = req.session?.user;
+    console.log("im here 97");
+
     if (!sessionUser || !sessionUser.id) {
       return res.status(403).json({ error: 'User not authenticated' });
     }
+  console.log("im here 102");
+
 
     const users = await userModel.select({ id: sessionUser.id });
     if (users.length === 0) {
@@ -98,6 +109,7 @@ router.post('/complete-production', async (req, res) => {
 
     const user = users[0];
     const newBalance = (user.balance || 0) + amount;
+    console.log("im here 112");
 
     await userModel.update({ id: user.id }, { balance: newBalance });
     await completedPaymentModel.insert({
