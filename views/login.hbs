@@ -1,1 +1,71 @@
-login page
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login with Pi</title>
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+</head>
+<body>
+  <h1>Login with Pi</h1>
+  <button id="pi-login">Login</button>
+  <button id="reset-session">Reset Session</button>
+
+  <script>
+    const Pi = window.Pi;
+    Pi.init({ version: '2.0', sandbox: true });
+
+    document.getElementById('pi-login').addEventListener('click', async () => {
+      try {
+        const scopes = ['username', 'payments', 'wallet_address'];
+        const authResult = await Pi.authenticate(scopes, onIncompletePaymentFound);
+
+        if (authResult.cancelled) {
+          alert('You cancelled the login.');
+          return;
+        }
+
+        const response = await fetch('/auth/verify-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ accessToken: authResult.accessToken })
+        });
+        const data = await response.json();
+        console.log(data);
+        if (data.success) {
+            localStorage.setItem('token', data.token);
+            console.log(data.token)
+            window.location.href = '/terms?token=' + localStorage.getItem('token');
+        } else {
+          alert(data.message || 'Login failed');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('An unexpected error occurred during login.');
+      }
+    });
+
+    function onIncompletePaymentFound(payment) {
+      console.log('Incomplete payment found', payment);
+    }
+
+    // Reset Session Button – clears site data and reloads
+    document.getElementById('reset-session').addEventListener('click', () => {
+      try {
+        localStorage.clear();
+        sessionStorage.clear();
+        indexedDB.databases().then(dbs => {
+          dbs.forEach(db => indexedDB.deleteDatabase(db.name));
+        });
+        document.cookie.split(";").forEach(c => {
+          document.cookie = c
+            .replace(/^ +/, "")
+            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+        alert('Session cleared. Reloading...');
+        setTimeout(() => location.reload(), 1000);
+      } catch (e) {
+        console.error('Failed to reset session:', e);
+      }
+    });
+  </script>
+</body>
+</html>
