@@ -1,71 +1,53 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Login with Pi</title>
-  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-</head>
-<body>
-  <h1>Login with Pi</h1>
-  <button id="pi-login">Login</button>
-  <button id="reset-session">Reset Session</button>
+<!-- אזור להצגת הודעות -->
+<div id="auth-status" class="alert d-none mt-3" role="alert"></div>
 
-  <script>
-    const Pi = window.Pi;
-    Pi.init({ version: '2.0' });
+<!-- SDK -->
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
-    document.getElementById('pi-login').addEventListener('click', async () => {
-      try {
-        const scopes = ['username', 'payments', 'wallet_address'];
-        const authResult = await Pi.authenticate(scopes, onIncompletePaymentFound);
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const statusBox = document.getElementById("auth-status");
 
-        if (authResult.cancelled) {
-          alert('You cancelled the login.');
-          return;
-        }
+  function showMessage(type, text) {
+    statusBox.className = "alert mt-3 alert-" + type;
+    statusBox.textContent = text;
+    statusBox.classList.remove("d-none");
+  }
 
-        const response = await fetch('/auth/verify-token', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ accessToken: authResult.accessToken })
-        });
-        const data = await response.json();
-        console.log(data);
-        if (data.success) {
-            localStorage.setItem('token', data.token);
-            console.log(data.token)
-            window.location.href = '/terms?token=' + localStorage.getItem('token');
-        } else {
-          alert(data.message || 'Login failed');
-        }
-      } catch (err) {
-        console.error(err);
-        alert('An unexpected error occurred during login.');
+  if (!window.Pi) {
+    showMessage("danger", "Pi SDK not available. Open this app inside Pi Browser.");
+    return;
+  }
+
+  window.Pi.init({ version: "2.0" });
+
+  document.getElementById("login-btn").addEventListener("click", async () => {
+    try {
+      showMessage("info", "Connecting to Pi Network...");
+
+      const auth = await window.Pi.authenticate(["username"]);
+      console.log("✅ Authenticated:", auth);
+      showMessage("success", `Authenticated as ${auth.user.username}`);
+
+      const res = await fetch("/auth/verify-token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ piToken: auth.accessToken })
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        showMessage("success", "✅ Login successful! Redirecting...");
+        setTimeout(() =>{window.location.href = '/terms?token=' + localStorage.getItem('token');}
+      } else {
+        showMessage("danger", "❌ Authentication failed on server.");
       }
-    });
 
-    function onIncompletePaymentFound(payment) {
-      console.log('Incomplete payment found', payment);
+    } catch (err) {
+      console.error("❌ Pi login error:", err);
+      showMessage("danger", "Login failed: " + err.message || "unknown error");
     }
-
-    // Reset Session Button – clears site data and reloads
-    document.getElementById('reset-session').addEventListener('click', () => {
-      try {
-        localStorage.clear();
-        sessionStorage.clear();
-        indexedDB.databases().then(dbs => {
-          dbs.forEach(db => indexedDB.deleteDatabase(db.name));
-        });
-        document.cookie.split(";").forEach(c => {
-          document.cookie = c
-            .replace(/^ +/, "")
-            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-        });
-        alert('Session cleared. Reloading...');
-        setTimeout(() => location.reload(), 1000);
-      } catch (e) {
-        console.error('Failed to reset session:', e);
-      }
-    });
-  </script>
-</body>
-</html>
+  });
+});
+</script>
