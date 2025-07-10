@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const paymentData = {
         amount: parseFloat(amount),
-        memo: "Buy Pi in sandbox",
+        memo: "Buy Pi in production",
         metadata: {
           type: "buy_pi",
           userId: "{{user.id}}"
@@ -80,9 +80,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       await window.Pi.createPayment(paymentData, {
         onReadyForServerApproval: async function (paymentId) {
-        console.log("Sandbox Payment ID:", paymentId);
+        console.log("production Payment ID:", paymentId);
 
-        const res = await fetch("/auth/sandbox-approve", {
+        const res = await fetch("/auth/production-approve", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ paymentId })

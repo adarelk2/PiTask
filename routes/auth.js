@@ -15,7 +15,8 @@ const PI_API_KEY = "xbdryzovdb6ejryiaexe2ibtvmetdr3bjlvw15hexbrvifoghgxgyuxbntpi
 // אישור והשלמת תשלום (Production)
 router.post('/approve-production', async (req, res) => {
   const { paymentId } = req.body;
-
+  console.log("im here 18");
+  console.log(paymentId);
   if (!paymentId) {
     return res.status(400).json({ error: 'Missing paymentId' });
   }
