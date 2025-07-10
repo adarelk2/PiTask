@@ -1,3 +1,43 @@
+<div class="container py-4">
+  <h2 class="mb-4" style="color:goldenrod;">🪙 Buy Pi Coins</h2>
+
+  <!-- Balance summary -->
+  <div class="alert alert-secondary">
+    Your current balance: <strong>{{user.balance}} π</strong>
+  </div>
+
+  <!-- Purchase UI -->
+  <div class="card shadow-sm p-4">
+    <div class="mb-3">
+      <label for="amount" class="form-label">Amount of Pi to Buy</label>
+      <input type="number" class="form-control" id="amount" min="1" step="0.01" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="estimated_price" class="form-label">Estimated Price (USD)</label>
+      <input type="text" class="form-control" id="estimated_price" readonly value="{{estimatedPrice}}">
+    </div>
+
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" id="terms" required>
+      <label class="form-check-label" for="terms">
+        I agree to the <a href="/terms" target="_blank">terms and conditions</a>
+      </label>
+    </div>
+
+    <button type="button" class="btn btn-purple w-100" id="createPaymentBTN">💸 Buy Now</button>
+  </div>
+
+  <div class="mt-4 text-muted">
+    Note: Conversion rate is updated periodically. Final value will be confirmed before processing the transaction.
+  </div>
+
+  <!-- Debug log -->
+  <div id="debug-log" class="mt-5 p-3 bg-light border rounded" style="font-family: monospace; white-space: pre-wrap; font-size: 0.85rem; max-height: 300px; overflow-y: auto;">
+    <strong>Debug Log:</strong>
+  </div>
+</div>
+
 <!-- Pi SDK -->
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
