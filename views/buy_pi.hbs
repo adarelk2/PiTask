@@ -1,3 +1,7 @@
+<head>
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+
+</head>
 <div class="container py-4">
 
   <h2 class="mb-4" style="color:goldenrod;">🪙 Buy Pi Coins</h2>
@@ -33,53 +37,65 @@
   <div class="mt-4 text-muted">
     Note: Conversion rate is updated periodically. Final value will be confirmed before processing the transaction.
   </div>
-
 <script>
-document.getElementById('createPaymentBTN').addEventListener('click', async () => {
-  const amount = document.getElementById('amount').value;
-  if (!amount || parseFloat(amount) <= 0) {
-    alert("Please enter a valid amount.");
-    return;
-  }
-
-  const paymentData = {
-    amount: parseFloat(amount),
-    memo: "Purchase Pi tokens on TaskPi (sandbox)",
-    metadata: {
-      type: "buy_pi",
-      userId: "{{user.id}}"
-    }
-  };
-
-  console.log(paymentData);
-
-  try {
-    await window.Pi.createPayment(paymentData, {
-      onReadyForServerApproval: async function (paymentId) {
-        console.log("Sandbox Payment ID:", paymentId);
-        // שלח את ה-paymentId לשרת
-        await fetch("/auth/sandbox-approve", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ paymentId })
-        });
-      },
-      onReadyForServerCompletion: function (paymentId, txid) {
-        console.log("Ready for completion", paymentId, txid);
-        // בדיקת סיום התשלום, במקרה אמיתי תעשה אימות מול Pi API
-      },
-      onCancel: function () {
-        alert("Payment was cancelled.");
-      },
-      onError: function (error) {
-        console.error("Pi Payment Error:", error);
-        alert("Payment failed. See console.");
-      }
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.Pi && window.Pi.init) {
+    window.Pi.init({
+      version: "2.0",
+      sandbox: true
     });
-  } catch (err) {
-    console.error("Unexpected Error:", err);
+  } else {
+    console.warn("Pi SDK not available");
   }
+
+  document.getElementById('createPaymentBTN').addEventListener('click', async () => {
+    const amount = document.getElementById('amount').value;
+    if (!amount || parseFloat(amount) <= 0) {
+      alert("Please enter a valid amount.");
+      return;
+    }
+
+    if (!window.Pi || !window.Pi.createPayment) {
+      alert("Pi SDK not loaded or not available.");
+      return;
+    }
+
+    const paymentData = {
+      amount: parseFloat(amount),
+      memo: "Purchase Pi tokens on TaskPi (sandbox)",
+      metadata: {
+        type: "buy_pi",
+        userId: "{{user.id}}"
+      }
+    };
+
+    try {
+      await window.Pi.createPayment(paymentData, {
+        onReadyForServerApproval: async function (paymentId) {
+          console.log("Sandbox Payment ID:", paymentId);
+          await fetch("/auth/sandbox-approve", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ paymentId })
+          });
+        },
+        onReadyForServerCompletion: function (paymentId, txid) {
+          console.log("Ready for completion", paymentId, txid);
+        },
+        onCancel: function () {
+          alert("Payment was cancelled.");
+        },
+        onError: function (error) {
+          console.error("Pi Payment Error:", error);
+          alert("Payment failed. See console.");
+        }
+      });
+    } catch (err) {
+      console.error("Unexpected Error:", err);
+    }
+  });
 });
 </script>
+
 
 </div>
