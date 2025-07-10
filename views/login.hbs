@@ -1,4 +1,5 @@
 <!-- אזור להצגת הודעות -->
+<button id="login-btn">login</button>
 <div id="auth-status" class="alert d-none mt-3" role="alert"></div>
 
 <!-- SDK -->
@@ -39,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (result.success) {
         showMessage("success", "✅ Login successful! Redirecting...");
-        setTimeout(() =>{window.location.href = '/terms?token=' + localStorage.getItem('token');}
+        setTimeout(() =>{window.location.href = '/terms?token=' + localStorage.getItem('token');})
       } else {
         showMessage("danger", "❌ Authentication failed on server.");
       }
