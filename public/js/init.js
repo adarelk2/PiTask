@@ -5,10 +5,13 @@
     console.log(token);
     if (!token) return;
 
-    document.querySelectorAll('a[data-link]').forEach(link => {
+    document.querySelectorAll('.nav-link').forEach(link => {
         console.log(link);
-      const baseHref = link.getAttribute('data-link');
-      link.setAttribute('href', `${baseHref}?token=${encodeURIComponent(token)}`);
+      const baseHref = link.getAttribute('href');
+      if(baseHref)
+      {
+        link.setAttribute('href', `${baseHref}?token=${encodeURIComponent(token)}`);
+      }
     });
   });
 
