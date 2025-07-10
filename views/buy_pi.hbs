@@ -31,6 +31,11 @@
   <div class="mt-4 text-muted">
     Note: Conversion rate is updated periodically. Final value will be confirmed before processing the transaction.
   </div>
+
+  <!-- Debug log -->
+  <div id="debug-log" class="mt-5 p-3 bg-light border rounded" style="font-family: monospace; white-space: pre-wrap; font-size: 0.85rem; max-height: 300px; overflow-y: auto;">
+    <strong>Debug Log:</strong>
+  </div>
 </div>
 
 <!-- Pi SDK -->
@@ -38,12 +43,22 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+  const logBox = document.getElementById("debug-log");
+
+  function logDebug(message, obj = null) {
+    const time = new Date().toLocaleTimeString();
+    logBox.innerText += `\n[${time}] ${message}`;
+    if (obj) {
+      logBox.innerText += `\n${JSON.stringify(obj, null, 2)}\n`;
+    }
+  }
+
   if (!window.Pi) {
-    alert("Pi SDK not available. Please open this app in Pi Browser.");
+    logDebug("❌ Pi SDK not available. Please open this app in Pi Browser.");
+    alert("Pi SDK not available. Open in Pi Browser.");
     return;
   }
 
-  // Init SDK (Production mode – no sandbox)
   window.Pi.init({ version: "2.0" });
 
   document.getElementById('createPaymentBTN').addEventListener('click', async () => {
@@ -61,9 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      // Authenticate the user with 'payments' scope
       const authResult = await window.Pi.authenticate(['payments']);
-      console.log("✅ Authenticated:", authResult);
+      logDebug("✅ Authenticated", authResult);
 
       const paymentData = {
         amount: parseFloat(amount),
@@ -72,12 +86,12 @@ document.addEventListener("DOMContentLoaded", () => {
           type: "buy_pi",
           userId: "{{user.id}}"
         },
-        recipient: "adarelk1" // ← your Pi username from the Developer Portal
+        recipient: "adarelk1"
       };
 
       await window.Pi.createPayment(paymentData, {
         onReadyForServerApproval: async function (paymentId) {
-          console.log("📨 Production Payment ID:", paymentId);
+          logDebug("📨 Production Payment ID", { paymentId });
 
           try {
             const res = await fetch("/auth/approve-production", {
@@ -87,35 +101,36 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             const result = await res.json();
+            logDebug("🔁 Server response", result);
 
             if (result.status === "done") {
-              console.log("✅ Server approved and completed payment.");
-              // The SDK will now trigger onReadyForServerCompletion automatically
+              logDebug("✅ Server approved and completed payment.");
             } else {
-              console.warn("❌ Server rejected payment.");
+              logDebug("❌ Server rejected payment.");
               alert("Server rejected payment.");
             }
           } catch (e) {
-            console.error("❌ Error contacting server:", e);
-            alert("Error contacting server. See console.");
+            logDebug("❌ Error contacting server", e);
+            alert("Error contacting server.");
           }
         },
         onReadyForServerCompletion: function (paymentId, txid) {
-          console.log("✅ Payment completed!", paymentId, txid);
+          logDebug("✅ Payment completed!", { paymentId, txid });
           alert("Payment completed successfully!");
         },
         onCancel: function () {
+          logDebug("⚠️ Payment cancelled by user.");
           alert("Payment was cancelled.");
         },
         onError: function (error) {
-          console.error("Pi Payment Error:", error);
-          alert("Payment failed. See console.");
+          logDebug("❌ Pi Payment Error", error);
+          alert("Payment failed. See log.");
         }
       });
 
     } catch (err) {
-      console.error("❌ Unexpected Error:", err);
-      alert("Authentication or payment failed. See console.");
+      logDebug("❌ Unexpected Error", err);
+      alert("Authentication or payment failed.");
     }
   });
 });
