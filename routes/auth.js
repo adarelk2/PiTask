@@ -9,7 +9,6 @@ router.post('/verify-token', authController.verifyToken);
 
 // התנתקות
 router.get('/logout', (req, res) => {
-  console.log("im here 12");
   res.clearCookie('token');
   res.redirect('/auth/login');
 });

@@ -7,7 +7,7 @@ class KDLevel1
     this.tasks = _tasks;
   }
 
-  get()
+  getKD()
   {
     return (this.tasks.length * 0.1).toFixed(2)
   }

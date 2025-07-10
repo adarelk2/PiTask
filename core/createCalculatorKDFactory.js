@@ -9,6 +9,7 @@ class createCalculatorKDFactory
     this.id = _id
     this.level = _level
     this.tasks = _tasks
+    return this;
   }
   
   create()

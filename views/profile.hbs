@@ -1,0 +1,60 @@
+
+  <h2 class="mb-3 text-primary">👤 {{user.username}}'s Profile</h2>
+
+  <!-- Profile Summary -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">Account Info</h5>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item"><strong>Level:</strong> {{user.level}}</li>
+        <li class="list-group-item"><strong>Accuracy:</strong> {{#if user.accuracy}}{{user.accuracy}}KD{{else}}N/A{{/if}}</li>
+        <li class="list-group-item"><strong>Balance:</strong> {{user.balance}} π <a href='/buy'>buy more</a></li>
+        <li class="list-group-item"><strong>Wallet:</strong> {{user.pi_wallet_address}}</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Completed Tasks -->
+  <h4 class="text-secondary mb-3">📝 Your Task Submissions</h4>
+  {{#if submissions.length}}
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Submitted At</th>
+            <th>Status</th>
+            <th>Proof</th>
+            <th>Review Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each submissions}}
+            <tr>
+              <td>{{this.task_title}}</td>
+              <td>{{this.submitted_at}}</td>
+              <td>
+                {{#if (eq this.status "approved")}}
+                  <span class="badge bg-success">Approved</span>
+                {{else if (eq this.status "rejected")}}
+                  <span class="badge bg-danger">Rejected</span>
+                {{else}}
+                  <span class="badge bg-warning text-dark">Pending</span>
+                {{/if}}
+              </td>
+              <td>
+                {{#if this.submission_data}}
+                  <a href="{{this.submission_data}}" target="_blank">View</a>
+                {{else}}
+                  N/A
+                {{/if}}
+              </td>
+              <td>{{this.review_reason}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  {{else}}
+    <p class="text-muted">You haven't submitted any tasks yet.</p>
+  {{/if}}
