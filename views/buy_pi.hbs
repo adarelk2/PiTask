@@ -98,7 +98,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const res = await fetch("/auth/approve-production", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ paymentId })
+            body: JSON.stringify({ paymentId }),
+            credentials: "include" // ✅ חובה לשליחת session
             });
 
             const result = await res.json();
@@ -122,7 +123,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const res = await fetch("/auth/complete-production", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ paymentId, txid })
+            body: JSON.stringify({ paymentId, txid }),
+            credentials: "include" // ✅ גם כאן חובה
             });
 
             const result = await res.json();
