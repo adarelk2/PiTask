@@ -82,29 +82,28 @@ document.addEventListener("DOMContentLoaded", () => {
       await window.Pi.createPayment(paymentData, {
         onReadyForServerApproval: async function (paymentId) {
         console.log("Sandbox Payment ID:", paymentId);
-        try {
-            const res = await fetch("/auth/sandbox-approve", {
+
+        const res = await fetch("/auth/sandbox-approve", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ paymentId })
-            });
+        });
 
-            const result = await res.json();
+        const result = await res.json();
 
-            if (result.status === "sandbox-approved") {
+        if (result.status === "sandbox-approved") {
             console.log("✅ Server approved payment.");
-            return Promise.resolve(); // ✅ זו הדרך ב-SDK v2
-            } else {
-            console.warn("❌ Server rejected payment.");
-            return Promise.reject(new Error("Server rejected payment"));
+
+            // פתרון זמני ל-sandbox: לקרוא לפונקציית הסיום ידנית
+            if (typeof this.onReadyForServerCompletion === "function") {
+            this.onReadyForServerCompletion(paymentId, "fake-txid-sandbox");
             }
 
-        } catch (err) {
-            console.error("❌ Error contacting server:", err);
-            return Promise.reject(new Error("Server error during approval"));
+        } else {
+            console.warn("❌ Server rejected payment.");
+            alert("Server rejected payment.");
         }
-        }
-        ,
+        },
         onReadyForServerCompletion: function (paymentId, txid) {
           console.log("✅ Payment completed!", paymentId, txid);
           alert("Payment completed successfully!");
