@@ -16,7 +16,8 @@ exports.verifyToken = async (req, res) => {
         Authorization: `Bearer ${accessToken}`
       }
     });
-
+    console.log("im here 12 new");
+    console.log(response);
     let { username, wallet_address } = response.data;
 
     if (!wallet_address) {
