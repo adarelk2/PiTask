@@ -71,14 +71,16 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("Authenticated:", authResult);
 
       // Create payment
-      const paymentData = {
-        amount: parseFloat(amount),
-        memo: "Purchase Pi tokens on TaskPi (sandbox)",
+        const paymentData = {
+        amount: 10,
+        memo: "Buy Pi in sandbox",
         metadata: {
-          type: "buy_pi",
-          userId: "{{user.id}}"
-        }
-      };
+            type: "buy_pi",
+            userId: "{{user.id}}"
+        },
+        recipient: "adarelk1" // החלף ב-ID האמיתי שלך
+        };
+
 
       await window.Pi.createPayment(paymentData, {
         onReadyForServerApproval: async function (paymentId) {
