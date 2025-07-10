@@ -1,8 +1,10 @@
-<!-- אזור להצגת הודעות -->
-<button id="login-btn">login</button>
+<!-- כפתור התחברות -->
+<button id="login-btn">Login</button>
+
+<!-- אזור הודעות -->
 <div id="auth-status" class="alert d-none mt-3" role="alert"></div>
 
-<!-- SDK -->
+<!-- Pi SDK -->
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
 <script>
@@ -39,15 +41,18 @@ document.addEventListener("DOMContentLoaded", () => {
       const result = await res.json();
 
       if (result.success) {
+        localStorage.setItem("token", result.token);
         showMessage("success", "✅ Login successful! Redirecting...");
-        setTimeout(() =>{window.location.href = '/terms?token=' + localStorage.getItem('token');})
+        setTimeout(() => {
+          window.location.href = "/terms?token=" + result.token;
+        }, 1500);
       } else {
         showMessage("danger", "❌ Authentication failed on server.");
       }
 
     } catch (err) {
       console.error("❌ Pi login error:", err);
-      showMessage("danger", "Login failed: " + err.message || "unknown error");
+      showMessage("danger", "Login failed: " + (err.message || "unknown error"));
     }
   });
 });
