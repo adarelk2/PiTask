@@ -1,0 +1,85 @@
+<div class="container py-4">
+
+  <h2 class="mb-4" style="color:goldenrod;">🪙 Buy Pi Coins</h2>
+
+  <!-- Balance summary -->
+  <div class="alert alert-secondary">
+    Your current balance: <strong>{{user.balance}} π</strong>
+  </div>
+
+  <!-- Purchase Form -->
+  <form method="POST" class="card shadow-sm p-4">
+    <div class="mb-3">
+      <label for="amount" class="form-label">Amount of Pi to Buy</label>
+      <input type="number" class="form-control" id="amount" name="amount" min="1" step="0.01" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="estimated_price" class="form-label">Estimated Price (USD)</label>
+      <input type="text" class="form-control" id="estimated_price" name="estimated_price" readonly value="{{estimatedPrice}}">
+    </div>
+
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" value="agree" id="terms" name="terms" required>
+      <label class="form-check-label" for="terms">
+        I agree to the <a href="/terms" target="_blank">terms and conditions</a>
+      </label>
+    </div>
+
+    <button type="submit" class="btn btn-purple w-10" id="createPaymentBTN">💸 Buy Now</button>
+  </form>
+
+  <!-- Conversion Note -->
+  <div class="mt-4 text-muted">
+    Note: Conversion rate is updated periodically. Final value will be confirmed before processing the transaction.
+  </div>
+
+<script>
+document.getElementById('createPaymentBTN').addEventListener('click', async () => {
+  const amount = document.getElementById('amount').value;
+  if (!amount || parseFloat(amount) <= 0) {
+    alert("Please enter a valid amount.");
+    return;
+  }
+
+  const paymentData = {
+    amount: parseFloat(amount),
+    memo: "Purchase Pi tokens on TaskPi (sandbox)",
+    metadata: {
+      type: "buy_pi",
+      userId: "{{user.id}}"
+    }
+  };
+
+  console.log(paymentData);
+
+  try {
+    await window.Pi.createPayment(paymentData, {
+      onReadyForServerApproval: async function (paymentId) {
+        console.log("Sandbox Payment ID:", paymentId);
+        // שלח את ה-paymentId לשרת
+        await fetch("/payment/sandbox-approve", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ paymentId })
+        });
+      },
+      onReadyForServerCompletion: function (paymentId, txid) {
+        console.log("Ready for completion", paymentId, txid);
+        // בדיקת סיום התשלום, במקרה אמיתי תעשה אימות מול Pi API
+      },
+      onCancel: function () {
+        alert("Payment was cancelled.");
+      },
+      onError: function (error) {
+        console.error("Pi Payment Error:", error);
+        alert("Payment failed. See console.");
+      }
+    });
+  } catch (err) {
+    console.error("Unexpected Error:", err);
+  }
+});
+</script>
+
+</div>
