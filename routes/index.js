@@ -5,10 +5,22 @@ const Application = require('../core/Application');
 
 // ✅ Auth Middleware כתוסף פנימי
 function requireAuth(req, res, next) {
+  if (process.env.NODE_ENV == "staging") {
+    const id = "6";
+    const username = "adarelk1";
+    const token = jwt.sign({ id, username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    // תוכל להחזיר את זה ב-JSON או לשמור ב-localStorage
+    res.cookie('token', token, {
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 60 * 24 * 7
+    });
+
+    req.cookies.token = token;
+  }
   const authHeader = req.headers.authorization;
   const cookieToken = req.cookies?.token;
   const queryToken = req.query?.token; // ✅ חדש
-
   let token = null;
 
   if (authHeader?.startsWith?.('Bearer ')) {
@@ -19,15 +31,15 @@ function requireAuth(req, res, next) {
     token = queryToken; // ✅ ייבחר אם אין שום דבר אחר
   }
 
+  console.log("here 34");
+  console.log(token);
   if (!token) {
     console.warn('🔒 Missing token');
     return res.redirect('/auth/login');
   }
-
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
-    console.log(req.user);
     next();
   } catch (err) {
     console.warn('🔒 Invalid token');
@@ -39,19 +51,7 @@ function requireAuth(req, res, next) {
 
 // ✅ הראוטר הראשי
 router.get('/:controller?', requireAuth, (req, res) => {
-  if (process.env.NODE_ENV == "staging") {
-    const id = "11111111-1111-1111-1111-111111111111";
-    const username = "alice";
-    const token = jwt.sign({ id, username }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-    // תוכל להחזיר את זה ב-JSON או לשמור ב-localStorage
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60 * 24 * 7
-    });
-  }
-
+  console.log(req.user);
   const app = new Application(req, res);
   app.init();
 });
