@@ -58,7 +58,7 @@ document.getElementById('createPaymentBTN').addEventListener('click', async () =
       onReadyForServerApproval: async function (paymentId) {
         console.log("Sandbox Payment ID:", paymentId);
         // שלח את ה-paymentId לשרת
-        await fetch("/payment/sandbox-approve", {
+        await fetch("/auth/sandbox-approve", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ paymentId })
