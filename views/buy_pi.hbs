@@ -1,4 +1,3 @@
-
 <div class="container py-4">
   <h2 class="mb-4" style="color:goldenrod;">🪙 Buy Pi Coins</h2>
 
@@ -92,59 +91,61 @@ document.addEventListener("DOMContentLoaded", () => {
 
       await window.Pi.createPayment(paymentData, {
         onReadyForServerApproval: async function (paymentId) {
-        logDebug("📨 Production Payment ID", { paymentId });
+          logDebug("📨 Production Payment ID", { paymentId });
 
-        try {
+          try {
             const res = await fetch("/auth/approve-production", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ paymentId }),
-            credentials: "include" // ✅ חובה לשליחת session
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ paymentId }),
+              credentials: "include"
             });
 
             const result = await res.json();
             logDebug("🔁 Server approval response", result);
 
-            if (result.status === "done") {
-            logDebug("✅ Server approved payment.");
+            if (result.status === "approved") {
+              logDebug("✅ Server approved payment.");
             } else {
-            logDebug("❌ Approval rejected by server.");
-            alert("Server rejected payment.");
+              logDebug("❌ Approval rejected by server.");
+              alert("Server rejected payment.");
             }
-        } catch (e) {
+          } catch (e) {
             logDebug("❌ Approval error", e);
             alert("Approval error.");
-        }
+          }
         },
-        onReadyForServerCompletion: async function (paymentId, txid) {
-        logDebug("⏳ Payment ready for completion", { paymentId, txid });
 
-        try {
+        onReadyForServerCompletion: async function (paymentId, txid) {
+          logDebug("⏳ Payment ready for completion", { paymentId, txid });
+
+          try {
             const res = await fetch("/auth/complete-production", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ paymentId, txid }),
-            credentials: "include" // ✅ גם כאן חובה
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ paymentId, txid }),
+              credentials: "include"
             });
 
             const result = await res.json();
             logDebug("✅ Final completion response", result);
 
             if (result.status === "done") {
-            alert("✅ Payment completed successfully!");
+              alert("✅ Payment completed successfully!");
             } else {
-            alert("⚠️ Payment not completed. See debug log.");
+              alert("⚠️ Payment not completed. See debug log.");
             }
-        } catch (e) {
+          } catch (e) {
             logDebug("❌ Completion error", e);
             alert("Payment completion failed.");
-        }
-        }
-       ,
+          }
+        },
+
         onCancel: function () {
           logDebug("⚠️ Payment cancelled by user.");
           alert("Payment was cancelled.");
         },
+
         onError: function (error) {
           logDebug("❌ Pi Payment Error", error);
           alert("Payment failed. See log.");

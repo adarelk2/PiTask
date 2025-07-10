@@ -68,7 +68,7 @@ router.post('/complete-production', async (req, res) => {
   }
 
   try {
-    // 🔒 מניעת כפילויות
+    // מניעת כפילות
     const existing = await completedPaymentModel.select({ payment_id: paymentId });
     if (existing.length > 0) {
       return res.status(409).json({ error: 'Payment already processed' });
@@ -79,7 +79,6 @@ router.post('/complete-production', async (req, res) => {
       'X-Requested-With': 'XMLHttpRequest',
     };
 
-    // 🧾 קריאה ל-Pi להשלמת התשלום
     const completeRes = await axios.post(
       `https://api.minepi.com/v2/payments/${paymentId}/complete`,
       { txid },
@@ -88,7 +87,6 @@ router.post('/complete-production', async (req, res) => {
 
     const amount = completeRes.data.amount || 0;
     const sessionUser = req.session?.user;
-
     if (!sessionUser || !sessionUser.id) {
       return res.status(403).json({ error: 'User not authenticated' });
     }
@@ -102,7 +100,6 @@ router.post('/complete-production', async (req, res) => {
     const newBalance = (user.balance || 0) + amount;
 
     await userModel.update({ id: user.id }, { balance: newBalance });
-
     await completedPaymentModel.insert({
       user_id: user.id,
       payment_id: paymentId,
