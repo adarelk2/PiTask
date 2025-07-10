@@ -54,6 +54,36 @@ router.post('/approve-production', async (req, res) => {
   }
 });
 
+// שלב 2: השלמת התשלום (עכשיו דורש txid מהלקוח)
+router.post('/complete-production', async (req, res) => {
+  const { paymentId, txid } = req.body;
+
+  if (!paymentId || !txid) {
+    return res.status(400).json({ error: 'Missing paymentId or txid' });
+  }
+
+  try {
+    const headers = {
+      Authorization: `Key ${PI_API_KEY}`,
+      'X-Requested-With': 'XMLHttpRequest',
+    };
+
+    const completeRes = await axios.post(
+      `https://api.minepi.com/v2/payments/${paymentId}/complete`,
+      { txid },
+      { headers }
+    );
+
+    console.log('✅ Payment completed:', completeRes.data);
+
+    res.status(200).json({ status: 'done', tx: completeRes.data.transaction });
+  } catch (err) {
+    console.error('❌ Error completing payment:', err.response?.data || err.message);
+    res.status(500).json({ error: 'Failed to complete payment', details: err.response?.data || err.message });
+  }
+});
+
+
 // התנתקות
 router.get('/logout', (req, res) => {
   console.log("im here 12");

@@ -1,3 +1,4 @@
+
 <div class="container py-4">
   <h2 class="mb-4" style="color:goldenrod;">🪙 Buy Pi Coins</h2>
 
@@ -114,10 +115,31 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Error contacting server.");
           }
         },
-        onReadyForServerCompletion: function (paymentId, txid) {
-          logDebug("✅ Payment completed!", { paymentId, txid });
-          alert("Payment completed successfully!");
-        },
+        onReadyForServerCompletion: async function (paymentId, txid) 
+        {
+            logDebug("⏳ Payment ready for completion", { paymentId, txid });
+
+            try {
+                const res = await fetch("/auth/complete-production", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ paymentId, txid })
+                });
+
+                const result = await res.json();
+                logDebug("✅ Final server response", result);
+
+                if (result.status === "done") {
+                alert("✅ Payment completed successfully!");
+                } else {
+                alert("⚠️ Payment not completed. See debug log.");
+                }
+            } catch (e) {
+                logDebug("❌ Error completing payment", e);
+                alert("Payment completion failed.");
+            }
+        }
+       ,
         onCancel: function () {
           logDebug("⚠️ Payment cancelled by user.");
           alert("Payment was cancelled.");
