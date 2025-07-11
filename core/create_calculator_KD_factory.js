@@ -1,6 +1,6 @@
-const KDLevel1 = require('./kd/KDLevel1');
-const KDLevel2 = require('./kd/KDLevel2');
-const KDLevel3 = require('./kd/KDLevel3');
+const KDLevel1 = require('./kd/KD_level_1');
+const KDLevel2 = require('./kd/KD_level_2');
+const KDLevel3 = require('./kd/KD_level_3');
 
 class createCalculatorKDFactory
 {

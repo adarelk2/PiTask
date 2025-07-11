@@ -53,4 +53,11 @@ router.get('/:controller?', requireAuth, (req, res) => {
   app.init();
 });
 
+// ✅ הראוטר הראשי
+router.post('/:controller?', requireAuth, (req, res) => {
+  const app = new Application(req, res);
+  app.init();
+
+});
+
 module.exports = router;
