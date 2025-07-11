@@ -132,14 +132,7 @@
       credentials: "include",
       body: JSON.stringify(_params)
     });
-    const response = await res.json();
-    Swal.close();
-    if(response.flag)
-    {
-      successAlert(response.errors,reload);
-    }
-    else
-      failedAlert(response.errors);
+    alert(JSON.stringify(res));
   } catch (err) {
     alert(`Something went wrong! - ${err}`);
   }
