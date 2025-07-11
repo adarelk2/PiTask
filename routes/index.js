@@ -56,6 +56,8 @@ router.get('/:controller?', requireAuth, (req, res) => {
 // ✅ הראוטר הראשי
 router.post('/:controller?', requireAuth, (req, res) => {
   const app = new Application(req, res);
+  console.log("im here 59");
+  console.log(req.body);
   app.init();
 
 });
