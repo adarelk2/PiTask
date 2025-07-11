@@ -1,12 +1,10 @@
 <div class="container py-4">
   <h2 class="mb-4" style="color:goldenrod;">🪙 Buy Pi Coins</h2>
 
-  <!-- Balance summary -->
   <div class="alert alert-secondary">
     Your current balance: <strong>{{user.balance}} π</strong>
   </div>
 
-  <!-- Purchase UI -->
   <div class="card shadow-sm p-4">
     <div class="mb-3">
       <label for="amount" class="form-label">Amount of Pi to Buy</label>
@@ -26,13 +24,15 @@
     </div>
 
     <button type="button" class="btn btn-purple w-100" id="createPaymentBTN">💸 Buy Now</button>
+    <button type="button" class="btn btn-outline-warning mt-3" onclick="Pi.cancelCurrentPayment()">
+      🔄 Cancel Pending Payment
+    </button>
   </div>
 
   <div class="mt-4 text-muted">
     Note: Conversion rate is updated periodically. Final value will be confirmed before processing the transaction.
   </div>
 
-  <!-- Debug log -->
   <div id="debug-log" class="mt-5 p-3 bg-light border rounded" style="font-family: monospace; white-space: pre-wrap; font-size: 0.85rem; max-height: 300px; overflow-y: auto;">
     <strong>Debug Log:</strong>
   </div>
@@ -79,71 +79,74 @@ document.addEventListener("DOMContentLoaded", () => {
       const authResult = await window.Pi.authenticate(['payments']);
       logDebug("✅ Authenticated", authResult);
 
+      // 🧹 ביטול תשלום קודם אם קיים
+      await Pi.cancelCurrentPayment().catch(() => {
+        logDebug("ℹ️ No previous pending payment.");
+      });
+
+      const token = localStorage.getItem("token");
+      const userId = "{{user.id}}"; // ודא ש-HBS מחליף את זה לערך תקין
+
       const paymentData = {
         amount: parseFloat(amount),
         memo: "Buy Pi in production",
         metadata: {
           type: "buy_pi",
-          userId: "{{user.id}}"
+          userId: userId
         },
-        recipient: "adarelk1.trs-f65b74c907519592"
+        recipient: "adarelk1"
       };
-    alert(paymentData.amount);
-        let token = localStorage.getItem('token');
 
-    alert(token);
+      logDebug("📦 Payment data", paymentData);
+
       await window.Pi.createPayment(paymentData, {
         onReadyForServerApproval: async function (paymentId) {
-        logDebug("📨 Production Payment ID", { paymentId });
-        let token = localStorage.getItem('token');
-        try {
+          logDebug("📨 Production Payment ID", { paymentId });
+          try {
             const res = await fetch("/auth/approve-production", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ paymentId, token }),
-            credentials: "include"
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ paymentId, token }),
+              credentials: "include"
             });
 
             const result = await res.json();
             logDebug("🔁 Server approval response", result);
 
             if (result.status === "approved") {
-            logDebug("✅ Server approved payment.");
+              logDebug("✅ Server approved payment.");
             } else {
-            logDebug("❌ Approval rejected by server.");
-            alert("Server rejected payment.");
+              logDebug("❌ Approval rejected by server.");
+              alert("Server rejected payment.");
             }
-        } catch (e) {
-            logDebug("❌ Approval error", e);
+          } catch (e) {
+            logDebug("❌ Approval error", e.message || e);
             alert("Approval error.");
-        }
+          }
         },
 
         onReadyForServerCompletion: async function (paymentId, txid) {
-        logDebug("⏳ Payment ready for completion", { paymentId, txid });
-
-        try {
-            let token = localStorage.getItem('token');
-
+          logDebug("⏳ Payment ready for completion", { paymentId, txid });
+          try {
             const res = await fetch("/auth/complete-production", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ paymentId, txid, token }),
-            credentials: "include"
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ paymentId, txid, token }),
+              credentials: "include"
             });
 
             const result = await res.json();
             logDebug("✅ Final completion response", result);
 
             if (result.status === "done") {
-            alert("✅ Payment completed successfully!");
+              alert("✅ Payment completed successfully!");
             } else {
-            alert("⚠️ Payment not completed. See debug log.");
+              alert("⚠️ Payment not completed. See debug log.");
             }
-        } catch (e) {
-            logDebug("❌ Completion error", e);
+          } catch (e) {
+            logDebug("❌ Completion error", e.message || e);
             alert("Payment completion failed.");
-        }
+          }
         },
 
         onCancel: function () {
@@ -152,13 +155,13 @@ document.addEventListener("DOMContentLoaded", () => {
         },
 
         onError: function (error) {
-          logDebug("❌ Pi Payment error", error);
+          logDebug("❌ Pi Payment error", error?.message || JSON.stringify(error) || "Unknown error");
           alert("Payment failed. Check log.");
         }
       });
 
     } catch (err) {
-      logDebug("❌ Unexpected error", err);
+      logDebug("❌ Unexpected error", err.message || err);
       alert("Something went wrong.");
     }
   });
