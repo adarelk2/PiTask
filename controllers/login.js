@@ -9,8 +9,7 @@ class Login extends BaseController {
     {
         this.render('login', {
             title: 'TaskPi - Login',
-            headerTitle:"TaskPi",
-            env: process.env.PI_ENV || 'sandbox'
+            headerTitle:"TaskPi"
           });
     }
 }
