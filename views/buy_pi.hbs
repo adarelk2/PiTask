@@ -1,13 +1,44 @@
-<!-- בתוך כרטיס התשלום -->
-<button type="button" class="btn btn-outline-warning mt-3" id="cancelPaymentBTN">
-  🔄 Cancel Pending Payment
-</button>
+<div class="container py-4">
+  <h2 class="mb-4" style="color:goldenrod;">🪙 Buy Pi Coins</h2>
 
-<!-- לוג ו־Pi SDK -->
-<div id="debug-log" class="mt-5 p-3 bg-light border rounded" style="font-family: monospace; white-space: pre-wrap; font-size: 0.85rem; max-height: 300px; overflow-y: auto;">
-  <strong>Debug Log:</strong>
+  <div class="alert alert-secondary">
+    Your current balance: <strong>{{user.balance}} π</strong>
+  </div>
+
+  <div class="card shadow-sm p-4">
+    <div class="mb-3">
+      <label for="amount" class="form-label">Amount of Pi to Buy</label>
+      <input type="number" class="form-control" id="amount" min="1" step="0.01" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="estimated_price" class="form-label">Estimated Price (USD)</label>
+      <input type="text" class="form-control" id="estimated_price" readonly value="{{estimatedPrice}}">
+    </div>
+
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" id="terms" required>
+      <label class="form-check-label" for="terms">
+        I agree to the <a href="/terms" target="_blank">terms and conditions</a>
+      </label>
+    </div>
+
+    <button type="button" class="btn btn-purple w-100" id="createPaymentBTN">💸 Buy Now</button>
+    <button type="button" class="btn btn-outline-warning mt-3" onclick="Pi.cancelCurrentPayment()">
+      🔄 Cancel Pending Payment
+    </button>
+  </div>
+
+  <div class="mt-4 text-muted">
+    Note: Conversion rate is updated periodically. Final value will be confirmed before processing the transaction.
+  </div>
+
+  <div id="debug-log" class="mt-5 p-3 bg-light border rounded" style="font-family: monospace; white-space: pre-wrap; font-size: 0.85rem; max-height: 300px; overflow-y: auto;">
+    <strong>Debug Log:</strong>
+  </div>
 </div>
 
+<!-- Pi SDK -->
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
 <script>
@@ -30,19 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.Pi.init({ version: "2.0" });
 
-  // כפתור ביטול תשלום תקוע
-  document.getElementById("cancelPaymentBTN").addEventListener("click", async () => {
-    try {
-      await window.Pi.createPayment(null);
-      logDebug("✅ Cleared previous pending payment.");
-      alert("✅ Previous payment cleared.");
-    } catch (e) {
-      logDebug("ℹ️ No pending payment or error clearing it.", e);
-      alert("Nothing to cancel or failed to cancel.");
-    }
-  });
-
-  // תשלום חדש
   document.getElementById('createPaymentBTN').addEventListener('click', async () => {
     const amount = document.getElementById('amount').value;
     const agreed = document.getElementById('terms').checked;
@@ -61,16 +79,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const authResult = await window.Pi.authenticate(['payments']);
       logDebug("✅ Authenticated", authResult);
 
-      // ביטול תשלום קודם אם קיים
-      try {
-        await window.Pi.createPayment(null);
-        logDebug("🧹 Cleared any existing pending payment (via null).");
-      } catch (e) {
-        logDebug("ℹ️ No pending payment to clear.");
-      }
+      // 🧹 ביטול תשלום קודם אם קיים
+      await Pi.cancelCurrentPayment().catch(() => {
+        logDebug("ℹ️ No previous pending payment.");
+      });
 
       const token = localStorage.getItem("token");
-      const userId = "{{user.id}}"; // ודא ש-HBS מחליף לערך אמיתי
+      const userId = "{{user.id}}"; // ודא ש-HBS מחליף את זה לערך תקין
 
       const paymentData = {
         amount: parseFloat(amount),
@@ -79,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
           type: "buy_pi",
           userId: userId
         },
-        recipient: "adarelk1"
+        recipient: "adarelk1.trs-f65b74c907519592"
       };
 
       logDebug("📦 Payment data", paymentData);
@@ -87,7 +102,6 @@ document.addEventListener("DOMContentLoaded", () => {
       await window.Pi.createPayment(paymentData, {
         onReadyForServerApproval: async function (paymentId) {
           logDebug("📨 Production Payment ID", { paymentId });
-
           try {
             const res = await fetch("/auth/approve-production", {
               method: "POST",
@@ -102,6 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (result.status === "approved") {
               logDebug("✅ Server approved payment.");
             } else {
+              logDebug("❌ Approval rejected by server.");
               alert("Server rejected payment.");
             }
           } catch (e) {
@@ -112,7 +127,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         onReadyForServerCompletion: async function (paymentId, txid) {
           logDebug("⏳ Payment ready for completion", { paymentId, txid });
-
           try {
             const res = await fetch("/auth/complete-production", {
               method: "POST",
