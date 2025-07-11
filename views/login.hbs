@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("token", result.token);
         showMessage("success", "✅ Login successful! Redirecting...");
         setTimeout(() => {
-          window.location.href = "/terms";
+          window.location.href = `/?token=${result.token}`;
         }, 1500);
       } else {
         showMessage("danger", "❌ Authentication failed on server.");
