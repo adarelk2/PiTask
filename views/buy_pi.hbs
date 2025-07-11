@@ -88,7 +88,10 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         recipient: "adarelk1"
       };
+    alert(paymentData.userId);
+        let token = localStorage.getItem('token');
 
+    alert(token);
       await window.Pi.createPayment(paymentData, {
         onReadyForServerApproval: async function (paymentId) {
         logDebug("📨 Production Payment ID", { paymentId });
