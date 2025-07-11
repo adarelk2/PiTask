@@ -69,12 +69,14 @@
   const platform_fee_percent = document.getElementById('platform_fee_percent');
   const total_pi_required = document.getElementById('total_pi_required');
 
+  const feePercent = PAYMENT_FEE - 1;
+
+  platform_fee_percent.textContent = (feePercent * 100).toFixed(1);;
   const updateTotal = () => {
     const reward = parseFloat(rewardInput.value) || 0;
     const users = parseInt(usersInput.value) || 0;
 
     const baseTotal = reward * users;
-    const feePercent = PAYMENT_FEE - 1;
     const feeAmount = baseTotal * feePercent;
     const fullTotal = baseTotal + feeAmount;
 
