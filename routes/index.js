@@ -8,7 +8,7 @@ function requireAuth(req, res, next) {
   if (process.env.NODE_ENV == "staging") {
     const id = "8";
     const username = "adarelk4";
-    const token = jwt.sign({ id, username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id, username, ENV: process.env.NODE_ENV}, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     // תוכל להחזיר את זה ב-JSON או לשמור ב-localStorage
     res.cookie('token', token, {
@@ -40,8 +40,14 @@ function requireAuth(req, res, next) {
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
+    if(decoded.ENV == process.env.NODE_ENV)
+    {
+      req.user = decoded;
+      next();
+    }
+    else
+      return res.redirect('/auth/login');
+
   } catch (err) {
     console.warn('🔒 Invalid token');
     return res.redirect('/auth/login');

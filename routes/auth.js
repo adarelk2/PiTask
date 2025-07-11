@@ -60,6 +60,10 @@ router.post('/complete-production', async (req, res) => {
   try {
     // 🧠 אימות JWT
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if(decoded.ENV != process.env.NODE_ENV)
+    {
+      return res.status(409).json({ error: 'Token auth is invalid.' });
+    }
     const userId = decoded.id;
 
     // למניעת כפילות
