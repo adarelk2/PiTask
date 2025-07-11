@@ -1,8 +1,21 @@
-<!-- כפתור התחברות -->
-<button id="login-btn">Login</button>
+<div class="d-flex justify-content-center align-items-center vh-100">
+  <div class="card shadow p-4 text-center" style="max-width: 400px; width: 100%;">
+    <div class="mb-3">
+      <img src="/logo.png" alt="Pi Logo" width="64">
+    </div>
 
-<!-- אזור הודעות -->
-<div id="auth-status" class="alert d-none mt-3" role="alert"></div>
+    <h2 class="mb-2 text-primary">Sign in with Pi Network</h2>
+    <p class="text-muted">Welcome to <strong>TaskPi</strong> – connect your Pi account to continue.</p>
+
+    <!-- כפתור התחברות -->
+    <button id="login-btn" class="btn btn-warning btn-lg w-100 mt-3">
+      🔐 Login with Pi
+    </button>
+
+    <!-- אזור הודעות -->
+    <div id="auth-status" class="alert d-none mt-4" role="alert"></div>
+  </div>
+</div>
 
 <!-- Pi SDK -->
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
@@ -12,13 +25,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const statusBox = document.getElementById("auth-status");
 
   function showMessage(type, text) {
-    statusBox.className = "alert mt-3 alert-" + type;
+    statusBox.className = "alert mt-4 alert-" + type;
     statusBox.textContent = text;
     statusBox.classList.remove("d-none");
   }
 
   if (!window.Pi) {
-    showMessage("danger", "Pi SDK not available. Open this app inside Pi Browser.");
+    showMessage("danger", "Pi SDK not available. Please open this app inside Pi Browser.");
     return;
   }
 
@@ -26,11 +39,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("login-btn").addEventListener("click", async () => {
     try {
-      showMessage("info", "Connecting to Pi Network...");
+      showMessage("info", "🔄 Connecting to Pi Network...");
 
       const auth = await window.Pi.authenticate(["username"]);
       console.log("✅ Authenticated:", auth);
-      showMessage("success", `Authenticated as ${auth.user.username}`);
+      showMessage("success", `✅ Authenticated as @${auth.user.username}`);
 
       const res = await fetch("/auth/verify-token", {
         method: "POST",
@@ -44,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("token", result.token);
         showMessage("success", "✅ Login successful! Redirecting...");
         setTimeout(() => {
-          window.location.href = "/terms?token=" + result.token;
+          window.location.href = "/terms";
         }, 1500);
       } else {
         showMessage("danger", "❌ Authentication failed on server.");

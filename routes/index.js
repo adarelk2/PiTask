@@ -6,8 +6,8 @@ const Application = require('../core/Application');
 // ✅ Auth Middleware כתוסף פנימי
 function requireAuth(req, res, next) {
   if (process.env.NODE_ENV == "staging") {
-    const id = "6";
-    const username = "adarelk1";
+    const id = "8";
+    const username = "adarelk4";
     const token = jwt.sign({ id, username }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     // תוכל להחזיר את זה ב-JSON או לשמור ב-localStorage

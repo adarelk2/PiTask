@@ -9,7 +9,7 @@ class KDLevel1
 
   getKD()
   {
-    return (this.tasks.length * 0.1).toFixed(2)
+    return ((this.tasks.length * 0.1) + 0.2).toFixed(2)
   }
 }
 
