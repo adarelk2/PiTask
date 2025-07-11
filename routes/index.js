@@ -5,6 +5,8 @@ const Application = require('../core/Application');
 
 // ✅ Auth Middleware כתוסף פנימי
 function requireAuth(req, res, next) {
+  console.log("im here 59");
+  console.log(req.body);
   if (process.env.NODE_ENV == "staging") {
     const id = "8";
     const username = "adarelk4";
@@ -56,8 +58,6 @@ router.get('/:controller?', requireAuth, (req, res) => {
 // ✅ הראוטר הראשי
 router.post('/:controller?', requireAuth, (req, res) => {
   const app = new Application(req, res);
-  console.log("im here 59");
-  console.log(req.body);
   app.init();
 
 });
