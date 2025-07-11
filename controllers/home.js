@@ -1,5 +1,5 @@
 const BaseController = require('../core/BaseController');
-const createCalculatorKDFactory = require("../core/createCalculatorKDFactory");
+const createCalculatorKDFactory = require("../core/create_calculator_KD_factory");
 const UserModel = require("../models/UserModel");
 const TaskModel = require("../models/TaskModel");
 const TaskSubmissionModel = require("../models/TaskSubmissionModel");

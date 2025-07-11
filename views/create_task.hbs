@@ -1,0 +1,151 @@
+<h2 class="mb-4">Create a New Task</h2>
+
+<form method="POST" id="send_request">
+  <!-- Task Title -->
+  <div class="mb-3">
+    <label for="title" class="form-label">Task Title</label>
+    <input type="text" name="title" id="title" class="form-control" required>
+  </div>
+
+  <!-- Task Description -->
+  <div class="mb-3">
+    <label for="description" class="form-label">Task Description</label>
+    <textarea name="description" id="description" class="form-control" rows="4" required></textarea>
+  </div>
+
+  <!-- Max Users -->
+  <div class="mb-3">
+    <label for="max_users" class="form-label">Maximum Number of Users</label>
+    <input type="number" name="max_users" id="max_users" class="form-control" value="0" min="1" required>
+  </div>
+
+  <!-- Reward Per User -->
+  <div class="mb-3">
+    <label for="reward" class="form-label">Reward Per User (in Pi)</label>
+    <input type="number" name="reward" id="reward" class="form-control" value="0" step="0.01" min="0.01" required>
+  </div>
+
+  <!-- Required User Level -->
+  <div class="mb-3">
+    <label for="required_level" class="form-label">Required User Level</label>
+    <select name="required_level" id="required_level" class="form-select" required>
+      <option value="1">Level 1 – Beginner</option>
+      <option value="2">Level 2 – Trusted Performer</option>
+    </select>
+  </div>
+
+  <!-- Proof Description -->
+  <div class="mb-3 d-none" id="proofDiv">
+    <label for="proof_description" class="form-label">Proof Description</label>
+    <textarea name="proof_description" id="proof_description" class="form-control" rows="2"
+              placeholder="E.g. Upload a screenshot of your signup confirmation"></textarea>
+  </div>
+
+  <!-- Price Summary -->
+  <div class="mb-3">
+    <div>Reward (total): <span id="total_price">0</span> Pi</div>
+    <div>Platform Fee (<span id="platform_fee_percent">0</span>%): <span id="paymentFeeAmount">0</span> Pi</div>
+    <div><strong>Total Pi Required:</strong> <span id="total_pi_required">0</span> Pi</div>
+  </div>
+
+  <!-- Submit Button -->
+  <button type="submit" class="btn btn-purple" id="send_requestBTN">Publish Task</button>
+</form>
+
+<script>
+  // Injected from server environment — for example: 1.15 (means 15% fee)
+  const PAYMENT_FEE = parseFloat("{{paymentFee}}");
+
+  const rewardInput = document.getElementById('reward');
+  const usersInput = document.getElementById('max_users');
+  const required_level = document.getElementById('required_level');
+  const proofDiv = document.getElementById('proofDiv');
+  const title = document.getElementById('title');
+  const description = document.getElementById('description');
+  const proof_description = document.getElementById('proof_description');
+
+  const totalOutput = document.getElementById('total_price');
+  const paymentFeeAmount = document.getElementById('paymentFeeAmount');
+  const platform_fee_percent = document.getElementById('platform_fee_percent');
+  const total_pi_required = document.getElementById('total_pi_required');
+
+  const updateTotal = () => {
+    const reward = parseFloat(rewardInput.value) || 0;
+    const users = parseInt(usersInput.value) || 0;
+
+    const baseTotal = reward * users;
+    const feePercent = PAYMENT_FEE - 1;
+    const feeAmount = baseTotal * feePercent;
+    const fullTotal = baseTotal + feeAmount;
+
+    totalOutput.textContent = baseTotal.toFixed(2);
+    paymentFeeAmount.textContent = feeAmount.toFixed(2);
+    total_pi_required.textContent = fullTotal.toFixed(2);
+    platform_fee_percent.textContent = (feePercent * 100).toFixed(1);
+  };
+
+  const updateRequireLevel = () => {
+    if (required_level.value === "1") {
+      proofDiv.classList.add('d-none');
+    } else {
+      proofDiv.classList.remove('d-none');
+    }
+  };
+
+  rewardInput.addEventListener('input', updateTotal);
+  usersInput.addEventListener('input', updateTotal);
+  required_level.addEventListener('change', updateRequireLevel);
+
+  document.getElementById("send_request").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!e.target.checkValidity()) return;
+
+    // Optional confirmation popup:
+    // if (!confirm("Are you sure you want to publish this task?")) return;
+
+    const token = localStorage.getItem("token");
+
+    const payload = {
+      method: "create_new_task",
+      token,
+      params: {
+        reward: rewardInput.value,
+        max_users: usersInput.value,
+        required_level: required_level.value,
+        title: title.value,
+        description: description.value,
+        proof_description: proof_description.value
+      }
+    };
+    showPopUpConfirming(create_requiest, payload)
+  });
+
+  const create_requiest = async(_params)=>{
+  showLoading();
+  try {
+    const res = await fetch("/create_task", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(_params)
+    });
+    const response = await res.json();
+    Swal.close();
+    if(response.flag)
+    {
+      successAlert(response.errors,reload);
+    }
+    else
+      failedAlert(response.errors);
+  } catch (err) {
+    alert("Something went wrong!");
+  }
+}
+
+const reload = ()=>
+{
+  let token = localStorage.getItem("token");
+  window.location.href = `/create_task?token=${token}`;
+}
+</script>

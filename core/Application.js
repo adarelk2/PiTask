@@ -6,8 +6,8 @@ class Application {
     this.res = res;
 
     this.controllerName = (req.params.controller || 'home').toLowerCase();
-    this.methodName = req.query.method || 'print';
-    this.params = req.query.params || {};
+    this.methodName = req.query.method || req.body.method || 'print';
+    this.params = req.query.params || req.body.params || {};
     this.errors = [];
 
     this.controllerLoader = new Controller(req, res);

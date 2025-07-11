@@ -15,3 +15,54 @@
     });
   });
 
+  function showLoading()
+  {
+    Swal.fire({
+      title:'Loading...',
+      html: `<img src=/loading.gif style='width:56px; height:56px;'>`,
+      showCancelButton: false, // There won't be any cancel button
+      showConfirmButton: false // There won't be any confirm button
+    });
+  }
+
+  function showPopUpConfirming(_callback, _params)
+  {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+       _callback(_params);
+      } 
+    });
+  }
+
+  function successAlert(_str, _callback=false)
+  {
+    Swal.fire({
+      position: "top-end",
+      icon: "success",
+      title: "Your requiest has been done",
+      showConfirmButton: true,
+    }).then(()=>{
+      if(_callback)
+        _callback();
+    });
+  }
+
+  function failedAlert(_errors, _title="error")
+  {
+    const errors = _errors.join("\n");
+    Swal.fire({
+      position: "top-end",
+      icon: "error",
+      html: `${errors}`,
+      title: _title,
+      showConfirmButton: true,
+    });
+  }
