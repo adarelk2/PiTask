@@ -40,6 +40,8 @@ function requireAuth(req, res, next) {
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("im here 43");
+    console.log(decoded);
     if(decoded.ENV == process.env.NODE_ENV)
     {
       req.user = decoded;
