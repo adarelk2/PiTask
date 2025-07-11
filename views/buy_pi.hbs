@@ -92,12 +92,12 @@ document.addEventListener("DOMContentLoaded", () => {
       await window.Pi.createPayment(paymentData, {
         onReadyForServerApproval: async function (paymentId) {
         logDebug("📨 Production Payment ID", { paymentId });
-
+        let token = localStorage.getItem('token');
         try {
             const res = await fetch("/auth/approve-production", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ paymentId }),
+            body: JSON.stringify({ paymentId, token }),
             credentials: "include"
             });
 

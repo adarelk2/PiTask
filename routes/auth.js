@@ -2,6 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 require('dotenv').config();
+const jwt = require('jsonwebtoken');
 
 const CompletedPaymentModel = require('../models/CompletedPaymentModel');
 const UserModel = require('../models/UserModel');
@@ -55,15 +56,16 @@ router.post('/approve-production', async (req, res) => {
 // שלב 2: השלמת התשלום (עכשיו דורש txid מהלקוח)
 router.post('/complete-production', async (req, res) => {
   console.log("im here 64");
+  const decoded = jwt.verify(req.body.token, process.env.JWT_SECRET);
+  req.user = decoded;
   const { paymentId, txid } = req.body;
-
   if (!paymentId || !txid) {
     console.log("im here 68");
 
     return res.status(400).json({ error: 'Missing paymentId or txid' });
   }
   console.log("im here 72");
-
+  console.log(req.body.token);
   try {
   console.log("im here 75");
 
@@ -86,7 +88,6 @@ router.post('/complete-production', async (req, res) => {
     );
 
     const amount = completeRes.data.amount || 0;
-    const sessionUser = req.session?.user;
     console.log("im here 97");
 
     if (!sessionUser || !sessionUser.id) {
