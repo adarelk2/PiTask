@@ -31,6 +31,8 @@ class Create_Task extends BaseController {
 
   async create_new_task(_params)
   {
+    console.log("im here 34");
+    console.log(_params);
     const users = await this.userModel.filter({id:this.req.user.id});
     const user = users[0];
     if(user.id)
