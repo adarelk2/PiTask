@@ -7,22 +7,19 @@
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <script>
-        let token = `?token=${localStorage.getItem("token")}`;
-      </script>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link {{#if (eq activePage 'home')}}active{{/if}}" href="/">Tasks</a>
+            <a class="nav-link menu-link {{#if (eq activePage 'home')}}active{{/if}}" href="/">Tasks</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {{#if (eq activePage 'policy')}}active{{/if}}" href="/policy">Policy</a>
+            <a class="nav-link menu-link {{#if (eq activePage 'policy')}}active{{/if}}" href="/policy">Policy</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {{#if (eq activePage 'terms')}}active{{/if}}" href="/terms">Terms</a>
+            <a class="nav-link menu-link {{#if (eq activePage 'terms')}}active{{/if}}" href="/terms">Terms</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {{#if (eq activePage 'white_paper')}}active{{/if}}" href="/white_paper">White Paper</a>
+            <a class="nav-link menu-link {{#if (eq activePage 'white_paper')}}active{{/if}}" href="/white_paper">White Paper</a>
           </li>
         </ul>
 
@@ -34,8 +31,9 @@
                 {{user.username}}
               </a>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="/profile">My Profile</a></li>
-                <li><a class="dropdown-item" href="/settings">Settings</a></li>
+                <li><a class="dropdown-item menu-link" href="/profile">My Profile</a></li>
+                <li><a class="dropdown-item menu-link" href="/buy_pi">Buy Pi</a></li>
+                <li><a class="dropdown-item menu-link" href="/settings">Settings</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
               </ul>

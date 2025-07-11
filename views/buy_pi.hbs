@@ -1,0 +1,187 @@
+<div class="container py-4">
+  <h2 class="mb-4" style="color:goldenrod;">🪙 Buy Pi Coins</h2>
+
+  <div class="alert alert-secondary">
+    Your current balance: <strong>{{user.balance}} π</strong>
+  </div>
+
+  <div class="card shadow-sm p-4">
+    <div class="mb-3">
+      <label for="amount" class="form-label">Amount of Pi to Buy</label>
+      <input type="number" class="form-control" id="amount" min="1" step="0.01" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="estimated_price" class="form-label">Estimated Price (USD)</label>
+      <input type="text" class="form-control" id="estimated_price" readonly value="{{estimatedPrice}}">
+    </div>
+
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" id="terms" required>
+      <label class="form-check-label" for="terms">
+        I agree to the <a href="/terms" target="_blank">terms and conditions</a>
+      </label>
+    </div>
+
+    <button type="button" class="btn btn-purple w-100" id="createPaymentBTN">💸 Buy Now</button>
+  </div>
+
+  <div class="mt-4 text-muted">
+    Note: Conversion rate is updated periodically. Final value will be confirmed before processing the transaction.
+  </div>
+
+  <div id="debug-log" class="mt-5 p-3 bg-light border rounded" style="font-family: monospace; white-space: pre-wrap; font-size: 0.85rem; max-height: 300px; overflow-y: auto;">
+    <strong>Debug Log:</strong>
+  </div>
+</div>
+
+<!-- Pi SDK -->
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const logBox = document.getElementById("debug-log");
+
+  function logDebug(message, obj = null) {
+    const time = new Date().toLocaleTimeString();
+    logBox.innerText += `\n[${time}] ${message}`;
+    if (obj) {
+      logBox.innerText += `\n${JSON.stringify(obj, null, 2)}\n`;
+    }
+  }
+
+  if (!window.Pi) {
+    logDebug("❌ Pi SDK not available. Please open this app in Pi Browser.");
+    alert("Pi SDK not available. Open in Pi Browser.");
+    return;
+  }
+
+  window.Pi.init({ version: "2.0" });
+
+  document.getElementById('createPaymentBTN').addEventListener('click', async () => {
+    const amount = document.getElementById('amount').value;
+    const agreed = document.getElementById('terms').checked;
+
+    if (!amount || parseFloat(amount) <= 0) {
+      alert("Please enter a valid amount.");
+      return;
+    }
+
+    if (!agreed) {
+      alert("You must agree to the terms and conditions.");
+      return;
+    }
+
+    try {
+      const authResult = await window.Pi.authenticate(['payments']);
+      logDebug("✅ Authenticated", authResult);
+
+      const token = localStorage.getItem("token");
+      const userId = "{{user.id}}";
+
+      const paymentData = {
+        amount: parseFloat(amount),
+        memo: "Buy Pi in production",
+        metadata: {
+          type: "buy_pi",
+          userId: userId
+        },
+        recipient: "adarelk1.trs-f65b74c907519592"
+      };
+
+      logDebug("📦 Payment data", paymentData);
+
+      await window.Pi.createPayment(paymentData, {
+        // 🔄 טיפול בתשלום תקוע
+        onIncompletePaymentFound: async function (payment) {
+          logDebug("⚠️ Incomplete payment found", payment);
+
+          try {
+            const res = await fetch("/auth/approve-production", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ paymentId: payment.identifier, token }),
+              credentials: "include"
+            });
+
+            const result = await res.json();
+            logDebug("🔁 Re-approval result", result);
+
+            if (result.status === "approved") {
+              logDebug("✅ Re-approved pending payment.");
+            } else {
+              alert("❌ Pending payment could not be approved again.");
+            }
+          } catch (e) {
+            logDebug("❌ Error handling pending payment", e.message || e);
+            alert("Error handling previous payment.");
+          }
+        },
+
+        // ✅ תשלום חדש
+        onReadyForServerApproval: async function (paymentId) {
+          logDebug("📨 Payment ID received", { paymentId });
+          try {
+            const res = await fetch("/auth/approve-production", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ paymentId, token }),
+              credentials: "include"
+            });
+
+            const result = await res.json();
+            logDebug("🔁 Server approval response", result);
+
+            if (result.status === "approved") {
+              logDebug("✅ Payment approved by server.");
+            } else {
+              alert("❌ Server rejected payment.");
+            }
+          } catch (e) {
+            logDebug("❌ Approval error", e.message || e);
+            alert("Approval error.");
+          }
+        },
+
+        onReadyForServerCompletion: async function (paymentId, txid) {
+          logDebug("⏳ Payment ready for completion", { paymentId, txid });
+          try {
+            const res = await fetch("/auth/complete-production", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ paymentId, txid, token }),
+              credentials: "include"
+            });
+
+            const result = await res.json();
+            logDebug("✅ Completion response", result);
+
+            if (result.status === "done") {
+              alert("✅ Payment completed successfully!");
+            } else {
+              alert("⚠️ Payment not completed. See debug log.");
+            }
+          } catch (e) {
+            logDebug("❌ Completion error", e.message || e);
+            alert("Payment completion failed.");
+          }
+        },
+
+        onCancel: function () {
+          logDebug("⚠️ Payment cancelled by user.");
+          alert("Payment cancelled.");
+        },
+
+        onError: function (error) {
+          logDebug("❌ Pi Payment error", error?.message || JSON.stringify(error) || "Unknown error");
+          alert("Payment failed. See debug log.");
+        }
+      });
+
+    } catch (err) {
+      logDebug("❌ Unexpected error", err.message || err);
+      alert("Something went wrong.");
+    }
+  });
+});
+</script>

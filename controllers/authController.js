@@ -9,25 +9,27 @@ exports.showLogin = (req, res) => {
 };
 
 exports.verifyToken = async (req, res) => {
-  const { accessToken } = req.body;
+  const { piToken } = req.body;
+
+  if (!piToken) {
+    return res.status(400).json({ success: false, message: 'Missing Pi token' });
+  }
+
   try {
     const response = await axios.get('https://api.minepi.com/v2/me', {
       headers: {
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${piToken}`
       }
     });
 
+    console.log("✅ Verified Pi Token:", response.data);
     let { username, wallet_address } = response.data;
 
     if (!wallet_address) {
-      wallet_address = "GAZ7T6NMYNISMPMX7SS775NW4WVZIZHYOOYG7PFHHVASRTCUHF3W6WIG";
-      // return res.status(400).json({
-      //   success: false,
-      //   message: 'You must allow access to your wallet address to log in.'
-      // });
+      wallet_address = "UNVERIFIED";
     }
 
-    let users = await userModel.filter({ username:username});
+    let users = await userModel.filter({ username });
 
     if (users.length === 0) {
       await userModel.insert({
@@ -37,32 +39,21 @@ exports.verifyToken = async (req, res) => {
         accuracy: 1.0,
         balance: 0
       });
-      users = await userModel.filter({ id: username });
+      users = await userModel.filter({ username });
     }
 
     const user = users[0];
 
-    // יצירת JWT
     const token = jwt.sign(
       { id: user.id, username: user.username },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
-//     // שמירת העוגייה
-//     res.cookie('token', token, {
-//       httpOnly: true,
-//       secure: process.env.NODE_ENV === 'production',
-//       maxAge: 60 * 60 * 1000
-//     });
-
-    res.json({
-      success: true,
-      token, // זה ה־JWT
-    });
+    res.json({ success: true, token });
 
   } catch (err) {
-    console.error('Token verification failed or DB error:', err);
+    console.error('❌ Token verification failed or DB error:', err.response?.data || err.message);
     res.status(401).json({ success: false, message: 'Invalid token or DB error' });
   }
 };
