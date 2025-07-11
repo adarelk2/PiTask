@@ -1,5 +1,6 @@
 # Ignore node modules
 node_modules/
+bin/
 
 # Ignore dotenv if תשתמש בו בעתיד
 .env
