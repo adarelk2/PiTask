@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       showMessage("info", "🔄 Connecting to Pi Network...");
 
-      const auth = await window.Pi.authenticate(["username"]);
+      const auth = await window.Pi.authenticate(["username", "wallet_address"]);
       console.log("✅ Authenticated:", auth);
       showMessage("success", `✅ Authenticated as @${auth.user.username}`);
 
