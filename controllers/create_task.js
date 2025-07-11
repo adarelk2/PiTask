@@ -2,6 +2,7 @@ const BaseController = require('../core/BaseController');
 const UserModel = require("../models/UserModel");
 const TaskModel = require("../models/TaskModel");
 const TaskSubmissionModel = require("../models/TaskSubmissionModel");
+const ERROR_MESSAGES = require("../constants/errors");
 
 
 const createValidationFactory = require("../core/create_validation_factory");
@@ -40,7 +41,24 @@ class Create_Task extends BaseController {
       if(validation.errors.length)
       {
         this.json({flag:false, errors:validation.errors});
+        return;
       }
+      
+      const new_balance = user.balance - (_params.reward * _params.max_users * process.env.PAYMENT_FEE);
+
+      const updated = await this.userModel.update({id:_params.user.id},{balance: new_balance});
+      if(updated)
+      {
+        for(let i=0;i<_params.max_users;i++)
+        {
+          const taskID = await this.taskModel.insert({publisher_id:_params.user.id, title:_params.title, description:_params.description, reward:_params.reward, required_level:_params.required_level});
+        }
+
+        this.json({flag:true});
+        return;
+      }
+
+      this.json({flag:false, errors:[ERROR_MESSAGES.GENERAL.UNKNOWN_ERROR]});
     }
   }
 }

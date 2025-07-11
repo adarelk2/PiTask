@@ -47,10 +47,10 @@ class CreateNewTaskValidation {
       this.errors.push(ERROR_MESSAGES.VALIDATION.DESCRIPTION_TOO_SHORT);
     }
 
-    // 3. Wallet verification
-    if (!user.pi_wallet_address || user.pi_wallet_address === "UNVERIFIED") {
-      this.errors.push(ERROR_MESSAGES.WALLET.WALLET_NOT_CONNECTED);
-    }
+    // // 3. Wallet verification
+    // if (!user.pi_wallet_address || user.pi_wallet_address === "UNVERIFIED") {
+    //   this.errors.push(ERROR_MESSAGES.WALLET.WALLET_NOT_CONNECTED);
+    // }
 
     // 4. Balance check
     const totalCost = rewardNum * maxUsersNum * feeMultiplier;

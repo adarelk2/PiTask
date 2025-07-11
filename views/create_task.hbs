@@ -49,7 +49,7 @@
   </div>
 
   <!-- Submit Button -->
-  <button type="submit" class="btn btn-primary" id="send_requestBTN">Publish Task</button>
+  <button type="submit" class="btn btn-purple" id="send_requestBTN">Publish Task</button>
 </form>
 
 <script>
@@ -118,21 +118,34 @@
         proof_description: proof_description.value
       }
     };
-
-    try {
-      const res = await fetch("/create_task", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(payload)
-      });
-
-      const response = await res.json();
-      console.log(response);
-      alert("Task submitted successfully!");
-    } catch (err) {
-      console.error("Error creating task:", err);
-      alert("Something went wrong!");
-    }
+    showPopUpConfirming(create_requiest, payload)
   });
+
+  const create_requiest = async(_params)=>{
+  showLoading();
+  try {
+    const res = await fetch("/create_task", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(_params)
+    });
+    const response = await res.json();
+    Swal.close();
+    if(response.flag)
+    {
+      successAlert(response.errors,reload);
+    }
+    else
+      failedAlert(response.errors);
+  } catch (err) {
+    alert("Something went wrong!");
+  }
+}
+
+const reload = ()=>
+{
+  let token = localStorage.getItem("token");
+  window.location.href = `/create_task?token=${token}`;
+}
 </script>

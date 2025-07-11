@@ -41,3 +41,28 @@
       } 
     });
   }
+
+  function successAlert(_str, _callback=false)
+  {
+    Swal.fire({
+      position: "top-end",
+      icon: "success",
+      title: "Your requiest has been done",
+      showConfirmButton: true,
+    }).then(()=>{
+      if(_callback)
+        _callback();
+    });
+  }
+
+  function failedAlert(_errors, _title="error")
+  {
+    const errors = _errors.join("\n");
+    Swal.fire({
+      position: "top-end",
+      icon: "error",
+      html: `${errors}`,
+      title: _title,
+      showConfirmButton: true,
+    });
+  }
