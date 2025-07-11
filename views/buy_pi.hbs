@@ -120,10 +120,12 @@ document.addEventListener("DOMContentLoaded", () => {
         logDebug("⏳ Payment ready for completion", { paymentId, txid });
 
         try {
+            let token = localStorage.getItem('token');
+
             const res = await fetch("/auth/complete-production", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ paymentId, txid }),
+            body: JSON.stringify({ paymentId, txid, token }),
             credentials: "include"
             });
 

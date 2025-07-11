@@ -1,27 +1,25 @@
 const express = require('express');
 const axios = require('axios');
+const jwt = require('jsonwebtoken');
 const router = express.Router();
 require('dotenv').config();
-const jwt = require('jsonwebtoken');
 
 const CompletedPaymentModel = require('../models/CompletedPaymentModel');
 const UserModel = require('../models/UserModel');
 const completedPaymentModel = new CompletedPaymentModel();
 const userModel = new UserModel();
-
 const authController = require('../controllers/authController');
+
+// 🔐 PI API KEY מהפורטל
+const PI_API_KEY = process.env.PI_API_KEY || "xbdryzovdb6ejryiaexe2ibtvmetdr3bjlvw15hexbrvifoghgxgyuxbntpivynl";
 
 // התחברות
 router.get('/login', authController.showLogin);
 router.post('/verify-token', authController.verifyToken);
 
-// שימוש במפתח פרודקשן מהפורטל (מותר לך להשאיר אותו פתוח אם השרת מאובטח)
-const PI_API_KEY = "xbdryzovdb6ejryiaexe2ibtvmetdr3bjlvw15hexbrvifoghgxgyuxbntpivynl";
-
-// אישור והשלמת תשלום (Production)
+// ✅ אישור תשלום בלבד (approve)
 router.post('/approve-production', async (req, res) => {
   const { paymentId } = req.body;
-
   if (!paymentId) {
     return res.status(400).json({ error: 'Missing paymentId' });
   }
@@ -32,7 +30,6 @@ router.post('/approve-production', async (req, res) => {
       'X-Requested-With': 'XMLHttpRequest',
     };
 
-    // ✅ שלב 1: רק אישור
     const approveRes = await axios.post(
       `https://api.minepi.com/v2/payments/${paymentId}/approve`,
       {},
@@ -40,7 +37,6 @@ router.post('/approve-production', async (req, res) => {
     );
 
     console.log('✅ Payment approved:', approveRes.data);
-
     res.status(200).json({ status: 'approved' });
 
   } catch (err) {
@@ -52,29 +48,25 @@ router.post('/approve-production', async (req, res) => {
   }
 });
 
-
-// שלב 2: השלמת התשלום (עכשיו דורש txid מהלקוח)
+// ✅ השלמת תשלום (כולל אימות טוקן)
 router.post('/complete-production', async (req, res) => {
-  console.log("im here 64");
-  const decoded = jwt.verify(req.body.token, process.env.JWT_SECRET);
-  req.user = decoded;
-  const { paymentId, txid } = req.body;
-  if (!paymentId || !txid) {
-    console.log("im here 68");
-
-    return res.status(400).json({ error: 'Missing paymentId or txid' });
+  const { paymentId, txid, token } = req.body;
+  console.log("im here 54");
+  console.log(token);
+  if (!paymentId || !txid || !token) {
+    return res.status(400).json({ error: 'Missing paymentId, txid or token' });
   }
-  console.log("im here 72");
-  console.log(req.body.token);
-  try {
-  console.log("im here 75");
 
-    // מניעת כפילות
+  try {
+    // 🧠 אימות JWT
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+
+    // למניעת כפילות
     const existing = await completedPaymentModel.select({ payment_id: paymentId });
     if (existing.length > 0) {
       return res.status(409).json({ error: 'Payment already processed' });
     }
-    console.log("im here 82");
 
     const headers = {
       Authorization: `Key ${PI_API_KEY}`,
@@ -88,22 +80,15 @@ router.post('/complete-production', async (req, res) => {
     );
 
     const amount = completeRes.data.amount || 0;
-    console.log("im here 97");
 
-    if (!sessionUser || !sessionUser.id) {
-      return res.status(403).json({ error: 'User not authenticated' });
-    }
-  console.log("im here 102");
-
-
-    const users = await userModel.select({ id: sessionUser.id });
+    // עדכון איזון משתמש
+    const users = await userModel.select({ id: userId });
     if (users.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
 
     const user = users[0];
     const newBalance = (user.balance || 0) + amount;
-    console.log("im here 112");
 
     await userModel.update({ id: user.id }, { balance: newBalance });
     await completedPaymentModel.insert({
@@ -114,7 +99,6 @@ router.post('/complete-production', async (req, res) => {
     });
 
     console.log('✅ Payment completed and balance updated');
-
     res.status(200).json({
       status: 'done',
       tx: completeRes.data.transaction,
@@ -132,7 +116,6 @@ router.post('/complete-production', async (req, res) => {
 
 // התנתקות
 router.get('/logout', (req, res) => {
-  console.log("im here 12");
   res.clearCookie('token');
   res.redirect('/auth/login');
 });
