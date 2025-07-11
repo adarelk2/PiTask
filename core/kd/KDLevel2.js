@@ -7,7 +7,7 @@ class KDLevel2
     this.tasks = _tasks;
   }
 
-  get()
+  getKD()
   {
     let approved = 1;
     let reject = 1;

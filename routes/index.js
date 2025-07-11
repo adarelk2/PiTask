@@ -31,8 +31,6 @@ function requireAuth(req, res, next) {
     token = queryToken; // ✅ ייבחר אם אין שום דבר אחר
   }
 
-  console.log("here 34");
-  console.log(token);
   if (!token) {
     console.warn('🔒 Missing token');
     return res.redirect('/auth/login');
@@ -51,7 +49,6 @@ function requireAuth(req, res, next) {
 
 // ✅ הראוטר הראשי
 router.get('/:controller?', requireAuth, (req, res) => {
-  console.log(req.user);
   const app = new Application(req, res);
   app.init();
 });

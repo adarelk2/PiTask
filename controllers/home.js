@@ -53,7 +53,7 @@ class Home extends BaseController {
 
     calculatorKD(_user_id = false, _user_level = false, _tasks=[])
     {
-        return new createCalculatorKDFactory(_user_id, _user_level, _tasks).create().get();
+        return new createCalculatorKDFactory(_user_id, _user_level, _tasks).create().getKD();
     }
 
     filterTasksByLevel(_kd, _level, _tasks)
