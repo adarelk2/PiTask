@@ -43,8 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const auth = await window.Pi.authenticate(["username", "wallet_address"]);
       console.log("✅ Authenticated:", auth);
-      showMessage("success", `✅ Authenticated as @${auth.user.username}`);
-      showMessage("success", `test: @${JSON.stringify(auth)}`);
+      showMessage("success", `✅ Authenticated as @${auth.user.username} wallet: ${auth.user.wallet_address}`);
       
       const res = await fetch("/auth/verify-token", {
         method: "POST",
@@ -59,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
         showMessage("success", "✅ Login successful! Redirecting...");
         setTimeout(() => {
           window.location.href = `/?token=${result.token}`;
-        }, 10500);
+        }, 1500);
       } else {
         showMessage("danger", "❌ Authentication failed on server.");
       }
