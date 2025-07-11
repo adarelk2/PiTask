@@ -5,7 +5,7 @@
     console.log(token);
     if (!token) return;
 
-    document.querySelectorAll('.nav-link').forEach(link => {
+    document.querySelectorAll('.menu-link').forEach(link => {
         console.log(link);
       const baseHref = link.getAttribute('href');
       if(baseHref)
