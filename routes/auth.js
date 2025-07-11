@@ -20,8 +20,7 @@ const PI_API_KEY = "xbdryzovdb6ejryiaexe2ibtvmetdr3bjlvw15hexbrvifoghgxgyuxbntpi
 // אישור והשלמת תשלום (Production)
 router.post('/approve-production', async (req, res) => {
   const { paymentId } = req.body;
-  console.log("im here 18");
-  console.log(paymentId);
+
   if (!paymentId) {
     return res.status(400).json({ error: 'Missing paymentId' });
   }
@@ -32,32 +31,26 @@ router.post('/approve-production', async (req, res) => {
       'X-Requested-With': 'XMLHttpRequest',
     };
 
-    // שלב 1: אישור התשלום
+    // ✅ שלב 1: רק אישור
     const approveRes = await axios.post(
       `https://api.minepi.com/v2/payments/${paymentId}/approve`,
       {},
       { headers }
     );
+
     console.log('✅ Payment approved:', approveRes.data);
 
-    // שלב 2: השלמת התשלום
-    const completeRes = await axios.post(
-      `https://api.minepi.com/v2/payments/${paymentId}/complete`,
-      {},
-      { headers }
-    );
-    console.log('✅ Payment completed:', completeRes.data);
-
-    res.status(200).json({ status: 'done', tx: completeRes.data.transaction });
+    res.status(200).json({ status: 'approved' });
 
   } catch (err) {
-    console.error('❌ Error approving/completing payment:', err.response?.data || err.message);
+    console.error('❌ Error approving payment:', err.response?.data || err.message);
     res.status(500).json({
-      error: 'Failed to approve/complete production payment',
+      error: 'Failed to approve payment',
       details: err.response?.data || err.message
     });
   }
 });
+
 
 // שלב 2: השלמת התשלום (עכשיו דורש txid מהלקוח)
 router.post('/complete-production', async (req, res) => {

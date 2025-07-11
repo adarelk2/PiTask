@@ -91,58 +91,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
       await window.Pi.createPayment(paymentData, {
         onReadyForServerApproval: async function (paymentId) {
-          logDebug("📨 Ready for server approval", { paymentId });
+        logDebug("📨 Production Payment ID", { paymentId });
 
-          try {
+        try {
             const res = await fetch("/auth/approve-production", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ paymentId, amount: paymentData.amount }),
-              credentials: "include"
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ paymentId }),
+            credentials: "include"
             });
 
             const result = await res.json();
             logDebug("🔁 Server approval response", result);
 
             if (result.status === "approved") {
-              logDebug("✅ Server approved. Waiting for transaction...");
+            logDebug("✅ Server approved payment.");
             } else {
-              alert("❌ Server rejected payment.");
+            logDebug("❌ Approval rejected by server.");
+            alert("Server rejected payment.");
             }
-          } catch (e) {
+        } catch (e) {
             logDebug("❌ Approval error", e);
-            alert("Server approval failed.");
-          }
+            alert("Approval error.");
+        }
         },
 
         onReadyForServerCompletion: async function (paymentId, txid) {
-          logDebug("⏳ Ready for completion", { paymentId, txid });
+        logDebug("⏳ Payment ready for completion", { paymentId, txid });
 
-          try {
-            if (!txid) {
-              alert("❌ Missing txid. Cannot complete payment.");
-              return;
-            }
-
+        try {
             const res = await fetch("/auth/complete-production", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ paymentId, txid }),
-              credentials: "include"
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ paymentId, txid }),
+            credentials: "include"
             });
 
             const result = await res.json();
-            logDebug("✅ Completion response", result);
+            logDebug("✅ Final completion response", result);
 
             if (result.status === "done") {
-              alert("✅ Payment completed!");
+            alert("✅ Payment completed successfully!");
             } else {
-              alert("⚠️ Completion failed. See log.");
+            alert("⚠️ Payment not completed. See debug log.");
             }
-          } catch (e) {
+        } catch (e) {
             logDebug("❌ Completion error", e);
-            alert("Error completing payment.");
-          }
+            alert("Payment completion failed.");
+        }
         },
 
         onCancel: function () {
