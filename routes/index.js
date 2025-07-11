@@ -5,8 +5,6 @@ const Application = require('../core/Application');
 
 // ✅ Auth Middleware כתוסף פנימי
 function requireAuth(req, res, next) {
-  console.log("im here 59");
-  console.log(req.body);
   if (process.env.NODE_ENV == "staging") {
     const id = "8";
     const username = "adarelk4";
@@ -23,6 +21,7 @@ function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization;
   const cookieToken = req.cookies?.token;
   const queryToken = req.query?.token; // ✅ חדש
+  const bodyToken = req.body?.token; // ✅ חדש
   let token = null;
 
   if (authHeader?.startsWith?.('Bearer ')) {
@@ -31,6 +30,8 @@ function requireAuth(req, res, next) {
     token = cookieToken;
   } else if (typeof queryToken === 'string') {
     token = queryToken; // ✅ ייבחר אם אין שום דבר אחר
+  }else if (typeof bodyToken === 'string') {
+    token = bodyToken; // ✅ ייבחר אם אין שום דבר אחר
   }
 
   if (!token) {
