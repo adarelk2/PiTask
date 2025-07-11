@@ -24,9 +24,6 @@
     </div>
 
     <button type="button" class="btn btn-purple w-100" id="createPaymentBTN">💸 Buy Now</button>
-    <button type="button" class="btn btn-outline-warning mt-3" onclick="clearPendingPayment()">
-      🔄 Cancel Pending Payment
-    </button>
   </div>
 
   <div class="mt-4 text-muted">
@@ -61,19 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.Pi.init({ version: "2.0" });
 
-  // 🔄 כפתור ביטול תשלום תקוע
-  window.clearPendingPayment = async function () {
-    try {
-      await window.Pi.createPayment(null);
-      alert("✅ Previous payment cleared.");
-      logDebug("✅ Cleared previous pending payment (via null).");
-    } catch (e) {
-      alert("Nothing to cancel or failed to clear.");
-      logDebug("ℹ️ Cancel failed or not needed.", e);
-    }
-  };
-
-  // 💸 יצירת תשלום
   document.getElementById('createPaymentBTN').addEventListener('click', async () => {
     const amount = document.getElementById('amount').value;
     const agreed = document.getElementById('terms').checked;
@@ -92,16 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const authResult = await window.Pi.authenticate(['payments']);
       logDebug("✅ Authenticated", authResult);
 
-      // 🧹 ביטול תשלום קודם אם קיים
-      try {
-        await window.Pi.createPayment(null);
-        logDebug("🧹 Cleared any existing pending payment (via null).");
-      } catch (e) {
-        logDebug("ℹ️ No pending payment to clear.");
-      }
-
       const token = localStorage.getItem("token");
-      const userId = "{{user.id}}"; // ← מוחלף ע"י HBS
+      const userId = "{{user.id}}";
 
       const paymentData = {
         amount: parseFloat(amount),
@@ -116,6 +92,33 @@ document.addEventListener("DOMContentLoaded", () => {
       logDebug("📦 Payment data", paymentData);
 
       await window.Pi.createPayment(paymentData, {
+        // 🔄 טיפול בתשלום תקוע
+        onIncompletePaymentFound: async function (payment) {
+          logDebug("⚠️ Incomplete payment found", payment);
+
+          try {
+            const res = await fetch("/auth/approve-production", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ paymentId: payment.identifier, token }),
+              credentials: "include"
+            });
+
+            const result = await res.json();
+            logDebug("🔁 Re-approval result", result);
+
+            if (result.status === "approved") {
+              logDebug("✅ Re-approved pending payment.");
+            } else {
+              alert("❌ Pending payment could not be approved again.");
+            }
+          } catch (e) {
+            logDebug("❌ Error handling pending payment", e.message || e);
+            alert("Error handling previous payment.");
+          }
+        },
+
+        // ✅ תשלום חדש
         onReadyForServerApproval: async function (paymentId) {
           logDebug("📨 Payment ID received", { paymentId });
           try {
