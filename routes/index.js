@@ -5,7 +5,7 @@ const Application = require('../core/Application');
 
 // ✅ Auth Middleware כתוסף פנימי
 function requireAuth(req, res, next) {
-  if (process.env.NODE_ENV == "staging") {
+  if (process.env.NODE_ENV == "develop") {
     const id = "8";
     const username = "adarelk4";
     const token = jwt.sign({ id, username, ENV: process.env.NODE_ENV}, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -40,8 +40,6 @@ function requireAuth(req, res, next) {
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("im here 43");
-    console.log(decoded);
     if(decoded.ENV == process.env.NODE_ENV)
     {
       req.user = decoded;
