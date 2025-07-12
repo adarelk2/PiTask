@@ -22,8 +22,15 @@ hbs.registerHelper('eq', function (a, b) {
 // Routes
 const authRoutes = require('./routes/auth');
 const indexRoutes = require('./routes/index');
-app.use('/auth', authRoutes);
 
-app.use('/', indexRoutes);
+if (process.env.SERVER_MODE === "off") {
+  app.use((req, res) => {
+    res.render('error',{ errors: ["Website is Offline"] });
+  });
+} else {
+  app.use('/auth', authRoutes);
+  app.use('/', indexRoutes);
+}
+
 
 module.exports = app;
