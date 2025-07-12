@@ -7,10 +7,15 @@ class KDLevel1
     this.tasks = _tasks;
   }
 
-  getKD()
+  getKD() 
   {
-    return ((this.tasks.length * 0.1) + 0.2).toFixed(2)
+    const completed = this.tasks.filter(task =>
+      task.level === 1 && task.status === "approved"
+    ).length;
+  
+    return ((completed * 0.1) + 0.2).toFixed(2); // לדוגמה: בסיס 0.2, כל משימה מוסיפה 0.1
   }
+  
 }
 
 module.exports = KDLevel1;

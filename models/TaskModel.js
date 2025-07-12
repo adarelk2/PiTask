@@ -10,6 +10,7 @@ class TaskModel extends Model {
       reward: ['n', 'reward'],
       required_level: ['n', 'required_level'],
       proof_type: ['s', 'proof_type'],
+      url: ['s', 'url'],
       status: ['s', 'status']
     });
   }

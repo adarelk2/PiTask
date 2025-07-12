@@ -33,6 +33,7 @@ class Create_Task extends BaseController {
   {
     console.log("im here 34");
     console.log(_params);
+
     const users = await this.userModel.filter({id:this.req.user.id});
     const user = users[0];
     if(user.id)
@@ -40,6 +41,8 @@ class Create_Task extends BaseController {
       _params.user = user;
       const validation = new createValidationFactory('create_new_task_validation', _params).create();
       validation.validate();
+      console.log(validation);
+
       if(validation.errors.length)
       {
         this.json({flag:false, errors:validation.errors});
@@ -53,7 +56,7 @@ class Create_Task extends BaseController {
       {
         for(let i=0;i<_params.max_users;i++)
         {
-          const taskID = await this.taskModel.insert({publisher_id:_params.user.id, title:_params.title, description:_params.description, reward:_params.reward, required_level:_params.required_level});
+          const taskID = await this.taskModel.insert({publisher_id:_params.user.id, title:_params.title, description:_params.description, reward:_params.reward, required_level:_params.required_level, url:_params.url});
         }
 
         this.json({flag:true});

@@ -39,6 +39,8 @@ const ERROR_MESSAGES = {
       TASK_NOT_FOUND: "The requested task does not exist.",
       TASK_ALREADY_COMPLETED: "This task has already been completed.",
       PROOF_REQUIRED: "Proof is required for this task type.",
+      URL_REQUIRED: "URL is required for this task type.",
+      URL_INVALID: "URL is Invalid.",
       CANNOT_TARGET_HIGHER_LEVEL: "You cannot assign tasks to users at a higher level than yourself.",
       TASK_TOO_EXPENSIVE: "Total task cost exceeds allowed maximum.",
     },

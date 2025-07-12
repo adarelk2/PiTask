@@ -18,11 +18,12 @@ class Home extends BaseController {
     const tasks_submission = await this.task_submissionModel.filter({user_id:this.req.user.id, level: user[0].level})
 
     const kd = this.calculatorKD(this.req.user.id, user[0].level, tasks_submission);
-    const tasks_avilable = this.filterTasksByLevel(kd, user[0].level, tasks);
+    const tasks_avilable = this.filterTasksByLevel(user[0].id, kd, user[0].level, tasks);
     this.render('home', {
       title: 'TaskPi',
       user: this.req.user, // או כל אובייקט משתמש רלוונטי
-      balance: user[0].balance,
+      level: user[0].level,
+      kd,
       tasks: tasks_avilable,
       headerTitle:"TaskPi"
     });
@@ -56,11 +57,18 @@ class Home extends BaseController {
         return new createCalculatorKDFactory(_user_id, _user_level, _tasks).create().getKD();
     }
 
-    filterTasksByLevel(_kd, _level, _tasks)
+    filterTasksByLevel(_userID, _kd, _level, _tasks)
     {
-        return _tasks.filter(task=>{
-            return (task.reward <= _kd && task.required_level == _level) || task.required_level < _level ? true : false;
-        })
+        return _tasks.filter(task=>
+          {
+            return (
+              task.publisher_id !== _userID &&
+              (
+                (task.reward <= _kd && task.required_level === _level) ||
+                task.required_level < _level
+              )
+            );
+          })
     }
 }
 

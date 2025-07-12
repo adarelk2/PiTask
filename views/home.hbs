@@ -1,8 +1,16 @@
   <h2>Dashboard</h2>
-  <p>Hello {{user.username}}, your balance is {{balance}} π.</p>
+  <p>Hello {{user.username}}</p>
 
+  <table class="table">
+    <thead>
+      <th>Level</th>
+      <th>KD</th>
+    </thead>
+    <tbody>
+      <tr><td>{{level}}</td><td>{{kd}}</td></tr>
+    </tbody>
+  </table>
   <hr>
-
   <h3>Available Tasks</h3>
 
   {{#if tasks.length}}
@@ -13,6 +21,7 @@
             <div class="card-body">
               <h5 class="card-title">{{title}}</h5>
               <p class="card-text">{{description}}</p>
+              <p class="card-text"><small>Required level: {{required_level}}</small></p>
               <p class="card-text"><strong>Reward:</strong> {{reward}} π</p>
               <a href="/tasks/{{id}}" class="btn btn-purple">Take Task</a>
             </div>

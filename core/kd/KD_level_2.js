@@ -7,20 +7,27 @@ class KDLevel2
     this.tasks = _tasks;
   }
 
-  getKD()
-  {
-    let approved = 1;
-    let reject = 1;
-    this.tasks.map(task=>{
-      if(task.level == 2 && task.status =="approved")
-        approved+=1;
-      else if(task.level == 2 && task.status =="reject")
-        reject+=1;
-      })
-
-    return (approved/reject*0.5).toFixed(2)
-
+  getKD() {
+    let approved = 0;
+    let rejected = 0;
+  
+    this.tasks.forEach(task => {
+      if (task.level === 2 && task.status === "approved") approved++;
+      else if (task.level === 2 && task.status === "reject") rejected++;
+    });
+  
+    const total = approved + rejected;
+    // 🔒 נוסחת התחלה: אם אין עדיין משימות ברמה 2
+    if (total === 0) {
+      return 0.75;  // ערך קבוע התחלתי — מספיק בשביל משימות זולות
+    }
+  
+    const accuracy = approved / total;
+    const kd = accuracy * Math.log2(total + 1);
+    return kd.toFixed(2);
   }
+  
+  
 }
 
 module.exports = KDLevel2;
