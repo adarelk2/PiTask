@@ -11,7 +11,7 @@ const userModel = new UserModel();
 const authController = require('../controllers/authController');
 
 // 🔐 PI API KEY מהפורטל
-const PI_API_KEY = process.env.PI_API_KEY || "xbdryzovdb6ejryiaexe2ibtvmetdr3bjlvw15hexbrvifoghgxgyuxbntpivynl";
+const PI_API_KEY = process.env.PI_API_KEY;
 
 // התחברות
 router.get('/login', authController.showLogin);
