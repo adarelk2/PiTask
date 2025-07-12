@@ -15,6 +15,7 @@ class CreateNewTaskValidation {
       title,
       description,
       proof_description,
+      url,
       user
     } = this.params;
 
@@ -66,6 +67,22 @@ class CreateNewTaskValidation {
     // 6. Proof requirement
     if (requiredLevelNum > 1 && (!proof_description || proof_description.trim() === "")) {
       this.errors.push(ERROR_MESSAGES.TASK.PROOF_REQUIRED);
+    }
+
+    // 7. Proof requirement for url
+    if (requiredLevelNum === 1) {
+        if (!url || url.trim() === "") {
+        this.errors.push(ERROR_MESSAGES.TASK.URL_REQUIRED);
+        } else {
+        try {
+            const parsedUrl = new URL(url); // זורק שגיאה אם לא תקין
+            if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+            this.errors.push(ERROR_MESSAGES.TASK.URL_INVALID);
+            }
+        } catch (e) {
+            this.errors.push(ERROR_MESSAGES.TASK.URL_INVALID);
+        }
+        }
     }
 
     // 7. Cost sanity limit

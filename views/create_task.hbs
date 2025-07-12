@@ -1,31 +1,27 @@
+
 <h2 class="mb-4">Create a New Task</h2>
 
 <form method="POST" id="send_request">
-  <!-- Task Title -->
   <div class="mb-3">
     <label for="title" class="form-label">Task Title</label>
     <input type="text" name="title" id="title" class="form-control" required>
   </div>
 
-  <!-- Task Description -->
   <div class="mb-3">
     <label for="description" class="form-label">Task Description</label>
     <textarea name="description" id="description" class="form-control" rows="4" required></textarea>
   </div>
 
-  <!-- Max Users -->
   <div class="mb-3">
     <label for="max_users" class="form-label">Maximum Number of Users</label>
     <input type="number" name="max_users" id="max_users" class="form-control" value="0" min="1" required>
   </div>
 
-  <!-- Reward Per User -->
   <div class="mb-3">
     <label for="reward" class="form-label">Reward Per User (in Pi)</label>
     <input type="number" name="reward" id="reward" class="form-control" value="0" step="0.01" min="0.01" required>
   </div>
 
-  <!-- Required User Level -->
   <div class="mb-3">
     <label for="required_level" class="form-label">Required User Level</label>
     <select name="required_level" id="required_level" class="form-select" required>
@@ -34,37 +30,41 @@
     </select>
   </div>
 
-  <!-- Proof Description -->
   <div class="mb-3 d-none" id="proofDiv">
     <label for="proof_description" class="form-label">Proof Description</label>
     <textarea name="proof_description" id="proof_description" class="form-control" rows="2"
               placeholder="E.g. Upload a screenshot of your signup confirmation"></textarea>
   </div>
 
-  <!-- Price Summary -->
+  <div class="mb-3" id="url_div">
+    <label for="url" class="form-label">URL</label>
+    <input type="text" name="url" id="url" class="form-control"
+           placeholder="Enter the URL the user should visit">
+  </div>
+
   <div class="mb-3">
     <div>Reward (total): <span id="total_price">0</span> Pi</div>
     <div>Platform Fee (<span id="platform_fee_percent">0</span>%): <span id="paymentFeeAmount">0</span> Pi</div>
     <div><strong>Total Pi Required:</strong> <span id="total_pi_required">0</span> Pi</div>
   </div>
 
-  <!-- Submit Button -->
   <button type="submit" class="btn btn-purple" id="send_requestBTN">Publish Task</button>
 </form>
 
-<!-- Debug Output -->
 <div id="debug-log" style="margin-top:40px; font-family: monospace; background: #f9f9f9; border: 1px solid #ddd; padding: 1em; display: none;"></div>
 
 <script>
-  const PAYMENT_FEE = parseFloat("{{paymentFee}}");
+  const PAYMENT_FEE = parseFloat("1.1"); // adjust as needed
 
   const rewardInput = document.getElementById('reward');
   const usersInput = document.getElementById('max_users');
   const required_level = document.getElementById('required_level');
   const proofDiv = document.getElementById('proofDiv');
+  const urlDiv = document.getElementById('url_div');
   const title = document.getElementById('title');
   const description = document.getElementById('description');
   const proof_description = document.getElementById('proof_description');
+  const url_input = document.getElementById('url');
 
   const totalOutput = document.getElementById('total_price');
   const paymentFeeAmount = document.getElementById('paymentFeeAmount');
@@ -77,7 +77,6 @@
   const updateTotal = () => {
     const reward = parseFloat(rewardInput.value) || 0;
     const users = parseInt(usersInput.value) || 0;
-
     const baseTotal = reward * users;
     const feeAmount = baseTotal * feePercent;
     const fullTotal = baseTotal + feeAmount;
@@ -85,20 +84,26 @@
     totalOutput.textContent = baseTotal.toFixed(2);
     paymentFeeAmount.textContent = feeAmount.toFixed(2);
     total_pi_required.textContent = fullTotal.toFixed(2);
-    platform_fee_percent.textContent = (feePercent * 100).toFixed(1);
   };
 
   const updateRequireLevel = () => {
     if (required_level.value === "1") {
       proofDiv.classList.add('d-none');
+      urlDiv.classList.remove('d-none');
+      proof_description.removeAttribute("required");
+      url_input.setAttribute("required", "true");
     } else {
       proofDiv.classList.remove('d-none');
+      urlDiv.classList.add('d-none');
+      url_input.removeAttribute("required");
+      proof_description.setAttribute("required", "true");
     }
   };
 
   rewardInput.addEventListener('input', updateTotal);
   usersInput.addEventListener('input', updateTotal);
   required_level.addEventListener('change', updateRequireLevel);
+  window.addEventListener('DOMContentLoaded', updateRequireLevel);
 
   document.getElementById("send_request").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -115,27 +120,17 @@
         required_level: required_level.value,
         title: title.value,
         description: description.value,
-        proof_description: proof_description.value
+        proof_description: proof_description.value,
+        url: url_input.value
       }
     };
 
     showPopUpConfirming(create_request, payload);
   });
 
-  function logDebug(label, data) {
-    const debug = document.getElementById('debug-log');
-    debug.style.display = "block";
-    const block = document.createElement("div");
-    block.style.marginBottom = "1em";
-    block.innerHTML = `<strong>${label}</strong><pre>${JSON.stringify(data, null, 2)}</pre>`;
-    debug.appendChild(block);
-  }
-
   const create_request = async (_params) => {
     showLoading();
     try {
-      logDebug("🚀 Sending Payload", _params);
-
       const res = await fetch("/create_task", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -143,19 +138,10 @@
         body: JSON.stringify(_params)
       });
 
-      logDebug("📥 Raw Response", {
-        status: res.status,
-        ok: res.ok,
-        url: res.url
-      });
-
       const text = await res.text();
-      logDebug("📝 Raw Response Text", text);
-
       let response;
       try {
         response = JSON.parse(text);
-        logDebug("✅ Parsed JSON", response);
       } catch (jsonErr) {
         throw new Error("Server returned invalid JSON.");
       }
@@ -169,7 +155,6 @@
       }
 
     } catch (err) {
-      logDebug("❌ Caught Error", err);
       alert(`Something went wrong! - ${err.message || err}`);
     }
   };
