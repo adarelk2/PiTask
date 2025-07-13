@@ -12,7 +12,8 @@ class TaskModel extends Model {
       proof_description: ['s', 'proof_description'],
       maxUsers:['n', 'maxUsers'],
       url: ['s', 'url'],
-      status: ['s', 'status']
+      status: ['s', 'status'],
+      counter:['n', 'counter']
     });
   }
 
