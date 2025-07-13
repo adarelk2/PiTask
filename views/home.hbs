@@ -23,7 +23,7 @@
               <p class="card-text">{{description}}</p>
               <p class="card-text"><small>Required level: {{required_level}}</small></p>
               <p class="card-text"><strong>Reward:</strong> {{reward}} π</p>
-              <a href="/tasks/{{id}}" class="btn btn-purple">Take Task</a>
+              <button data-id="{{id}}" class="btn btn-purple taskPull">Take Task</button>
             </div>
           </div>
         </div>
@@ -33,3 +33,47 @@
     <p>No tasks available at the moment. Please check back later!</p>
   {{/if}}
 </div>
+
+<script>
+  const btns = document.querySelectorAll(".taskPull");
+  console.log(btns);
+  const token = localStorage.getItem("token");
+
+  btns.forEach((btn)=>{
+    btn.addEventListener("click", async(e)=>{
+      let taskID = e.target.getAttribute("data-id");
+      console.log(taskID);
+      showLoading();
+
+    try {
+      let response;
+      const res = await fetch("/home", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({params:{taskID},token, method:"claimTask"})
+      });
+
+      const text = await res.text();
+      try {
+        response = JSON.parse(text);
+      } catch (jsonErr) {
+        throw new Error("Server returned invalid JSON.");
+      }
+
+      Swal.close();
+
+      if (response.flag) {
+        btn.setAttribute("disabled", "true");
+        successAlert(response.errors);
+      } else {
+        failedAlert(response.errors);
+      }
+
+    } catch (err) {
+      alert(`Something went wrong! - ${err.message || err}`);
+    }
+
+      })
+  })
+</script>

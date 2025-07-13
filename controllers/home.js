@@ -3,6 +3,7 @@ const createCalculatorKDFactory = require("../core/create_calculator_KD_factory"
 const UserModel = require("../models/UserModel");
 const TaskModel = require("../models/TaskModel");
 const TaskSubmissionModel = require("../models/TaskSubmissionModel");
+const createValidationFactory = require("../core/create_validation_factory");
 
 class Home extends BaseController {
   constructor(req, res) {
@@ -52,24 +53,45 @@ class Home extends BaseController {
     // }
   }
 
-    calculatorKD(_user_id = false, _user_level = false, _tasks=[])
+  async claimTask(_params)
+  {
+    const user = await this.userModel.filter({id:this.req.user.id});
+    const task = await this.taskModel.filter({id:_params.taskID}).then(tasks=>tasks[0]);
+    const tasks_submission = await this.task_submissionModel.filter({user_id:this.req.user.id});
+    const kd = this.calculatorKD(this.req.user.id, user[0].level, tasks_submission);
+    const validation = new createValidationFactory('claim_task_validation', {kd, task, user:user[0], tasks:tasks_submission}).create();
+    validation.validate();
+
+    if(validation.errors.length)
     {
-        return new createCalculatorKDFactory(_user_id, _user_level, _tasks).create().getKD();
+      this.json({flag:false, errors:validation.errors});
+      return;
     }
 
-    filterTasksByLevel(_userID, _kd, _level, _tasks)
-    {
-        return _tasks.filter(task=>
-          {
-            return (
-              task.publisher_id !== _userID &&
-              (
-                (task.reward <= _kd && task.required_level === _level) ||
-                task.required_level < _level
-              )
-            );
-          })
-    }
+    const response = await this.task_submissionModel.insert({task_id: task.id, user_id:user[0].id, level: task.required_level});
+
+    return this.json({flag:true, response});
+
+  }
+
+  calculatorKD(_user_id = false, _user_level = false, _tasks=[])
+  {
+      return new createCalculatorKDFactory(_user_id, _user_level, _tasks).create().getKD();
+  }
+
+  filterTasksByLevel(_userID, _kd, _level, _tasks)
+  {
+      return _tasks.filter(task=>
+        {
+          return (
+            task.publisher_id !== _userID &&
+            (
+              (task.reward <= _kd && task.required_level === _level) ||
+              task.required_level < _level
+            )
+          );
+        })
+  }
 }
 
 module.exports = Home;
