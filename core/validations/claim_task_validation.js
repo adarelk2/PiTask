@@ -19,7 +19,7 @@ class ClaimTaskValidation {
       this.errors.push(ERROR_MESSAGES.TASK.USER_LEVEL_TOO_LOW);
     }
 
-    if(this.params.kd < this.params.task.reward)
+    if(this.params.kd < this.params.task.reward && this.params.user.level < this.params.task.required_level)
     {
       this.errors.push(ERROR_MESSAGES.TASK.USER_KD_TOO_LOW);
     }
@@ -37,6 +37,16 @@ class ClaimTaskValidation {
     
     if (alreadyClaimed) {
       this.errors.push(ERROR_MESSAGES.TASK.TASK_ALREADY_CLAIMED);
+    }
+
+    const alreadyClaimedFromThisTask = this.params.tasks.some(task => 
+      {
+        return (task.user_id === this.params.user.id && task.task_id == this.params.task.id)
+      }
+    );
+
+    if (alreadyClaimedFromThisTask) {
+      this.errors.push(ERROR_MESSAGES.TASK.TASK_ALREADY_CLAIMED_CANNOT_CLAIM_IT_AGAIN);
     }
     
     return this;

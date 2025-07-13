@@ -45,7 +45,8 @@ const ERROR_MESSAGES = {
       TASK_TOO_EXPENSIVE: "Total task cost exceeds allowed maximum.",
       USER_LEVEL_TOO_LOW: "Your user level does not meet the requirement for this task.",
       USER_KD_TOO_LOW: "Your user KD does not meet the requirement for this task.",
-      TASK_ALREADY_CLAIMED: "You already have an active task waiting for completion."
+      TASK_ALREADY_CLAIMED: "You already have an active task waiting for completion.",
+      TASK_ALREADY_CLAIMED_CANNOT_CLAIM_IT_AGAIN: "User has already claimed this task and cannot claim it again."
     },
     WALLET: {
       INSUFFICIENT_FUNDS: "Not enough Pi in your wallet to create this task.",
