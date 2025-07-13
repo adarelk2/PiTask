@@ -1,105 +1,41 @@
 const BaseController = require('../core/BaseController');
-const createCalculatorKDFactory = require("../core/create_calculator_KD_factory");
-const createValidationFactory = require("../core/create_validation_factory");
-const UserModel = require("../models/UserModel");
-const TaskModel = require("../models/TaskModel");
-const TaskSubmissionModel = require("../models/TaskSubmissionModel");
+const userService = require('../services/userService');
 const ERROR_MESSAGES = require('../constants/errors');
 
 class Home extends BaseController {
   constructor(req, res) {
     super(req, res);
-    this.userModel = new UserModel();
-    this.taskModel = new TaskModel();
-    this.task_submissionModel = new TaskSubmissionModel();
   }
 
   async print() {
-    const user = await this.userModel.filter({id:this.req.user.id});
-    const tasks = await this.taskModel.filter({status:'active'})
-    const tasks_submission = await this.task_submissionModel.filter({user_id:this.req.user.id, level: user[0].level})
+    const user = await userService.getUserById(this.req.user.id);
+    const tasks = await userService.getActiveTasks();
+    const submissions = await userService.getUserSubmissions(this.req.user.id, user.level);
+    
+    const kd = userService.calculatorKD(this.req.user.id, user.level, submissions);
+    const filtered = userService.filterTasksByLevel(user.id, kd, user.level, tasks);
 
-    const kd = this.calculatorKD(this.req.user.id, user[0].level, tasks_submission);
-    const tasks_avilable = this.filterTasksByLevel(user[0].id, kd, user[0].level, tasks);
     this.render('home', {
       title: 'TaskPi',
-      user: this.req.user, // או כל אובייקט משתמש רלוונטי
-      level: user[0].level,
+      user: this.req.user,
+      level: user.level,
       kd,
-      tasks: tasks_avilable,
-      headerTitle:"TaskPi"
+      tasks: filtered,
+      headerTitle: "TaskPi"
     });
-        // try {
-    //   const user = await this.userModel.findByUsername(this.req.user.username);
-    //   if (!user) {
-    //     return this.res.status(404).send("User not found");
-    //   }
-
-    //   const tasks = await this.taskModel.findAvailableForLevel(user.level);
-    //   const tasks_submission = await this.task_submissionModel.findByUser(user.id);
-    //   // בדיקה בלבד
-    //   let html = `<h1>Hello ${user.username}</h1>`;
-    //   html += `<p>Your balance: ${user.balance} π</p>`;
-    //   html += `<h2>Available Tasks:</h2><ul>`;
-    //   for (const task of tasks) {
-    //     html += `<li><strong>${task.title}</strong>: ${task.description} (Reward: ${task.reward} π)</li>`;
-    //   }
-    //   html += `</ul>`;
-
-    //   this.res.send(html);
-
-    // } catch (err) {
-    //   console.error("❌ Error in print():", err);
-    //   this.res.status(500).send("Internal server error");
-    // }
   }
 
-    calculatorKD(_user_id = false, _user_level = false, _tasks=[])
-    {
-        return new createCalculatorKDFactory(_user_id, _user_level, _tasks).create().getKD();
-    }
+  async claimTask(_params) {
+    const result = await userService.handleTaskClaim({
+      userId: this.req.user.id,
+      taskId: _params.taskID
+    });
 
-    filterTasksByLevel(_userID, _kd, _level, _tasks)
-    {
-        return _tasks.filter(task=>
-          {
-            return (
-              task.publisher_id !== _userID &&
-              (
-                ((task.reward <= _kd && task.required_level === _level) ||
-                task.required_level < _level) && task.counter < task.maxUsers
-              )
-            );
-          })
-    }
+    if (!result.flag)
+      return this.json({ flag: false, errors: result.errors });
 
-    async claimTask(_params)
-    {
-      const user = await this.userModel.filter({id:this.req.user.id});
-      const tasks = await this.taskModel.filter({id:_params.taskID, status:'active'});
-      if(tasks.length)
-      {
-        const task = tasks[0];
-        const tasks_submission = await this.task_submissionModel.filter({user_id:this.req.user.id});
-        const kd = this.calculatorKD(this.req.user.id, user[0].level, tasks_submission);
-        const validation = new createValidationFactory('claim_task_validation', {kd, task, user:user[0], tasks:tasks_submission}).create();
-        validation.validate();
-    
-        if(validation.errors.length)
-          return this.json({flag:false, errors:validation.errors});
-    
-        const task_submissions_avilable = await this.task_submissionModel.filter({task_id:task.id, user_id:0});
-        if(task_submissions_avilable.length)
-        {
-          await this.task_submissionModel.update({id:task_submissions_avilable[0].id},{user_id:user[0].id});
-          await this.taskModel.update({id:task.id},{counter:task.counter + 1});
-          return this.json({flag:true});
-        }
-      }
-
-      return this.json({flag:false, errors:[ERROR_MESSAGES.TASK.TASK_NOT_FOUND]});
-  
-    }
+    return this.json({ flag: true });
+  }
 }
 
 module.exports = Home;

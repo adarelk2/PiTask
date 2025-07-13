@@ -1,72 +1,34 @@
 const BaseController = require('../core/BaseController');
-const UserModel = require("../models/UserModel");
-const TaskModel = require("../models/TaskModel");
-const TaskSubmissionModel = require("../models/TaskSubmissionModel");
-const ERROR_MESSAGES = require("../constants/errors");
-
-
-const createValidationFactory = require("../core/create_validation_factory");
+const userService = require('../services/userService');
+const taskService = require('../services/taskService');
 
 class Create_Task extends BaseController {
   constructor(req, res) {
     super(req, res);
-    this.userModel = new UserModel();
-    this.taskModel = new TaskModel();
-    this.task_submissionModel = new TaskSubmissionModel();
   }
 
   async print() {
-    const users= await this.userModel.filter({id:this.req.user.id});
-    const user = users[0];
-    const fee = parseFloat(process.env.PAYMENT_FEE) - 1; // לדוגמה 0.14999
+    const user = await userService.getUserById(this.req.user.id);
+    const fee = parseFloat(process.env.PAYMENT_FEE) - 1;
     const roundedFee = parseFloat(fee.toFixed(2)); 
     this.render('create_task', {
       title: 'TaskPi - Create new task',
-      user: user, // או כל אובייקט משתמש רלוונטי
+      user,
       paymentFee: process.env.PAYMENT_FEE,
       paymentFeePercent: roundedFee,
-      headerTitle:"TaskPi"
+      headerTitle: "TaskPi"
     });
   }
 
-  async create_new_task(_params)
-  {
-    console.log("im here 34");
-    console.log(_params);
+  async create_new_task(_params) {
+    const result = await taskService.createNewTask(this.req.user.id, _params);
 
-    const users = await this.userModel.filter({id:this.req.user.id});
-    const user = users[0];
-    if(user.id)
-    {
-      _params.user = user;
-      const validation = new createValidationFactory('create_new_task_validation', _params).create();
-      validation.validate();
-      console.log(validation);
-
-      if(validation.errors.length)
-      {
-        this.json({flag:false, errors:validation.errors});
-        return;
-      }
-      
-      const new_balance = user.balance - (_params.reward * _params.max_users * process.env.PAYMENT_FEE);
-
-      const updated = await this.userModel.update({id:_params.user.id},{balance: new_balance});
-      if(updated)
-      {
-        const taskID = await this.taskModel.insert({publisher_id:_params.user.id, title:_params.title, description:_params.description, reward:_params.reward, required_level:_params.required_level, url:_params.url, proof_description: _params.proof_description, maxUsers: _params.max_users});
-
-        for(let i=0;i<_params.max_users;i++)
-        {
-          await this.task_submissionModel.insert({task_id:taskID, user_id:0});
-        }
-
-        this.json({flag:true});
-        return;
-      }
-
-      this.json({flag:false, errors:[ERROR_MESSAGES.GENERAL.UNKNOWN_ERROR]});
+    if (!result.flag) {
+      this.json({ flag: false, errors: result.errors });
+      return;
     }
+
+    this.json({ flag: true });
   }
 }
 
