@@ -54,9 +54,11 @@ class Create_Task extends BaseController {
       const updated = await this.userModel.update({id:_params.user.id},{balance: new_balance});
       if(updated)
       {
+        const taskID = await this.taskModel.insert({publisher_id:_params.user.id, title:_params.title, description:_params.description, reward:_params.reward, required_level:_params.required_level, url:_params.url, proof_description: _params.proof_description, maxUsers: _params.max_users});
+
         for(let i=0;i<_params.max_users;i++)
         {
-          const taskID = await this.taskModel.insert({publisher_id:_params.user.id, title:_params.title, description:_params.description, reward:_params.reward, required_level:_params.required_level, url:_params.url});
+          await this.task_submissionModel.insert({task_id:taskID, user_id:0});
         }
 
         this.json({flag:true});
