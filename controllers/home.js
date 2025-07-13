@@ -64,8 +64,8 @@ class Home extends BaseController {
             return (
               task.publisher_id !== _userID &&
               (
-                (task.reward <= _kd && task.required_level === _level) ||
-                task.required_level < _level
+                ((task.reward <= _kd && task.required_level === _level) ||
+                task.required_level < _level) && task.counter < task.maxUsers
               )
             );
           })
