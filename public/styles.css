@@ -3,6 +3,15 @@ body {
     margin: 0;
     padding: 0;
   }
+  body.rtl {
+    direction: rtl;
+    text-align: right;
+  }
+  body.ltr {
+    direction: ltr;
+    text-align: left;
+  }
+  
   h1, h2, h3 { color: #5d2c91; }
   .container {
     padding: 1rem;

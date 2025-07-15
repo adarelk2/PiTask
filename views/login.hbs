@@ -4,15 +4,13 @@
       <img src="/logo.PNG" alt="Pi Logo" width="64">
     </div>
 
-    <h2 class="mb-2 text-primary">Sign in with Pi Network</h2>
-    <p class="text-muted">Welcome to <strong>TaskPi</strong> – connect your Pi account to continue.</p>
+    <h2 class="mb-2 text-primary">{{__ "sign_in_title"}}</h2>
+    <p class="text-muted">{{__ "sign_in_subtitle"}}</p>
 
-    <!-- כפתור התחברות -->
     <button id="login-btn" class="btn btn-warning btn-lg w-100 mt-3">
-      🔐 Login with Pi
+      🔐 {{__ "login_with_pi"}}
     </button>
 
-    <!-- אזור הודעות -->
     <div id="auth-status" class="alert d-none mt-4" role="alert"></div>
   </div>
 </div>
@@ -43,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const auth = await window.Pi.authenticate(["username", "wallet_address", "payments"]);
       console.log("✅ Authenticated:", auth);
-      showMessage("success", `✅ Authenticated as @${auth.user.username} wallet: ${auth.user.wallet_address}`);
+      showMessage("success", `✅ Authenticated as @${auth.user.username}`);
       
       const res = await fetch("/auth/verify-token", {
         method: "POST",
