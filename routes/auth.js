@@ -53,6 +53,8 @@ router.post('/complete-production', async (req, res) => {
   const { paymentId, txid, token } = req.body;
   console.log("im here 54");
   console.log(token);
+  console.log(`paymentId: ${paymentId}`);
+  console.log(`taxID: ${txid}`);
   if (!paymentId || !txid || !token) {
     return res.status(400).json({ error: 'Missing paymentId, txid or token' });
   }

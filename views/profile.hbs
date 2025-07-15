@@ -22,17 +22,18 @@
         <thead>
           <tr>
             <th>Title</th>
-            <th>Submitted At</th>
+            <th>Reward</th>
             <th>Status</th>
             <th>Proof</th>
             <th>Review Reason</th>
+            <th>Submitted At</th>
           </tr>
         </thead>
         <tbody>
           {{#each submissions}}
             <tr>
-              <td>{{this.task_title}}</td>
-              <td>{{this.submitted_at}}</td>
+              <td>{{this.task.title}}</td>
+              <td>{{this.task.reward}}</td>
               <td>
                 {{#if (eq this.status "approved")}}
                   <span class="badge bg-success">Approved</span>
@@ -42,6 +43,7 @@
                   <span class="badge bg-warning text-dark">Pending</span>
                 {{/if}}
               </td>
+              <td>{{this.review_reason}}</td>
               <td>
                 {{#if this.submission_data}}
                   <a href="{{this.submission_data}}" target="_blank">View</a>
@@ -49,7 +51,7 @@
                   N/A
                 {{/if}}
               </td>
-              <td>{{this.review_reason}}</td>
+              <td>{{this.submitted_at}}</td>
             </tr>
           {{/each}}
         </tbody>
