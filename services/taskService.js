@@ -3,6 +3,7 @@ const TaskModel = require('../models/TaskModel');
 const TaskSubmissionModel = require('../models/TaskSubmissionModel');
 const createValidationFactory = require("../core/create_validation_factory");
 const ERROR_MESSAGES = require("../constants/errors");
+const userService = require('../services/userService');
 
 async function createNewTask(userId, params) {
   const userModel = new UserModel();
@@ -17,10 +18,10 @@ async function createNewTask(userId, params) {
   }
 
   params.user = user;
-
+  params.userService = userService;
   const validation = new createValidationFactory('create_new_task_validation', params).create();
-  validation.validate();
-
+  await validation.validate();
+  
   if (validation.errors.length) {
     return { flag: false, errors: validation.errors };
   }
