@@ -36,7 +36,6 @@ exports.verifyToken = async (req, res) => {
         username,
         pi_wallet_address: wallet_address,
         level: 1,
-        accuracy: 1.0,
         balance: 0
       });
       users = await userModel.filter({ username });
