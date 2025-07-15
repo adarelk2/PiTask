@@ -21,6 +21,7 @@
 
 <script>
   const token = localStorage.getItem("token");
+  const lang = localStorage.getItem("lang");
   document.getElementById("send_request").addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = document.getElementById("email_input").value;
@@ -31,7 +32,7 @@
   method: "POST",
   headers: { "Content-Type": "application/json" },
   credentials: "include",
-  body: JSON.stringify({method:"update_details", params:{email, wallet_address}, token})})
+  body: JSON.stringify({method:"update_details", params:{email, wallet_address}, token, lang})})
 const text = await res.text();
   try {
     response = JSON.parse(text);

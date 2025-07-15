@@ -15,7 +15,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // i18n configuration
 i18n.configure({
-  locales: ['en', 'he','zh-CN', 'zh-TW'],
+  locales: ['en', 'he','zh-CN', 'zh-TW', 'vi','hi', 'tl'],
   directory: path.join(__dirname, 'locales'),
   defaultLocale: 'en',
   queryParameter: 'lang', // מאפשר /?lang=en
@@ -41,8 +41,11 @@ hbs.registerPartials(path.join(__dirname, 'views/partials'));
 hbs.registerHelper('eq', (a, b) => a === b);
 hbs.registerHelper('inc', value => parseInt(value, 10) + 1);
 hbs.registerHelper('__', function () {
-  return i18n.__.apply(this, arguments);
+  const options = arguments[arguments.length - 1];
+  const locale = options.data.root.lang || 'en';
+  return i18n.__({ phrase: arguments[0], locale });
 });
+
 
 // Routes
 const authRoutes = require('./routes/auth');

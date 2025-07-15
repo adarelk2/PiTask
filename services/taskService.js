@@ -2,7 +2,6 @@ const UserModel = require('../models/UserModel');
 const TaskModel = require('../models/TaskModel');
 const TaskSubmissionModel = require('../models/TaskSubmissionModel');
 const createValidationFactory = require("../core/create_validation_factory");
-const ERROR_MESSAGES = require("../constants/errors");
 const userService = require('../services/userService');
 
 async function createNewTask(userId, params) {
@@ -14,7 +13,7 @@ async function createNewTask(userId, params) {
   const user = users[0];
 
   if (!user) {
-    return { flag: false, errors: [ERROR_MESSAGES.GENERAL.UNKNOWN_ERROR] };
+    return { flag: false, errors: [params.errors.GENERAL.UNKNOWN_ERROR] };
   }
 
   params.user = user;
@@ -31,7 +30,7 @@ async function createNewTask(userId, params) {
 
   const updated = await userModel.update({ id: user.id }, { balance: newBalance });
   if (!updated) {
-    return { flag: false, errors: [ERROR_MESSAGES.GENERAL.UNKNOWN_ERROR] };
+    return { flag: false, errors: [params.errors.GENERAL.UNKNOWN_ERROR] };
   }
 
   const taskID = await taskModel.insert({

@@ -4,7 +4,6 @@ const TaskModel = require("../models/TaskModel");
 const TaskSubmissionModel = require("../models/TaskSubmissionModel");
 const userService = require('../services/userService');
 const taskService = require('../services/taskService');
-const ERROR_MESSAGES = require('../constants/errors');
 
 class Profile extends BaseController {
   constructor(req, res) {
@@ -47,7 +46,7 @@ class Profile extends BaseController {
       }
     }
 
-    return this.json({flag:false, errors:[ERROR_MESSAGES.TASK.TASK_NOT_FOUND]})
+    return this.json({flag:false, errors:[this.errors.TASK.TASK_NOT_FOUND]})
   }
 }
 

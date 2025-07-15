@@ -6,6 +6,11 @@ class BaseController {
     this.res = res;
     this.view = new View(res);
     this.user = req.user || null;
+
+    let lang_errors = "en";
+    if("lang" in this.req.body)
+      lang_errors = this.req.body.lang;
+     this.errors = require(`../constants/errors_${lang_errors}`);
   }
 
   render(viewName, context = {}) {

@@ -1,10 +1,11 @@
 const BaseController = require('../core/BaseController');
 const userService = require('../services/userService');
-const ERROR_MESSAGES = require('../constants/errors');
 
 class Home extends BaseController {
   constructor(req, res) {
     super(req, res);
+
+
   }
 
   async print() {
