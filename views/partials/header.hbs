@@ -35,6 +35,15 @@
                 <li><a class="dropdown-item menu-link" href="/buy_pi">Buy Pi</a></li>
                 <li><a class="dropdown-item menu-link" href="/create_task">Create Task</a></li>
                 <li><a class="dropdown-item menu-link" href="/settings">Settings</a></li>
+                <li class="dropdown-item d-flex align-items-center">
+                  <label for="lang-select" class="me-2 mb-0">Language:</label>
+                  <select id="lang-select" class="form-select form-select-sm w-auto" onchange="changeLanguage(this.value)">
+                    <option value="en" {{#if (eq lang "en")}}selected{{/if}}>EN</option>
+                    <option value="he" {{#if (eq lang "he")}}selected{{/if}}>HE</option>
+                  </select>
+                </li>
+
+
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item text-danger" href="/auth/logout">Logout</a></li>
               </ul>
