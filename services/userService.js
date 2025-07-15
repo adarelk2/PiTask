@@ -37,6 +37,14 @@ function filterTasksByLevel(userID, kd, level, tasks) {
   });
 }
 
+async function incrementBalance(id, amount = 1) {
+    const userModel = new UserModel();
+    const user = await userModel.filter({id:id}).then(res=>res[0]);
+    const updated = await userModel.update({id:id}, {balance: user.balance + amount});
+    return updated;
+  }
+  
+
 async function getUserById(id) {
   const userModel = new UserModel();
   const users = await userModel.filter({ id });
@@ -90,5 +98,6 @@ module.exports = {
   getActiveTasks,
   getUserSubmissions,
   handleTaskClaim,
-  calculatorMaxRewardByLevel
+  calculatorMaxRewardByLevel,
+  incrementBalance
 };
