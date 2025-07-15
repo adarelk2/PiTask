@@ -17,46 +17,79 @@
   <!-- Completed Tasks -->
   <h4 class="text-secondary mb-3">📝 Your Task Submissions</h4>
   {{#if submissions.length}}
-    <div class="table-responsive">
-      <table class="table table-striped align-middle">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Reward</th>
-            <th>Status</th>
-            <th>Proof</th>
-            <th>Review Reason</th>
-            <th>Submitted At</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each submissions}}
-            <tr>
-              <td>{{this.task.title}}</td>
-              <td>{{this.task.reward}}</td>
-              <td>
-                {{#if (eq this.status "approved")}}
-                  <span class="badge bg-success">Approved</span>
-                {{else if (eq this.status "rejected")}}
-                  <span class="badge bg-danger">Rejected</span>
-                {{else}}
-                  <span class="badge bg-warning text-dark">Pending</span>
-                {{/if}}
-              </td>
-              <td>{{this.review_reason}}</td>
-              <td>
-                {{#if this.submission_data}}
-                  <a href="{{this.submission_data}}" target="_blank">View</a>
-                {{else}}
-                  N/A
-                {{/if}}
-              </td>
-              <td>{{this.submitted_at}}</td>
-            </tr>
-          {{/each}}
-        </tbody>
-      </table>
+    {{#each submissions}}
+      <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex">
+            <div class='col-8'>
+              <h5 class="card-title">{{this.task.title}}</h5>
+            </div>
+            <div class="col-4 text-end"><small style="color:gray;">#{{inc @index}}</small></div>
+          </div>
+
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Reward: </strong>{{this.task.reward}}</li>
+            <li class="list-group-item"><strong>Status: </strong> 
+                  {{#if (eq this.status "approved")}}
+                    <span class="badge bg-success">Approved</span>
+                    {{else if (eq this.status "rejected")}}
+                      <span class="badge bg-danger">Rejected</span>
+                    {{else}}
+                      <span class="badge bg-warning text-dark">Pending</span>
+                  {{/if}}
+            </li>
+            <li class="list-group-item"><strong>Review Reason: </strong>{{this.review_reason}}</li>
+            <li class="list-group-item"><strong>Submission Date: </strong>
+              {{#if this.submission_data}}
+                <a href="{{this.submission_data}}" target="_blank">View</a>
+              {{else}}
+                N/A
+              {{/if}}
+            </li>
+            <li class="list-group-item"><strong>Submitted At: </strong>{{this.submitted_at}}</li>
+            {{#if (eq this.status "pending")}}<li class="list-group-item"><button class='btn btn-purple startTaskBTN' data-id="{{this.id}}">Click here</button></li>{{/if}}
+          </ul>
+        </div>
+      </div>
+      {{/each}}
     </div>
   {{else}}
     <p class="text-muted">You haven't submitted any tasks yet.</p>
   {{/if}}
+
+  <script>
+    const startTaskBTNS = document.querySelectorAll(".startTaskBTN");
+    startTaskBTNS.forEach(btn=>{
+      btn.addEventListener("click", async function(e){
+      const task_submission_id = e.target.getAttribute("data-id");
+      const token = localStorage.getItem("token");
+
+      showLoading();
+      const res = await fetch("/profile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({method:"startTask", params:{task_submission_id}, token}),
+      credentials: "include"
+      });
+      Swal.close();
+
+      const text = await res.text();
+      let response;
+      try {
+        let response = JSON.parse(text);
+        console.log(response);
+        if(response.flag)
+        {
+          if(response.level == "1")
+          {
+            console.log("im here")
+            location.replace(response.url)
+          }
+        }
+      } catch (jsonErr) {
+        throw new Error("Server returned invalid JSON.");
+      }
+      
+    })
+    })
+  </script>
