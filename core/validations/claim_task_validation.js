@@ -3,7 +3,7 @@ class ClaimTaskValidation {
     this.params = _params;
     this.errors_lang = _params.errors
     this.errors = [];
-    this.errors = _params.errors
+    this.errors_lang = _params.errors
 
     return this;
   }
