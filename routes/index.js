@@ -26,6 +26,7 @@ async function requireAuth(req, res, next) {
 
   const authHeader = req.headers.authorization;
   const cookieToken = req.cookies?.token;
+  const bodyToken = req.body?.token; // ✅ חדש
   const queryToken = req.query?.token; // ✅ חדש
   let token = null;
 
@@ -33,7 +34,11 @@ async function requireAuth(req, res, next) {
     token = authHeader.split(' ')[1];
   } else if (typeof cookieToken === 'string') {
     token = cookieToken;
-  } else if (typeof queryToken === 'string') {
+  } 
+  else if (typeof bodyToken === 'string') {
+    token = bodyToken; // ✅ ייבחר אם אין שום דבר אחר
+  }
+  else if (typeof queryToken === 'string') {
     token = queryToken; // ✅ ייבחר אם אין שום דבר אחר
   }
 
