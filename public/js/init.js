@@ -1,16 +1,13 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     const token = localStorage.getItem('token');
-    console.log("here 4");
-    console.log(token);
-    if (!token) return;
-
+    const lang = localStorage.getItem('lang');
     document.querySelectorAll('.menu-link').forEach(link => {
         console.log(link);
       const baseHref = link.getAttribute('href');
       if(baseHref)
       {
-        link.setAttribute('href', `${baseHref}?token=${encodeURIComponent(token)}`);
+        link.setAttribute('href', `${baseHref}?token=${encodeURIComponent(token)}&lang=${lang}`);
       }
     });
   });
@@ -66,4 +63,12 @@
       title: _title,
       showConfirmButton: true,
     });
+  }
+
+  function changeLanguage(_ln)
+  {
+    localStorage.setItem('lang', _ln)
+    const token = localStorage.getItem("token");
+    location.replace(`/?token=${token}&lang=${_ln}`)
+    console.log(_ln)
   }
