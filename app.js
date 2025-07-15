@@ -19,6 +19,9 @@ hbs.registerPartials(path.join(__dirname, 'views/partials'));
 hbs.registerHelper('eq', function (a, b) {
   return a === b;
 });
+hbs.registerHelper("inc", function (value) {
+  return parseInt(value, 10) + 1;
+});
 // Routes
 const authRoutes = require('./routes/auth');
 const indexRoutes = require('./routes/index');
