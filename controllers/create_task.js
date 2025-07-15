@@ -28,6 +28,7 @@ class Create_Task extends BaseController {
   }
 
   async create_new_task(_params) {
+    _params.errors = this.errors;
     const result = await taskService.createNewTask(this.req.user.id, _params);
     
     if (!result.flag) {

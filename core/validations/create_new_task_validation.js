@@ -1,8 +1,7 @@
-const ERROR_MESSAGES = require("../../constants/errors");
-
 class CreateNewTaskValidation {
   constructor(_params) {
     this.params = _params;
+    this.errors_lang = _params.errors
     this.errors = [];
     return this;
   }
@@ -29,71 +28,71 @@ class CreateNewTaskValidation {
     const userBalance = parseFloat(user.balance || 0);
     if(maxReward < rewardNum)
     {
-      this.errors.push(ERROR_MESSAGES.TASK.MAX_REWARD + maxReward);
+      this.errors.push(this.errors_lang.TASK.MAX_REWARD + maxReward);
     }
     // 1. Validate numbers
     if (isNaN(rewardNum) || rewardNum <= 0) {
-      this.errors.push(ERROR_MESSAGES.TASK.INVALID_REWARD);
+      this.errors.push(this.errors_lang.TASK.INVALID_REWARD);
     }
 
     if (isNaN(maxUsersNum) || maxUsersNum < 1) {
-      this.errors.push(ERROR_MESSAGES.TASK.MAX_USERS_REQUIRED);
+      this.errors.push(this.errors_lang.TASK.MAX_USERS_REQUIRED);
     }
 
     if (isNaN(requiredLevelNum) || ![1, 2, 3].includes(requiredLevelNum)) {
-      this.errors.push(ERROR_MESSAGES.VALIDATION.INVALID_LEVEL);
+      this.errors.push(this.errors_lang.VALIDATION.INVALID_LEVEL);
     }
 
     // 2. Validate title & description
     if (!title || title.trim().length < 5) {
-      this.errors.push(ERROR_MESSAGES.VALIDATION.TITLE_TOO_SHORT);
+      this.errors.push(this.errors_lang.VALIDATION.TITLE_TOO_SHORT);
     }
 
     if (!description || description.trim().length < 10) {
-      this.errors.push(ERROR_MESSAGES.VALIDATION.DESCRIPTION_TOO_SHORT);
+      this.errors.push(this.errors_lang.VALIDATION.DESCRIPTION_TOO_SHORT);
     }
 
     // // 3. Wallet verification
     // if (!user.pi_wallet_address || user.pi_wallet_address === "UNVERIFIED") {
-    //   this.errors.push(ERROR_MESSAGES.WALLET.WALLET_NOT_CONNECTED);
+    //   this.errors.push(this.errors.WALLET.WALLET_NOT_CONNECTED);
     // }
 
     // 4. Balance check
     const totalCost = rewardNum * maxUsersNum * feeMultiplier;
 
     if (userBalance < totalCost) {
-      this.errors.push(ERROR_MESSAGES.WALLET.INSUFFICIENT_FUNDS);
+      this.errors.push(this.errors_lang.WALLET.INSUFFICIENT_FUNDS);
     }
 
     // // 5. Logical level restriction
     // if (requiredLevelNum > user.level) {
-    //   this.errors.push(ERROR_MESSAGES.TASK.CANNOT_TARGET_HIGHER_LEVEL);
+    //   this.errors.push(this.errors.TASK.CANNOT_TARGET_HIGHER_LEVEL);
     // }
 
     // 6. Proof requirement
     if (requiredLevelNum > 1 && (!proof_description || proof_description.trim() === "")) {
-      this.errors.push(ERROR_MESSAGES.TASK.PROOF_REQUIRED);
+      this.errors.push(this.errors_lang.TASK.PROOF_REQUIRED);
     }
 
     // 7. Proof requirement for url
     if (requiredLevelNum === 1) {
         if (!url || url.trim() === "") {
-        this.errors.push(ERROR_MESSAGES.TASK.URL_REQUIRED);
+        this.errors.push(this.errors_lang.TASK.URL_REQUIRED);
         } else {
         try {
             const parsedUrl = new URL(url); // זורק שגיאה אם לא תקין
             if (!["http:", "https:"].includes(parsedUrl.protocol)) {
-            this.errors.push(ERROR_MESSAGES.TASK.URL_INVALID);
+            this.errors.push(this.errors_lang.TASK.URL_INVALID);
             }
         } catch (e) {
-            this.errors.push(ERROR_MESSAGES.TASK.URL_INVALID);
+            this.errors.push(this.errors_lang.TASK.URL_INVALID);
         }
         }
     }
 
     // 7. Cost sanity limit
     if (totalCost > 1000) {
-      this.errors.push(ERROR_MESSAGES.TASK.TASK_TOO_EXPENSIVE);
+      this.errors.push(this.errors_lang.TASK_TOO_EXPENSIVE);
     }
     console.log(this.errors);
     return this;

@@ -39,6 +39,7 @@
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
 <script>
+const lang = localStorage.getItem("lang");
 document.addEventListener("DOMContentLoaded", () => {
   const logBox = document.getElementById("debug-log");
 
@@ -100,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const res = await fetch("/auth/approve-production", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ paymentId: payment.identifier, token }),
+              body: JSON.stringify({ paymentId: payment.identifier, token, lang }),
               credentials: "include"
             });
 
@@ -125,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const res = await fetch("/auth/approve-production", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ paymentId, token }),
+              body: JSON.stringify({ paymentId, token , lang}),
               credentials: "include"
             });
 
@@ -144,12 +145,12 @@ document.addEventListener("DOMContentLoaded", () => {
         },
 
         onReadyForServerCompletion: async function (paymentId, txid) {
-          logDebug("⏳ Payment ready for completion", { paymentId, txid });
+          logDebug("⏳ Payment ready for completion", { paymentId, txid, lang});
           try {
             const res = await fetch("/auth/complete-production", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ paymentId, txid, token }),
+              body: JSON.stringify({ paymentId, txid, token, lang }),
               credentials: "include"
             });
 

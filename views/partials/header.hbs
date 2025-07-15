@@ -45,10 +45,13 @@
   <label for="lang-select" class="me-1 mb-0 ms-1">{{__ "language"}}</label>
   <select id="lang-select" class="form-select form-select-sm w-auto"
           onchange="changeLanguage(this.value)">
-    <option value="en" {{#if (eq lang "en")}}selected{{/if}}>EN</option>
-    <option value="he" {{#if (eq lang "he")}}selected{{/if}}>HE</option>
-    <option value="zh-TW" {{#if (eq lang "zh-TW")}}selected{{/if}}>ZH-TW</option>
-    <option value="zh-CN" {{#if (eq lang "zh-CN")}}selected{{/if}}>ZH-CN</option>
+    <option value="en" {{#if (eq lang "en")}}selected{{/if}}>English</option>
+    <option value="he" {{#if (eq lang "he")}}selected{{/if}}>עברית</option>
+    <option value="zh-TW" {{#if (eq lang "zh-TW")}}selected{{/if}}>中文（繁體）</option>
+    <option value="zh-CN" {{#if (eq lang "zh-CN")}}selected{{/if}}>中文（简体）</option>
+    <option value="vi" {{#if (eq lang "vi")}}selected{{/if}}>Tiếng Việt</option>
+    <option value="hi" {{#if (eq lang "hi")}}selected{{/if}}>हिन्दी</option>
+    <option value="tl" {{#if (eq lang "tl")}}selected{{/if}}>Filipino</option>
 
   </select>
 </div>

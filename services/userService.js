@@ -3,7 +3,7 @@ const TaskModel = require('../models/TaskModel');
 const TaskSubmissionModel = require('../models/TaskSubmissionModel');
 const createCalculatorKDFactory = require('../core/create_calculator_KD_factory');
 const createValidationFactory = require('../core/create_validation_factory');
-const ERROR_MESSAGES = require('../constants/errors');
+const ERROR_MESSAGES = require('../constants/errors_en');
 
 function calculatorKD(user_id, user_level, tasks) {
   return new createCalculatorKDFactory(user_id, user_level, tasks).create().getKD();

@@ -1,9 +1,10 @@
-const ERROR_MESSAGES = require("../../constants/errors");
-
 class ClaimTaskValidation {
   constructor(_params) {
     this.params = _params;
+    this.errors_lang = _params.errors
     this.errors = [];
+    this.errors = _params.errors
+
     return this;
   }
 
@@ -11,22 +12,22 @@ class ClaimTaskValidation {
   {
     if(this.params.task.publisher_id == this.params.user.id)
     {
-      this.errors.push(ERROR_MESSAGES.GENERAL.UNKNOWN_ERROR);
+      this.errors.push(this.errors_lang.GENERAL.UNKNOWN_ERROR);
     }
 
     if(this.params.user.level < this.params.task.required_level)
     {
-      this.errors.push(ERROR_MESSAGES.TASK.USER_LEVEL_TOO_LOW);
+      this.errors.push(this.errors_lang.TASK.USER_LEVEL_TOO_LOW);
     }
 
     if(this.params.kd < this.params.task.reward && this.params.user.level < this.params.task.required_level)
     {
-      this.errors.push(ERROR_MESSAGES.TASK.USER_KD_TOO_LOW);
+      this.errors.push(this.errors_lang.TASK.USER_KD_TOO_LOW);
     }
 
     if(this.params.task.status !="active")
     {
-      this.errors.push(ERROR_MESSAGES.TASK.TASK_ALREADY_COMPLETED);
+      this.errors.push(this.errors_lang.TASK.TASK_ALREADY_COMPLETED);
     }
 
     const alreadyClaimed = this.params.tasks.some(task => 
@@ -36,7 +37,7 @@ class ClaimTaskValidation {
     );
     
     if (alreadyClaimed) {
-      this.errors.push(ERROR_MESSAGES.TASK.TASK_ALREADY_CLAIMED);
+      this.errors.push(this.errors_lang.TASK.TASK_ALREADY_CLAIMED);
     }
 
     const alreadyClaimedFromThisTask = this.params.tasks.some(task => 
@@ -46,7 +47,7 @@ class ClaimTaskValidation {
     );
 
     if (alreadyClaimedFromThisTask) {
-      this.errors.push(ERROR_MESSAGES.TASK.TASK_ALREADY_CLAIMED_CANNOT_CLAIM_IT_AGAIN);
+      this.errors.push(this.errors_lang.TASK.TASK_ALREADY_CLAIMED_CANNOT_CLAIM_IT_AGAIN);
     }
     
     return this;

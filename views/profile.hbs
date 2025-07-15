@@ -78,12 +78,13 @@
       btn.addEventListener("click", async function(e){
       const task_submission_id = e.target.getAttribute("data-id");
       const token = localStorage.getItem("token");
+      const lang = localStorage.getItem("lang");
 
       showLoading();
       const res = await fetch("/profile", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({method:"startTask", params:{task_submission_id}, token}),
+      body: JSON.stringify({method:"startTask", params:{task_submission_id}, token, lang}),
       credentials: "include"
       });
       Swal.close();
