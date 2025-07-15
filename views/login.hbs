@@ -50,12 +50,16 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const result = await res.json();
-
+      let lang='en'
+      if(localStorage.getItem('lang'))
+      {
+        lang = localStorage.getItem('lang')
+      }
       if (result.success) {
         localStorage.setItem("token", result.token);
         showMessage("success", "✅ Login successful! Redirecting...");
         setTimeout(() => {
-          window.location.href = `/?token=${result.token}`;
+          window.location.href = `/?token=${result.token}&lang=${lang}`;
         }, 1500);
       } else {
         showMessage("danger", "❌ Authentication failed on server.");
