@@ -53,6 +53,36 @@ async function createNewTask(userId, params) {
   return { flag: true };
 }
 
+async function getSubmissionsWithTaskDetails(_params) 
+{
+    const submissions = await new TaskSubmissionModel().filter(_params);
+    const taskModel = new TaskModel();
+  
+    for (const submission of submissions) {
+      const tasks = await taskModel.filter({ id: submission.task_id });
+      submission.task = {title: tasks[0].title, description: tasks[0].description, reward: tasks[0].reward};
+      submission.submitted_at = changeFormatDate(submission.submitted_at)
+    }
+  
+    return submissions;
+  }
+
+ function changeFormatDate(_date)
+  {
+    const submittedAt = new Date(_date);
+
+    const day = String(submittedAt.getDate()).padStart(2, '0');
+    const month = String(submittedAt.getMonth() + 1).padStart(2, '0');
+    const year = submittedAt.getFullYear();
+    const hours = String(submittedAt.getHours()).padStart(2, '0');
+    const minutes = String(submittedAt.getMinutes()).padStart(2, '0');
+
+    const formatted = `${day}/${month}/${year} ${hours}:${minutes}`;
+    console.log(formatted); // 👉 "13/07/2025 20:08"
+
+    return formatted;
+
+  }
 module.exports = {
-  createNewTask
+  createNewTask,getSubmissionsWithTaskDetails
 };

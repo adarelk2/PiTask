@@ -1,8 +1,9 @@
 const BaseController = require('../core/BaseController');
-const Controller = require('../core/Controller');
 const UserModel = require("../models/UserModel");
 const TaskModel = require("../models/TaskModel");
 const TaskSubmissionModel = require("../models/TaskSubmissionModel");
+const userService = require('../services/userService');
+const taskService = require('../services/taskService');
 
 class Profile extends BaseController {
   constructor(req, res) {
@@ -16,10 +17,8 @@ class Profile extends BaseController {
     const users= await this.userModel.filter({id:this.req.user.id});
     const user = users[0];
 
-    const tasks_submission = await this.task_submissionModel.filter({user_id: user.id});
-
-    let userController = new Controller(this.req, this.res).getController("home");
-    const kd = userController.calculatorKD(user.id, user.level, tasks_submission);
+    const tasks_submission = await taskService.getSubmissionsWithTaskDetails({user_id: this.req.user.id});
+    const kd = userService.calculatorKD(user.id, user.level, tasks_submission);
     user.accuracy = kd;
     console.log(kd);
     
