@@ -47,7 +47,7 @@ async function requireAuth(req, res, next) {
     const isValidEmail = typeof req.user.email === "string" &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(req.user.email);
     console.log(req.user);
-    if(!userService.isValidPiWallet(req.user.pi_wallet_address) || !isValidEmail && req.body.method !="update_details")
+    if((!userService.isValidPiWallet(req.user.pi_wallet_address) || !isValidEmail) && req.body.method !="update_details")
     {
       res.render('settings', {user:req.user});
     }
