@@ -1,10 +1,17 @@
 const BaseController = require('../core/BaseController');
+const UserModel = require('../models/UserModel');
+const TaskModel = require('../models/TaskModel');
+const TaskSubmissionModel = require('../models/TaskSubmissionModel');
 const userService = require('../services/userService');
 const taskService = require('../services/taskService');
 
 class Create_Task extends BaseController {
   constructor(req, res) {
     super(req, res);
+    this.userModel = new UserModel();
+    this.taskModel = new TaskModel();
+    this.taskSubmissionModel = new TaskSubmissionModel();
+
   }
 
   async print() {
@@ -22,7 +29,7 @@ class Create_Task extends BaseController {
 
   async create_new_task(_params) {
     const result = await taskService.createNewTask(this.req.user.id, _params);
-
+    
     if (!result.flag) {
       this.json({ flag: false, errors: result.errors });
       return;

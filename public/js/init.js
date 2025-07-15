@@ -57,7 +57,8 @@
 
   function failedAlert(_errors, _title="error")
   {
-    const errors = _errors.join("\n");
+    const errors = _errors.join("<br>");
+    console.log(errors);
     Swal.fire({
       position: "top-end",
       icon: "error",

@@ -9,6 +9,21 @@ function calculatorKD(user_id, user_level, tasks) {
   return new createCalculatorKDFactory(user_id, user_level, tasks).create().getKD();
 }
 
+async function calculatorMaxRewardByLevel(_level)
+{
+  const userModel = new UserModel();
+
+  const users = await userModel.filter({level:_level});
+  let maxReward = 0.1;
+
+  users.map(user=>{
+    if(user.accuracy > maxReward)
+      maxReward = user.accuracy;
+  })
+
+  return maxReward;
+}
+
 function filterTasksByLevel(userID, kd, level, tasks) {
   return tasks.filter(task => {
     return (
@@ -74,5 +89,6 @@ module.exports = {
   getUserById,
   getActiveTasks,
   getUserSubmissions,
-  handleTaskClaim
+  handleTaskClaim,
+  calculatorMaxRewardByLevel
 };

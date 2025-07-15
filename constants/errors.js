@@ -33,6 +33,7 @@ const ERROR_MESSAGES = {
     },
   
     TASK: {
+      MAX_REWARD: "The Reward max for this level is: ",
       INVALID_REWARD: "Reward must be a positive number.",
       INVALID_USER_LEVEL: "Invalid user level selected.",
       MAX_USERS_REQUIRED: "You must specify how many users can complete the task.",

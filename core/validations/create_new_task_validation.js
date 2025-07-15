@@ -7,7 +7,7 @@ class CreateNewTaskValidation {
     return this;
   }
 
-  validate() {
+  async validate() {
     const {
       reward,
       max_users,
@@ -19,13 +19,18 @@ class CreateNewTaskValidation {
       user
     } = this.params;
 
+    const maxReward = await this.params.userService.calculatorMaxRewardByLevel(1)
+
     const feeMultiplier = parseFloat(process.env.PAYMENT_FEE || "1.15");
 
     const rewardNum = parseFloat(reward);
     const maxUsersNum = parseInt(max_users);
     const requiredLevelNum = parseInt(required_level);
     const userBalance = parseFloat(user.balance || 0);
-
+    if(maxReward < rewardNum)
+    {
+      this.errors.push(ERROR_MESSAGES.TASK.MAX_REWARD + maxReward);
+    }
     // 1. Validate numbers
     if (isNaN(rewardNum) || rewardNum <= 0) {
       this.errors.push(ERROR_MESSAGES.TASK.INVALID_REWARD);
@@ -55,6 +60,7 @@ class CreateNewTaskValidation {
 
     // 4. Balance check
     const totalCost = rewardNum * maxUsersNum * feeMultiplier;
+
     if (userBalance < totalCost) {
       this.errors.push(ERROR_MESSAGES.WALLET.INSUFFICIENT_FUNDS);
     }
@@ -89,7 +95,7 @@ class CreateNewTaskValidation {
     if (totalCost > 1000) {
       this.errors.push(ERROR_MESSAGES.TASK.TASK_TOO_EXPENSIVE);
     }
-
+    console.log(this.errors);
     return this;
   }
 }
