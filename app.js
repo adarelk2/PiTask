@@ -15,7 +15,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // i18n configuration
 i18n.configure({
-  locales: ['en', 'he'],
+  locales: ['en', 'he','zh-CN', 'zh-TW'],
   directory: path.join(__dirname, 'locales'),
   defaultLocale: 'en',
   queryParameter: 'lang', // מאפשר /?lang=en
