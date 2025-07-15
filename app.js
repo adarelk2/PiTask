@@ -25,6 +25,13 @@ i18n.configure({
 
 app.use(i18n.init);
 
+// expose lang + dir to templates
+app.use((req, res, next) => {
+  res.locals.lang = req.getLocale();
+  res.locals.dir = req.__('dir');
+  next();
+});
+
 // HBS view engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');

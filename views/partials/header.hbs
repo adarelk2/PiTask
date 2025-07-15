@@ -10,47 +10,54 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link menu-link {{#if (eq activePage 'home')}}active{{/if}}" href="/">Tasks</a>
+            <a class="nav-link menu-link {{#if (eq activePage 'home')}}active{{/if}}" href="/">{{__ "nav_tasks"}}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link menu-link {{#if (eq activePage 'policy')}}active{{/if}}" href="/policy">Policy</a>
+            <a class="nav-link menu-link {{#if (eq activePage 'policy')}}active{{/if}}" href="/policy">{{__ "nav_policy"}}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link menu-link {{#if (eq activePage 'terms')}}active{{/if}}" href="/terms">Terms</a>
+            <a class="nav-link menu-link {{#if (eq activePage 'terms')}}active{{/if}}" href="/terms">{{__ "nav_terms"}}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link menu-link {{#if (eq activePage 'white_paper')}}active{{/if}}" href="/white_paper">White Paper</a>
+            <a class="nav-link menu-link {{#if (eq activePage 'white_paper')}}active{{/if}}" href="/white_paper">{{__ "nav_whitepaper"}}</a>
           </li>
         </ul>
 
-        <ul class="navbar-nav">
+        <ul class="navbar-nav" dir="rtl">
           {{#if user}}
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                 data-bs-toggle="dropdown" aria-expanded="false">
                 {{user.username}}
               </a>
-              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item menu-link" href="/profile">My Profile</a></li>
-                <li><a class="dropdown-item menu-link" href="/buy_pi">Buy Pi</a></li>
-                <li><a class="dropdown-item menu-link" href="/create_task">Create Task</a></li>
-                <li><a class="dropdown-item menu-link" href="/settings">Settings</a></li>
-                <li class="dropdown-item d-flex align-items-center">
-                  <label for="lang-select" class="me-2 mb-0">Language:</label>
-                  <select id="lang-select" class="form-select form-select-sm w-auto" onchange="changeLanguage(this.value)">
-                    <option value="en" {{#if (eq lang "en")}}selected{{/if}}>EN</option>
-                    <option value="he" {{#if (eq lang "he")}}selected{{/if}}>HE</option>
-                  </select>
-                </li>
+            <ul class="dropdown-menu {{#if (eq dir 'rtl')}}dropdown-menu-start{{else}}dropdown-menu-end{{/if}}"
+              aria-labelledby="navbarDropdown"
+              dir="ltr">
+            
+            <li><a class="dropdown-item menu-link" href="/profile">{{__ "nav_profile"}}</a></li>
+            <li><a class="dropdown-item menu-link" href="/buy_pi">{{__ "nav_buy_pi"}}</a></li>
+            <li><a class="dropdown-item menu-link" href="/create_task">{{__ "nav_create_task"}}</a></li>
+            <li><a class="dropdown-item menu-link" href="/settings">{{__ "nav_settings"}}</a></li>
 
+            <li class="dropdown-item">
+              <div class="d-flex align-items-center">
+                <label for="lang-select" class="me-2 mb-0">{{__ "language"}}</label>
+                <select id="lang-select" class="form-select form-select-sm w-auto ms-auto"
+                        onchange="changeLanguage(this.value)">
+                  <option value="en" {{#if (eq lang "en")}}selected{{/if}}>EN</option>
+                  <option value="he" {{#if (eq lang "he")}}selected{{/if}}>HE</option>
+                </select>
+              </div>
+            </li>
 
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger" href="/auth/logout">Logout</a></li>
-              </ul>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="/auth/logout">{{__ "logout"}}</a></li>
+          </ul>
+
             </li>
           {{else}}
             <li class="nav-item">
-              <a class="nav-link" href="/login">Login</a>
+              <a class="nav-link" href="/login">{{__ "login"}}</a>
             </li>
           {{/if}}
         </ul>

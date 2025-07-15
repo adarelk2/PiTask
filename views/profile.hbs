@@ -1,61 +1,76 @@
+<h2 class="mb-3 text-primary">👤 {{user.username}} {{__ "profile_title"}}</h2>
 
-  <h2 class="mb-3 text-primary">👤 {{user.username}}'s Profile</h2>
-
-  <!-- Profile Summary -->
-  <div class="card mb-4 shadow-sm">
-    <div class="card-body">
-      <h5 class="card-title">Account Info</h5>
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item"><strong>Level:</strong> {{user.level}}</li>
-        <li class="list-group-item"><strong>Accuracy:</strong> {{#if user.accuracy}}{{user.accuracy}}KD{{else}}N/A{{/if}}</li>
-        <li class="list-group-item"><strong>Balance:</strong> {{user.balance}} π <a class="menu-link" href='/buy_pi'>buy more</a></li>
-        <li class="list-group-item"><strong>Wallet:</strong> {{user.pi_wallet_address}}</li>
-      </ul>
-    </div>
+<!-- Profile Summary -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+    <h5 class="card-title">{{__ "account_info"}}</h5>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item"><strong>{{__ "level"}}:</strong> {{user.level}}</li>
+      <li class="list-group-item">
+        <strong>{{__ "accuracy"}}:</strong>
+        {{#if user.accuracy}}{{user.accuracy}}KD{{else}}N/A{{/if}}
+      </li>
+      <li class="list-group-item">
+        <strong>{{__ "balance"}}:</strong> {{user.balance}} π
+        <a class="menu-link" href='/buy_pi'>{{__ "buy_more"}}</a>
+      </li>
+      <li class="list-group-item"><strong>{{__ "wallet"}}:</strong> {{user.pi_wallet_address}}</li>
+    </ul>
   </div>
+</div>
 
-  <!-- Completed Tasks -->
-  <h4 class="text-secondary mb-3">📝 Your Task Submissions</h4>
-  {{#if submissions.length}}
-    {{#each submissions}}
-      <div class="card mb-4 shadow-sm">
-        <div class="card-body">
-          <div class="d-flex">
-            <div class='col-8'>
-              <h5 class="card-title">{{this.task.title}}</h5>
-            </div>
-            <div class="col-4 text-end"><small style="color:gray;">#{{inc @index}}</small></div>
+<!-- Completed Tasks -->
+<h4 class="text-secondary mb-3">📝 {{__ "your_task_submissions"}}</h4>
+
+{{#if submissions.length}}
+  {{#each submissions}}
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex">
+          <div class='col-8'>
+            <h5 class="card-title">{{this.task.title}}</h5>
           </div>
-
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item"><strong>Reward: </strong>{{this.task.reward}}</li>
-            <li class="list-group-item"><strong>Status: </strong> 
-                  {{#if (eq this.status "approved")}}
-                    <span class="badge bg-success">Approved</span>
-                    {{else if (eq this.status "rejected")}}
-                      <span class="badge bg-danger">Rejected</span>
-                    {{else}}
-                      <span class="badge bg-warning text-dark">Pending</span>
-                  {{/if}}
-            </li>
-            <li class="list-group-item"><strong>Review Reason: </strong>{{this.review_reason}}</li>
-            <li class="list-group-item"><strong>Submission Date: </strong>
-              {{#if this.submission_data}}
-                <a href="{{this.submission_data}}" target="_blank">View</a>
-              {{else}}
-                N/A
-              {{/if}}
-            </li>
-            <li class="list-group-item"><strong>Submitted At: </strong>{{this.submitted_at}}</li>
-            {{#if (eq this.status "pending")}}<li class="list-group-item"><button class='btn btn-purple startTaskBTN' data-id="{{this.id}}">Click here</button></li>{{/if}}
-          </ul>
+          <div class="col-4 text-end">
+            <small style="color:gray;">#{{inc @index}}</small>
+          </div>
         </div>
+
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item"><strong>{{__ "reward"}}:</strong> {{this.task.reward}}</li>
+          <li class="list-group-item">
+            <strong>{{__ "status"}}:</strong>
+            {{#if (eq this.status "approved")}}
+              <span class="badge bg-success">{{__ "approved"}}</span>
+            {{else if (eq this.status "rejected")}}
+              <span class="badge bg-danger">{{__ "rejected"}}</span>
+            {{else}}
+              <span class="badge bg-warning text-dark">{{__ "pending"}}</span>
+            {{/if}}
+          </li>
+          <li class="list-group-item"><strong>{{__ "review_reason"}}:</strong> {{this.review_reason}}</li>
+          <li class="list-group-item">
+            <strong>{{__ "submission_data"}}:</strong>
+            {{#if this.submission_data}}
+              <a href="{{this.submission_data}}" target="_blank">{{__ "view"}}</a>
+            {{else}}
+              N/A
+            {{/if}}
+          </li>
+          <li class="list-group-item"><strong>{{__ "submitted_at"}}:</strong> {{this.submitted_at}}</li>
+
+          {{#if (eq this.status "pending")}}
+            <li class="list-group-item">
+              <button class='btn btn-purple startTaskBTN' data-id="{{this.id}}">{{__ "click_here"}}</button>
+            </li>
+          {{/if}}
+        </ul>
       </div>
-      {{/each}}
     </div>
-  {{else}}
-    <p class="text-muted">You haven't submitted any tasks yet.</p>
-  {{/if}}
+  {{/each}}
+{{else}}
+  <p class="text-muted">{{__ "no_submissions_yet"}}</p>
+{{/if}}
+
 
   <script>
     const startTaskBTNS = document.querySelectorAll(".startTaskBTN");
