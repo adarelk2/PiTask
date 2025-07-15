@@ -20,7 +20,6 @@ class Settings extends BaseController {
 
   async update_details(_params)
   {
-    console.log(_params);
     const email = _params.email
     const pi_wallet_address = _params.wallet_address;
     if (!userService.isValidPiWallet(pi_wallet_address)) {
