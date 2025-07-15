@@ -1,0 +1,47 @@
+<h2>Settings</h2>
+<p>Hello {{user.username}}</p>
+
+<form id="send_request">
+  <div class="form-group">
+    <label for="exampleInputEmail1">Email address</label>
+    <input type="email" required class="form-control" id="email_input" aria-describedby="emailHelp" value="{{user.email}}">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">Wallet address</label>
+    <input type="text" required class="form-control" id="wallet_input" value="{{user.pi_wallet_address}}">
+  </div>
+
+  <button type="submit" id="saveBTN" class="btn btn-purple mt-3">Save</button>
+</form>
+
+<script>
+  const token = localStorage.getItem("token");
+  document.getElementById("send_request").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = document.getElementById("email_input").value;
+  const wallet_address = document.getElementById("wallet_input").value;
+  showLoading();
+
+  const res = await fetch("/settings", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  credentials: "include",
+  body: JSON.stringify({method:"update_details", params:{email, wallet_address}, token})})
+const text = await res.text();
+  try {
+    response = JSON.parse(text);
+  } catch (jsonErr) {
+    throw new Error("Server returned invalid JSON.");
+  }
+
+  Swal.close();
+
+  if (response.flag) {
+    successAlert(response.errors, function(){
+      location.replace("/auth/logout");
+    });
+  } else {
+    failedAlert(response.errors);
+  }
+});
+</script>
