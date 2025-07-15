@@ -13,25 +13,25 @@
   <hr>
   <h3>Available Tasks</h3>
 
-  {{#if tasks.length}}
-    <div class="row ">
-      {{#each tasks}}
-        <div class="col-md-6 mb-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">{{title}}</h5>
-              <p class="card-text">{{description}}</p>
-              <p class="card-text"><small>Required level: {{required_level}}</small></p>
-              <p class="card-text"><strong>Reward:</strong> {{reward}} π</p>
-              <button data-id="{{id}}" class="btn btn-purple taskPull">Take Task</button>
-            </div>
+{{#if (hasKeys tasks)}}
+  <div class="row">
+    {{#eachInObject tasks}}
+      <div class="col-md-6 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{title}}</h5>
+            <p class="card-text">{{description}}</p>
+            <p class="card-text"><small>Required level: {{required_level}}</small></p>
+            <p class="card-text"><strong>Reward:</strong> {{reward}} π</p>
+            <button data-id="{{id}}" class="btn btn-purple taskPull">Take Task</button>
           </div>
         </div>
-      {{/each}}
-    </div>
-  {{else}}
-    <p>No tasks available at the moment. Please check back later!</p>
-  {{/if}}
+      </div>
+    {{/eachInObject}}
+  </div>
+{{else}}
+  <p>No tasks available at the moment. Please check back later!</p>
+{{/if}}
 </div>
 
 <script>

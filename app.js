@@ -19,6 +19,22 @@ hbs.registerPartials(path.join(__dirname, 'views/partials'));
 hbs.registerHelper('eq', function (a, b) {
   return a === b;
 });
+
+hbs.registerHelper("hasKeys", function (object) {
+  return object && Object.keys(object).length > 0;
+});
+
+hbs.registerHelper("eachInObject", function (object, block) {
+  let out = "";
+  for (const key in object) {
+    if (Object.prototype.hasOwnProperty.call(object, key)) {
+      out += block.fn({ id: key, ...object[key] });
+    }
+  }
+  return out;
+});
+
+
 // Routes
 const authRoutes = require('./routes/auth');
 const indexRoutes = require('./routes/index');

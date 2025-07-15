@@ -13,14 +13,20 @@ class Home extends BaseController {
     const submissions = await userService.getUserSubmissions(this.req.user.id, user.level);
     
     const kd = userService.calculatorKD(this.req.user.id, user.level, submissions);
-    const filtered = userService.filterTasksByLevel(user.id, kd, user.level, tasks);
+    const tasks_avilableForUser = userService.filterTasksByLevel(user.id, kd, user.level, tasks);
+    submissions.map(task_submission=>{
+      if(task_submission.task_id in tasks_avilableForUser)
+        delete tasks_avilableForUser[task_submission.task_id];
+    })
+
+    console.log(tasks_avilableForUser);
 
     this.render('home', {
       title: 'TaskPi',
       user: this.req.user,
       level: user.level,
       kd,
-      tasks: filtered,
+      tasks: tasks_avilableForUser,
       headerTitle: "TaskPi"
     });
   }

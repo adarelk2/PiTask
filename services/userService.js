@@ -10,16 +10,19 @@ function calculatorKD(user_id, user_level, tasks) {
 }
 
 function filterTasksByLevel(userID, kd, level, tasks) {
-  return tasks.filter(task => {
-    return (
-      task.publisher_id !== userID &&
-      (
-        ((task.reward <= kd && task.required_level === level) ||
-        task.required_level < level) &&
-        task.counter < task.maxUsers
-      )
-    );
+    const tasks_obj = {}
+    tasks.map(task => 
+    {
+        if(task.publisher_id !== userID &&
+        (
+              ((task.reward <= kd && task.required_level === level) ||
+              task.required_level < level) &&
+              task.counter < task.maxUsers
+        ))
+            tasks_obj[task.id] = task;
   });
+
+  return tasks_obj;
 }
 
 async function getUserById(id) {
@@ -34,8 +37,9 @@ async function getActiveTasks() {
 }
 
 async function getUserSubmissions(user_id, level) {
-  const taskSubmissionModel = new TaskSubmissionModel();
-  return await taskSubmissionModel.filter({ user_id, level });
+    const taskSubmissionModel = new TaskSubmissionModel();
+    const tasks_submissions = await taskSubmissionModel.filter({ user_id});
+    return tasks_submissions.filter(task=>task.level <= level);
 }
 
 async function handleTaskClaim({ userId, taskId }) {
