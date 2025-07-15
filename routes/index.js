@@ -2,14 +2,19 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const Application = require('../core/Application');
+const userService = require('../services/userService');
+
 
 // ✅ Auth Middleware כתוסף פנימי
-function requireAuth(req, res, next) {
+async function requireAuth(req, res, next) {
   if (process.env.NODE_ENV == "develop") {
-    const id = "8";
-    const username = "adarelk4";
-    const token = jwt.sign({ id, username, ENV: process.env.NODE_ENV}, process.env.JWT_SECRET, { expiresIn: '1h' });
-
+    const id = "6";
+    const user = await userService.getUserById(id);
+    const token = jwt.sign(
+      { id: user.id, username: user.username, pi_wallet_address:user.pi_wallet_address, email:user.email , ENV: process.env.NODE_ENV},
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
     // תוכל להחזיר את זה ב-JSON או לשמור ב-localStorage
     res.cookie('token', token, {
       secure: process.env.NODE_ENV === 'production',
@@ -18,10 +23,10 @@ function requireAuth(req, res, next) {
 
     req.cookies.token = token;
   }
+
   const authHeader = req.headers.authorization;
   const cookieToken = req.cookies?.token;
   const queryToken = req.query?.token; // ✅ חדש
-  const bodyToken = req.body?.token; // ✅ חדש
   let token = null;
 
   if (authHeader?.startsWith?.('Bearer ')) {
@@ -30,8 +35,6 @@ function requireAuth(req, res, next) {
     token = cookieToken;
   } else if (typeof queryToken === 'string') {
     token = queryToken; // ✅ ייבחר אם אין שום דבר אחר
-  }else if (typeof bodyToken === 'string') {
-    token = bodyToken; // ✅ ייבחר אם אין שום דבר אחר
   }
 
   if (!token) {
@@ -40,14 +43,16 @@ function requireAuth(req, res, next) {
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if(decoded.ENV == process.env.NODE_ENV)
+    req.user = decoded;
+    const isValidEmail = typeof req.user.email === "string" &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(req.user.email);
+    console.log(req.user);
+    if(!userService.isValidPiWallet(req.user.pi_wallet_address) || !isValidEmail && req.body.method !="update_details")
     {
-      req.user = decoded;
-      next();
+      res.render('settings', {user:req.user});
     }
     else
-      return res.redirect('/auth/login');
-
+      next();
   } catch (err) {
     console.warn('🔒 Invalid token');
     return res.redirect('/auth/login');
@@ -62,11 +67,8 @@ router.get('/:controller?', requireAuth, (req, res) => {
   app.init();
 });
 
-// ✅ הראוטר הראשי
 router.post('/:controller?', requireAuth, (req, res) => {
   const app = new Application(req, res);
   app.init();
-
 });
-
 module.exports = router;

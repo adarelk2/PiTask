@@ -20,6 +20,7 @@ const ERROR_MESSAGES = {
   
     VALIDATION: {
       INVALID_EMAIL: "Please enter a valid email address.",
+      INVALID_WALLET: "Please enter a valid Wallet address.",
       INVALID_PASSWORD: "Password must be at least 8 characters long.",
       PASSWORD_MISMATCH: "Passwords do not match.",
       INVALID_USERNAME: "Username must be 3–20 characters, letters and numbers only.",

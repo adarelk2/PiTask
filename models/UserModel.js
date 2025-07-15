@@ -5,6 +5,7 @@ class UserModel extends Model {
     super('users', {
       id: ['n', 'id'],
       username: ['s', 'username'],
+      email: ['s', 'email'],
       pi_wallet_address: ['s', 'pi_wallet_address'],
       level: ['n', 'level'],
       accuracy: ['n', 'accuracy'],

@@ -91,6 +91,11 @@ async function handleTaskClaim({ userId, taskId }) {
   return { flag: false, errors: [ERROR_MESSAGES.TASK.TASK_NOT_FOUND] };
 }
 
+function isValidPiWallet(address) {
+  return typeof address === "string" &&
+    /^G[A-Z2-7]{55}$/.test(address);
+}
+
 module.exports = {
   calculatorKD,
   filterTasksByLevel,
@@ -99,5 +104,6 @@ module.exports = {
   getUserSubmissions,
   handleTaskClaim,
   calculatorMaxRewardByLevel,
-  incrementBalance
+  incrementBalance,
+  isValidPiWallet
 };

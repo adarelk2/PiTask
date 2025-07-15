@@ -44,7 +44,7 @@ exports.verifyToken = async (req, res) => {
     const user = users[0];
 
     const token = jwt.sign(
-      { id: user.id, username: user.username, ENV: process.env.NODE_ENV},
+      { id: user.id, username: user.username, pi_wallet_address:user.pi_wallet_address, email:user.email , ENV: process.env.NODE_ENV},
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
