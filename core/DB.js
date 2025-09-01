@@ -1,10 +1,10 @@
 const mysql = require('mysql2/promise');
 const pool = mysql.createPool({
-  host: 'mysql-353956d6-adarelk2-4949.e.aivencloud.com',
-  user: 'avnadmin',
-  password: 'AVNS_1Hl8MEZrYQ7L5PdBSeB',
-  database: 'TaskPi',
-  port: 15929,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB,
+  port: process.env.DB_PORT,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
