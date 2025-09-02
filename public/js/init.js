@@ -12,6 +12,21 @@
     });
   });
 
+  function getAllParams(url = window.location.href) {
+  const params = {};
+  const queryString = url.split('?')[1]?.split('#')[0]; // Get part after "?" and before "#"
+
+  if (!queryString) return params;
+
+  queryString.split('&').forEach(pair => {
+    const [key, value] = pair.split('=');
+    params[decodeURIComponent(key)] = decodeURIComponent(value || '');
+  });
+
+  return params;
+}
+
+
   function showLoading()
   {
     Swal.fire({
