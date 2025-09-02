@@ -4,5 +4,4 @@ bin/
 
 # Ignore dotenv if תשתמש בו בעתיד
 .env
-Plans/
 core/DB.js
