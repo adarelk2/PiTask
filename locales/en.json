@@ -151,5 +151,7 @@
 	"logout": "Logout",
 	"login": "Login",
 	"TEST": "TEST",
-	"test": "test"
+	"test": "test",
+	"tasks": "tasks",
+	"submissions": "submissions"
 }

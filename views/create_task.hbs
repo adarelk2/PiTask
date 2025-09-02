@@ -1,59 +1,147 @@
-<h2 class="mb-4">{{__ "create_new_task"}}</h2>
-
-<form method="POST" id="send_request">
-  <div class="mb-3">
-    <label for="title" class="form-label">{{__ "task_title"}}</label>
-    <input type="text" name="title" id="title" class="form-control" required>
+<div class="fade-in">
+  <!-- Header Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card shadow-soft">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center">
+            <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-4">
+              <i class="fas fa-plus-circle text-primary fs-1"></i>
+            </div>
+            <div>
+              <h2 class="mb-1 text-primary">{{__ "create_new_task"}}</h2>
+              <p class="text-muted mb-0">Create a new task for the Pi Network community</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="mb-3">
-    <label for="description" class="form-label">{{__ "task_description"}}</label>
-    <textarea name="description" id="description" class="form-control" rows="4" required></textarea>
-  </div>
+  <!-- Create Task Form -->
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="card shadow-soft">
+        <div class="card-header bg-primary bg-opacity-10">
+          <h5 class="card-title mb-0 text-primary">
+            <i class="fas fa-edit me-2"></i>Task Details
+          </h5>
+        </div>
+        <div class="card-body">
+          <form method="POST" id="send_request">
+            <div class="row">
+              <div class="col-12 mb-3">
+                <label for="title" class="form-label">
+                  <i class="fas fa-heading me-1"></i>{{__ "task_title"}}
+                </label>
+                <input type="text" name="title" id="title" class="form-control" 
+                       placeholder="Enter a clear and descriptive title for your task" required>
+              </div>
 
-  <div class="mb-3">
-    <label for="max_users" class="form-label">{{__ "max_users"}}</label>
-    <input type="number" name="max_users" id="max_users" class="form-control" value="0" min="1" required>
-  </div>
+              <div class="col-12 mb-3">
+                <label for="description" class="form-label">
+                  <i class="fas fa-align-left me-1"></i>{{__ "task_description"}}
+                </label>
+                <textarea name="description" id="description" class="form-control" rows="4" 
+                          placeholder="Provide detailed instructions for task completion" required></textarea>
+              </div>
 
-  <div class="mb-3">
-    <label for="reward" class="form-label">{{__ "reward_per_user"}}</label>
-    <input type="number" name="reward" id="reward" class="form-control" value="0" step="0.01" min="0.01" required>
-  </div>
+              <div class="col-md-6 mb-3">
+                <label for="max_users" class="form-label">
+                  <i class="fas fa-users me-1"></i>{{__ "max_users"}}
+                </label>
+                <input type="number" name="max_users" id="max_users" class="form-control" 
+                       value="0" min="1" placeholder="Maximum number of users" required>
+              </div>
 
-  <div class="mb-3">
-    <label for="required_level" class="form-label">{{__ "required_user_level"}}</label>
-    <select name="required_level" id="required_level" class="form-select" required>
-      <option value="1">{{__ "level_1"}}</option>
-      <option value="2" disabled>{{__ "level_2_disabled"}}</option>
-    </select>
-  </div>
+              <div class="col-md-6 mb-3">
+                <label for="reward" class="form-label">
+                  <i class="fas fa-coins me-1"></i>{{__ "reward_per_user"}}
+                </label>
+                <div class="input-group">
+                  <input type="number" name="reward" id="reward" class="form-control" 
+                         value="0" step="0.01" min="0.01" placeholder="0.00" required>
+                  <span class="input-group-text">π</span>
+                </div>
+              </div>
 
-  <div class="mb-3 d-none" id="proofDiv">
-    <label for="proof_description" class="form-label">{{__ "proof_description"}}</label>
-    <textarea name="proof_description" id="proof_description" class="form-control" rows="2"
-              placeholder="{{__ 'proof_placeholder'}}"></textarea>
-  </div>
+              <div class="col-12 mb-3">
+                <label for="required_level" class="form-label">
+                  <i class="fas fa-layer-group me-1"></i>{{__ "required_user_level"}}
+                </label>
+                <select name="required_level" id="required_level" class="form-select" required>
+                  <option value="1">{{__ "level_1"}}</option>
+                  <option value="2" disabled>{{__ "level_2_disabled"}}</option>
+                </select>
+              </div>
 
-  <div class="mb-3" id="url_div">
-    <label for="url" class="form-label">{{__ "url_label"}}</label>
-    <input type="text" name="url" id="url" class="form-control"
-           placeholder="{{__ 'url_placeholder'}}">
-  </div>
+              <div class="col-12 mb-3 d-none" id="proofDiv">
+                <label for="proof_description" class="form-label">
+                  <i class="fas fa-clipboard-check me-1"></i>{{__ "proof_description"}}
+                </label>
+                <textarea name="proof_description" id="proof_description" class="form-control" rows="2"
+                          placeholder="{{__ 'proof_placeholder'}}"></textarea>
+              </div>
 
-  <div class="mb-3">
-    <div>{{__ "reward_total"}}: <span id="total_price">0</span> Pi</div>
-    <div>{{__ "platform_fee"}} (<span id="platform_fee_percent">0</span>%): <span id="paymentFeeAmount">0</span> Pi</div>
-    <div><strong>{{__ "total_pi_required"}}:</strong> <span id="total_pi_required">0</span> Pi</div>
-  </div>
+              <div class="col-12 mb-3" id="url_div">
+                <label for="url" class="form-label">
+                  <i class="fas fa-link me-1"></i>{{__ "url_label"}}
+                </label>
+                <input type="text" name="url" id="url" class="form-control"
+                       placeholder="{{__ 'url_placeholder'}}">
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
 
-  <button type="submit" class="btn btn-purple" id="send_requestBTN">{{__ "publish_task"}}</button>
-</form>
+    <!-- Cost Summary -->
+    <div class="col-lg-4">
+      <div class="card shadow-soft">
+        <div class="card-header bg-success bg-opacity-10">
+          <h5 class="card-title mb-0 text-success">
+            <i class="fas fa-calculator me-2"></i>Cost Summary
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted">{{__ "reward_total"}}:</span>
+            <span class="fw-bold text-primary fs-5"><span id="total_price">0</span> π</span>
+          </div>
+          
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted">{{__ "platform_fee"}} (<span id="platform_fee_percent">0</span>%):</span>
+            <span class="fw-bold text-warning"><span id="paymentFeeAmount">0</span> π</span>
+          </div>
+          
+          <hr>
+          
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <span class="fw-bold text-success fs-6">{{__ "total_pi_required"}}:</span>
+            <span class="fw-bold text-success fs-4"><span id="total_pi_required">0</span> π</span>
+          </div>
+
+          <button type="submit" form="send_request" class="btn btn-primary w-100" id="send_requestBTN">
+            <i class="fas fa-paper-plane me-2"></i>{{__ "publish_task"}}
+          </button>
+
+          <div class="mt-3 text-center">
+            <small class="text-muted">
+              <i class="fas fa-info-circle me-1"></i>
+              Task will be reviewed before going live
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div id="debug-log" class='d-none' style="margin-top:40px; font-family: monospace; background: #f9f9f9; border: 1px solid #ddd; padding: 1em; display: none;"></div>
 
 <script>
-  const PAYMENT_FEE = parseFloat("1.1"); // adjust as needed
+  const PAYMENT_FEE = {{paymentFee}} // adjust as needed
 
   const rewardInput = document.getElementById('reward');
   const usersInput = document.getElementById('max_users');
@@ -156,7 +244,7 @@
       }
 
     } catch (err) {
-      alert(`Something went wrong! - ${err.message || err}`);
+      failedAlert(`Something went wrong! - ${err.message || err}`, "Error");
     }
   };
 

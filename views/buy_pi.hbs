@@ -1,36 +1,133 @@
-<div class="container py-4">
-  <h2 class="mb-4" style="color:goldenrod;">🪙 {{__ "buy_pi"}}</h2>
-
-  <div class="alert alert-secondary">
-    {{__ "current_balance"}}: <strong>{{user.balance}} π</strong>
+<div class="fade-in">
+  <!-- Header Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card shadow-soft">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center">
+            <div class="bg-warning bg-opacity-10 rounded-circle p-3 me-4">
+              <i class="fas fa-coins text-warning fs-1"></i>
+            </div>
+            <div>
+              <h2 class="mb-1 text-warning">{{__ "buy_pi"}}</h2>
+              <p class="text-muted mb-0">Purchase Pi tokens to fund your tasks</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="card shadow-sm p-4">
-    <div class="mb-3">
-      <label for="amount" class="form-label">{{__ "amount_to_buy"}}</label>
-      <input type="number" class="form-control" id="amount" min="1" step="0.01" required>
+  <!-- Current Balance -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="alert alert-info border-0 shadow-soft">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-wallet text-info fs-4 me-3"></i>
+          <div>
+            <h6 class="mb-0 text-info">{{__ "current_balance"}}</h6>
+            <span class="fw-bold text-info fs-4">{{user.balance}} π</span>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div class="mb-3">
-      <label for="estimated_price" class="form-label">{{__ "estimated_price"}}</label>
-      <input type="text" class="form-control" id="estimated_price" readonly value="{{estimatedPrice}}">
-    </div>
-
-    <div class="form-check mb-3">
-      <input class="form-check-input" type="checkbox" id="terms" required>
-      <label class="form-check-label" for="terms">
-        {{__ "agree_terms"}} <a href="/terms" class="menu-link" target="_blank">{{__ "terms_link"}}</a>
-      </label>
-    </div>
-
-    <button type="button" class="btn btn-purple w-100" id="createPaymentBTN">💸 {{__ "buy_now"}}</button>
   </div>
 
-  <div class="mt-4 text-muted">
-    {{__ "conversion_note"}}
+  <!-- Purchase Form -->
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="card shadow-soft">
+        <div class="card-header bg-warning bg-opacity-10">
+          <h5 class="card-title mb-0 text-warning">
+            <i class="fas fa-shopping-cart me-2"></i>Purchase Details
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="amount" class="form-label">
+                <i class="fas fa-coins me-1"></i>{{__ "amount_to_buy"}}
+              </label>
+              <div class="input-group">
+                <input type="number" class="form-control" id="amount" min="1" step="0.01" 
+                       placeholder="Enter amount" required>
+                <span class="input-group-text">π</span>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label for="estimated_price" class="form-label">
+                <i class="fas fa-dollar-sign me-1"></i>{{__ "estimated_price"}}
+              </label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="estimated_price" readonly value="{{estimatedPrice}}">
+                <span class="input-group-text">USD</span>
+              </div>
+            </div>
+
+            <div class="col-12 mb-4">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="terms" required>
+                <label class="form-check-label text-white" for="terms">
+                  <i class="fas fa-check-circle me-1"></i>
+                  {{__ "agree_terms"}} <a href="/terms" class="menu-link text-primary" target="_blank">{{__ "terms_link"}}</a>
+                </label>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <button type="button" class="btn btn-warning btn-lg w-100" id="createPaymentBTN">
+                <i class="fas fa-credit-card me-2"></i>{{__ "buy_now"}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Info -->
+    <div class="col-lg-4">
+      <div class="card shadow-soft">
+        <div class="card-header bg-success bg-opacity-10">
+          <h5 class="card-title mb-0 text-success">
+            <i class="fas fa-info-circle me-2"></i>Payment Info
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="text-center mb-4">
+            <div class="bg-light rounded-circle p-4 mx-auto mb-3" style="width: 80px; height: 80px;">
+              <i class="fas fa-shield-alt text-success fs-2"></i>
+            </div>
+            <h6 class="text-success">Secure Payment</h6>
+            <p class="text-muted small">Powered by Pi Network</p>
+          </div>
+
+          <div class="mb-3">
+            <h6 class="text-primary mb-2">
+              <i class="fas fa-check-circle me-1"></i>Benefits
+            </h6>
+            <ul class="list-unstyled small text-muted">
+              <li class="mb-1"><i class="fas fa-arrow-right text-primary me-2"></i>Instant processing</li>
+              <li class="mb-1"><i class="fas fa-arrow-right text-primary me-2"></i>Low fees</li>
+              <li class="mb-1"><i class="fas fa-arrow-right text-primary me-2"></i>Secure transactions</li>
+              <li class="mb-1"><i class="fas fa-arrow-right text-primary me-2"></i>24/7 support</li>
+            </ul>
+          </div>
+
+          <div class="alert border-0">
+            <small class="text-warning">
+              <i class="fas fa-info-circle me-1"></i>
+              {{__ "conversion_note"}}
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div id="debug-log" class="mt-5 p-3 bg-light border rounded d-none" style="font-family: monospace; white-space: pre-wrap; font-size: 0.85rem; max-height: 300px; overflow-y: auto;">
+  <!-- Debug Log -->
+  <div id="debug-log" class="mt-4 p-3 bg-light border rounded d-none" 
+       style="font-family: monospace; white-space: pre-wrap; font-size: 0.85rem; max-height: 300px; overflow-y: auto;">
     <strong>{{__ "debug_log"}}:</strong>
   </div>
 </div>
@@ -53,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!window.Pi) {
     logDebug("❌ Pi SDK not available. Please open this app in Pi Browser.");
-    alert("Pi SDK not available. Open in Pi Browser.");
+    infoAlert("Pi SDK not available. Please open this app in Pi Browser.", "Pi Browser Required");
     return;
   }
 
@@ -64,12 +161,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const agreed = document.getElementById('terms').checked;
 
     if (!amount || parseFloat(amount) <= 0) {
-      alert("Please enter a valid amount.");
+      validationAlert("Please enter a valid amount.", "Invalid Amount");
       return;
     }
 
     if (!agreed) {
-      alert("You must agree to the terms and conditions.");
+      validationAlert("You must agree to the terms and conditions.", "Terms Required");
       return;
     }
 
@@ -111,11 +208,11 @@ document.addEventListener("DOMContentLoaded", () => {
             if (result.status === "approved") {
               logDebug("✅ Re-approved pending payment.");
             } else {
-              alert("❌ Pending payment could not be approved again.");
+              paymentErrorAlert("Pending payment could not be approved again.");
             }
           } catch (e) {
             logDebug("❌ Error handling pending payment", e.message || e);
-            alert("Error handling previous payment.");
+            paymentErrorAlert("Error handling previous payment.");
           }
         },
 
@@ -136,11 +233,11 @@ document.addEventListener("DOMContentLoaded", () => {
             if (result.status === "approved") {
               logDebug("✅ Payment approved by server.");
             } else {
-              alert("❌ Server rejected payment.");
+              paymentErrorAlert("Server rejected payment.");
             }
           } catch (e) {
             logDebug("❌ Approval error", e.message || e);
-            alert("Approval error.");
+            paymentErrorAlert("Approval error.");
           }
         },
 
@@ -158,30 +255,30 @@ document.addEventListener("DOMContentLoaded", () => {
             logDebug("✅ Completion response", result);
 
             if (result.status === "done") {
-              alert("✅ Payment completed successfully!");
+              paymentSuccessAlert("Payment completed successfully!");
             } else {
-              alert("⚠️ Payment not completed. See debug log.");
+              warningAlert("Payment not completed. See debug log.", "Payment Incomplete");
             }
           } catch (e) {
             logDebug("❌ Completion error", e.message || e);
-            alert("Payment completion failed.");
+            paymentErrorAlert("Payment completion failed.");
           }
         },
 
         onCancel: function () {
           logDebug("⚠️ Payment cancelled by user.");
-          alert("Payment cancelled.");
+          warningAlert("Payment cancelled by user.", "Payment Cancelled");
         },
 
         onError: function (error) {
           logDebug("❌ Pi Payment error", error?.message || JSON.stringify(error) || "Unknown error");
-          alert("Payment failed. See debug log.");
+          paymentErrorAlert("Payment failed. See debug log.");
         }
       });
 
     } catch (err) {
       logDebug("❌ Unexpected error", err.message || err);
-      alert("Something went wrong.");
+      paymentErrorAlert("Something went wrong. Please try again.");
     }
   });
 });
