@@ -1,71 +1,94 @@
 <header>
   <nav class="navbar navbar-expand-lg navbar-purple">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/">{{title}}</a>
+    <div class="container-fluid px-3 px-md-4">
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <i class="fas fa-tasks me-2"></i>
+        <span class="text-gradient">{{title}}</span>
+      </a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+      
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link menu-link {{#if (eq activePage 'home')}}active{{/if}}" href="/">{{__ "nav_tasks"}}</a>
+            <a class="nav-link menu-link {{#if (eq activePage 'home')}}active{{/if}}" href="/">
+              <i class="fas fa-home me-1"></i>{{__ "nav_tasks"}}
+            </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link menu-link {{#if (eq activePage 'policy')}}active{{/if}}" href="/policy">{{__ "nav_policy"}}</a>
+            <a class="nav-link menu-link {{#if (eq activePage 'policy')}}active{{/if}}" href="/policy">
+              <i class="fas fa-shield-alt me-1"></i>{{__ "nav_policy"}}
+            </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link menu-link {{#if (eq activePage 'terms')}}active{{/if}}" href="/terms">{{__ "nav_terms"}}</a>
+            <a class="nav-link menu-link {{#if (eq activePage 'terms')}}active{{/if}}" href="/terms">
+              <i class="fas fa-file-contract me-1"></i>{{__ "nav_terms"}}
+            </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link menu-link {{#if (eq activePage 'white_paper')}}active{{/if}}" href="/white_paper">{{__ "nav_whitepaper"}}</a>
+            <a class="nav-link menu-link {{#if (eq activePage 'white_paper')}}active{{/if}}" href="/white_paper">
+              <i class="fas fa-file-alt me-1"></i>{{__ "nav_whitepaper"}}
+            </a>
           </li>
         </ul>
 
         <ul class="navbar-nav" dir="rtl">
           {{#if user}}
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button"
                 data-bs-toggle="dropdown" aria-expanded="false">
-                {{user.username}}
+                <i class="fas fa-user-circle me-2"></i>
+                <span>{{user.username}}</span>
               </a>
-            <ul class="dropdown-menu {{#if (eq dir 'rtl')}}dropdown-menu-start{{else}}dropdown-menu-end{{/if}}"
-              aria-labelledby="navbarDropdown"
-              dir="ltr">
-            
-            <li><a class="dropdown-item menu-link" href="/profile">{{__ "nav_profile"}}</a></li>
-            <li><a class="dropdown-item menu-link" href="/buy_pi">{{__ "nav_buy_pi"}}</a></li>
-            <li><a class="dropdown-item menu-link" href="/create_task">{{__ "nav_create_task"}}</a></li>
-            <li><a class="dropdown-item menu-link" href="/settings">{{__ "nav_settings"}}</a></li>
+              <ul class="dropdown-menu {{#if (eq dir 'rtl')}}dropdown-menu-start{{else}}dropdown-menu-end{{/if}}"
+                aria-labelledby="navbarDropdown" dir="ltr">
+                
+                <li><a class="dropdown-item menu-link" href="/profile">
+                  <i class="fas fa-user me-2"></i>{{__ "nav_profile"}}
+                </a></li>
+                <li><a class="dropdown-item menu-link" href="/buy_pi">
+                  <i class="fas fa-coins me-2"></i>{{__ "nav_buy_pi"}}
+                </a></li>
+                <li><a class="dropdown-item menu-link" href="/create_task">
+                  <i class="fas fa-plus-circle me-2"></i>{{__ "nav_create_task"}}
+                </a></li>
+                <li><a class="dropdown-item menu-link" href="/settings">
+                  <i class="fas fa-cog me-2"></i>{{__ "nav_settings"}}
+                </a></li>
 
-            <li class="dropdown-item">
+                <li><hr class="dropdown-divider"></li>
+                
+                <li class="dropdown-item">
+                  <div class="d-flex align-items-center {{#if (eq dir 'rtl')}}flex-row-reverse{{/if}}">
+                    <i class="fas fa-globe me-2"></i>
+                    <label for="lang-select" class="me-2 mb-0">{{__ "language"}}</label>
+                    <select id="lang-select" class="form-select form-select-sm w-auto"
+                            onchange="changeLanguage(this.value)">
+                      <option value="en" {{#if (eq lang "en")}}selected{{/if}}>🇺🇸 English</option>
+                      <option value="he" {{#if (eq lang "he")}}selected{{/if}}>🇮🇱 עברית</option>
+                      <option value="zh-TW" {{#if (eq lang "zh-TW")}}selected{{/if}}>🇹🇼 中文（繁體）</option>
+                      <option value="zh-CN" {{#if (eq lang "zh-CN")}}selected{{/if}}>🇨🇳 中文（简体）</option>
+                      <option value="vi" {{#if (eq lang "vi")}}selected{{/if}}>🇻🇳 Tiếng Việt</option>
+                      <option value="hi" {{#if (eq lang "hi")}}selected{{/if}}>🇮🇳 हिन्दी</option>
+                      <option value="tl" {{#if (eq lang "tl")}}selected{{/if}}>🇵🇭 Filipino</option>
+                    </select>
+                  </div>
+                </li>
 
-<div class="d-flex align-items-center {{#if (eq dir 'rtl')}}flex-row-reverse{{/if}}">
-  <label for="lang-select" class="me-1 mb-0 ms-1">{{__ "language"}}</label>
-  <select id="lang-select" class="form-select form-select-sm w-auto"
-          onchange="changeLanguage(this.value)">
-    <option value="en" {{#if (eq lang "en")}}selected{{/if}}>English</option>
-    <option value="he" {{#if (eq lang "he")}}selected{{/if}}>עברית</option>
-    <option value="zh-TW" {{#if (eq lang "zh-TW")}}selected{{/if}}>中文（繁體）</option>
-    <option value="zh-CN" {{#if (eq lang "zh-CN")}}selected{{/if}}>中文（简体）</option>
-    <option value="vi" {{#if (eq lang "vi")}}selected{{/if}}>Tiếng Việt</option>
-    <option value="hi" {{#if (eq lang "hi")}}selected{{/if}}>हिन्दी</option>
-    <option value="tl" {{#if (eq lang "tl")}}selected{{/if}}>Filipino</option>
-
-  </select>
-</div>
-
-            </li>
-
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="/auth/logout">{{__ "logout"}}</a></li>
-          </ul>
-
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="/auth/logout">
+                  <i class="fas fa-sign-out-alt me-2"></i>{{__ "logout"}}
+                </a></li>
+              </ul>
             </li>
           {{else}}
             <li class="nav-item">
-              <a class="nav-link" href="/login">{{__ "login"}}</a>
+              <a class="nav-link btn btn-outline-light btn-sm" href="/login">
+                <i class="fas fa-sign-in-alt me-1"></i>{{__ "login"}}
+              </a>
             </li>
           {{/if}}
         </ul>
