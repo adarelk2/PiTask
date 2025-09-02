@@ -1,8 +1,8 @@
 const mysql = require('mysql2/promise');
 const pool = mysql.createPool({
   host: 'mysql-353956d6-adarelk2-4949.e.aivencloud.com',
-  user: 'avnadmin',
-  password: 'AVNS_1Hl8MEZrYQ7L5PdBSeB',
+  user: 'taskpi_user',
+  password: 'Tp!_User#2025_Xs7',
   database: 'TaskPi',
   port: 15929,
   waitForConnections: true,
