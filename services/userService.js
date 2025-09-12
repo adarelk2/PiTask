@@ -61,7 +61,7 @@ async function getUserSubmissions(user_id, level) {
   return await taskSubmissionModel.filter({ user_id, level });
 }
 
-async function handleTaskClaim({ userId, taskId }) {
+async function handleTaskClaim({ userId, taskId, errors}) {
   const userModel = new UserModel();
   const taskModel = new TaskModel();
   const taskSubmissionModel = new TaskSubmissionModel();
@@ -75,7 +75,7 @@ async function handleTaskClaim({ userId, taskId }) {
   const task = tasks[0];
   const submissions = await taskSubmissionModel.filter({ user_id: userId });
   const kd = calculatorKD(userId, user.level, submissions);
-  const validation = new createValidationFactory('claim_task_validation', { kd, task, user, tasks: submissions }).create();
+  const validation = new createValidationFactory('claim_task_validation', { kd, task, user, tasks: submissions, errors}).create();
   validation.validate();
 
   if (validation.errors.length)

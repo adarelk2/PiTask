@@ -29,7 +29,8 @@ class Home extends BaseController {
   async claimTask(_params) {
     const result = await userService.handleTaskClaim({
       userId: this.req.user.id,
-      taskId: _params.taskID
+      taskId: _params.taskID,
+      errors:this.errors
     });
 
     if (!result.flag)

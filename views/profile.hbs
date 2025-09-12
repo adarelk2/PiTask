@@ -1,75 +1,181 @@
-<h2 class="mb-3 text-primary">👤 {{user.username}} {{__ "profile_title"}}</h2>
-
-<!-- Profile Summary -->
-<div class="card mb-4 shadow-sm">
-  <div class="card-body">
-    <h5 class="card-title">{{__ "account_info"}}</h5>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item"><strong>{{__ "level"}}:</strong> {{user.level}}</li>
-      <li class="list-group-item">
-        <strong>{{__ "accuracy"}}:</strong>
-        {{#if user.accuracy}}{{user.accuracy}}KD{{else}}N/A{{/if}}
-      </li>
-      <li class="list-group-item">
-        <strong>{{__ "balance"}}:</strong> {{user.balance}} π
-        <a class="menu-link" href='/buy_pi'>{{__ "buy_more"}}</a>
-      </li>
-      <li class="list-group-item"><strong>{{__ "wallet"}}:</strong> {{user.pi_wallet_address}}</li>
-    </ul>
-  </div>
-</div>
-
-<!-- Completed Tasks -->
-<h4 class="text-secondary mb-3">📝 {{__ "your_task_submissions"}}</h4>
-
-{{#if submissions.length}}
-  {{#each submissions}}
-    <div class="card mb-4 shadow-sm">
-      <div class="card-body">
-        <div class="d-flex">
-          <div class='col-8'>
-            <h5 class="card-title">{{this.task.title}}</h5>
-          </div>
-          <div class="col-4 text-end">
-            <small style="color:gray;">#{{inc @index}}</small>
+<div class="fade-in">
+  <!-- Profile Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card shadow-soft">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center">
+            <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-4">
+              <i class="fas fa-user-circle text-primary fs-1"></i>
+            </div>
+            <div>
+              <h2 class="mb-1 text-primary">{{user.username}}
+                <span class="text-muted mb-0">{{__ "profile_title"}}</span></h2>
+              
+            </div>
           </div>
         </div>
-
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item"><strong>{{__ "reward"}}:</strong> {{this.task.reward}}</li>
-          <li class="list-group-item">
-            <strong>{{__ "status"}}:</strong>
-            {{#if (eq this.status "approved")}}
-              <span class="badge bg-success">{{__ "approved"}}</span>
-            {{else if (eq this.status "rejected")}}
-              <span class="badge bg-danger">{{__ "rejected"}}</span>
-            {{else}}
-              <span class="badge bg-warning text-dark">{{__ "pending"}}</span>
-            {{/if}}
-          </li>
-          <li class="list-group-item"><strong>{{__ "review_reason"}}:</strong> {{this.review_reason}}</li>
-          <li class="list-group-item">
-            <strong>{{__ "submission_data"}}:</strong>
-            {{#if this.submission_data}}
-              <a href="{{this.submission_data}}" target="_blank">{{__ "view"}}</a>
-            {{else}}
-              N/A
-            {{/if}}
-          </li>
-          <li class="list-group-item"><strong>{{__ "submitted_at"}}:</strong> {{this.submitted_at}}</li>
-
-          {{#if (eq this.status "pending")}}
-            <li class="list-group-item">
-              <button class='btn btn-purple startTaskBTN' data-id="{{this.id}}">{{__ "click_here"}}</button>
-            </li>
-          {{/if}}
-        </ul>
       </div>
     </div>
-  {{/each}}
-{{else}}
-  <p class="text-muted">{{__ "no_submissions_yet"}}</p>
-{{/if}}
+  </div>
+
+  <!-- Account Information -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card shadow-soft">
+        <div class="card-header bg-primary bg-opacity-10">
+          <h5 class="card-title mb-0 text-primary">
+            <i class="fas fa-info-circle me-2"></i>{{__ "account_info"}}
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center p-3 bg-light rounded">
+                <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
+                  <i class="fas fa-trophy text-success"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0 text-success">{{__ "level"}}</h6>
+                  <span class="fw-bold text-success fs-5">{{user.level}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center p-3 bg-light rounded">
+                <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
+                  <i class="fas fa-chart-line text-warning"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0 text-warning">{{__ "accuracy"}}</h6>
+                  <span class="fw-bold text-warning fs-5">
+                    {{#if user.accuracy}}{{user.accuracy}}KD{{else}}N/A{{/if}}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center p-3 bg-light rounded">
+                <div class="bg-info bg-opacity-10 rounded-circle p-2 me-3">
+                  <i class="fas fa-coins text-info"></i>
+                </div>
+                <div class="flex-grow-1">
+                  <h6 class="mb-0 text-info">{{__ "balance"}}</h6>
+                  <span class="fw-bold text-info fs-5">{{user.balance}} π</span>
+                </div>
+                <a class="btn btn-outline-primary btn-sm menu-link" href='/buy_pi'>
+                  <i class="fas fa-plus me-1"></i>{{__ "buy_more"}}
+                </a>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center p-3 bg-light rounded">
+                <div class="bg-secondary bg-opacity-10 rounded-circle p-2 me-3">
+                  <i class="fas fa-wallet text-primary"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0 text-primary">{{__ "wallet"}}</h6>
+                  <small class="text-primary text-truncate" style="max-width: 340px; display: inline-block; vertical-align: bottom; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{user.pi_wallet_address}}">
+                    {{user.pi_wallet_address}}
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task Submissions -->
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <h4 class="mb-0 text-primary">
+          <i class="fas fa-tasks me-2"></i>{{__ "your_task_submissions"}}
+        </h4>
+        <span class="badge bg-primary fs-6">{{#if submissions.length}}{{submissions.length}}{{else}}0{{/if}} {{__ "submissions"}}</span>
+      </div>
+
+      {{#if submissions.length}}
+        {{#each submissions}}
+          <div class="card shadow-soft mb-4">
+            <div class="card-body">
+              <div class="d-flex align-items-start justify-content-between mb-3">
+                <h5 class="card-title mb-0 flex-grow-1 me-3">{{this.task.title}}</h5>
+                <div class="d-flex align-items-center">
+                  <span class="badge bg-secondary me-2">#{{inc @index}}</span>
+                  {{#if (eq this.status "approved")}}
+                    <span class="badge bg-success text-white">{{__ "approved"}}</span>
+                  {{else if (eq this.status "rejected")}}
+                    <span class="badge bg-danger text-white">{{__ "rejected"}}</span>
+                  {{else}}
+                    <span class="badge bg-warning text-dark">{{__ "pending"}}</span>
+                  {{/if}}
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-coins text-warning me-2"></i>
+                    <strong class="me-2 text-muted">{{__ "reward"}}:</strong>
+                    <span class="text-warning fw-bold">{{this.task.reward}} π</span>
+                  </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-calendar text-muted me-2"></i>
+                    <strong class="me-2 text-muted">{{__ "submitted_at"}}:</strong>
+                    <span class="text-muted">{{this.submitted_at}}</span>
+                  </div>
+                </div>
+                <div class="col-12 mb-3">
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-comment text-muted me-2"></i>
+                    <strong class="me-2 text-muted">{{__ "review_reason"}}:</strong>
+                    <span class="text-muted">{{this.review_reason}}</span>
+                  </div>
+                </div>
+                {{#if this.submission_data}}
+                  <div class="col-12 mb-3">
+                    <div class="d-flex align-items-center">
+                      <i class="fas fa-link text-muted me-2"></i>
+                      <strong class="me-2 text-muted">{{__ "submission_data"}}:</strong>
+                      <a href="{{this.submission_data}}" target="_blank" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-external-link-alt me-1"></i>{{__ "view"}}
+                      </a>
+                    </div>
+                  </div>
+                {{/if}}
+                {{#if (eq this.status "pending")}}
+                  <div class="col-12">
+                    <button class='btn btn-primary startTaskBTN' data-id="{{this.id}}">
+                      <i class="fas fa-play me-2"></i>{{__ "click_here"}}
+                    </button>
+                  </div>
+                {{/if}}
+              </div>
+            </div>
+          </div>
+        {{/each}}
+      {{else}}
+        <div class="card shadow-soft">
+          <div class="card-body text-center py-5">
+            <div class="bg-light rounded-circle p-4 mx-auto mb-4" style="width: 100px; height: 100px;">
+              <i class="fas fa-clipboard-list text-muted fs-1"></i>
+            </div>
+            <h4 class="text-muted mb-3">{{__ "no_submissions_yet"}}</h4>
+            <p class="text-muted mb-4">Complete some tasks to see your submissions here!</p>
+            <a href="/" class="btn btn-primary">
+              <i class="fas fa-tasks me-2"></i>Browse Tasks
+            </a>
+          </div>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</div>
 
 
   <script>
