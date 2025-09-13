@@ -136,8 +136,7 @@
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
 <script>
-const lang = localStorage.getItem("lang");
-document.addEventListener("DOMContentLoaded", () => {
+
   const logBox = document.getElementById("debug-log");
 
   function logDebug(message, obj = null) {
@@ -151,7 +150,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!window.Pi) {
     logDebug("❌ Pi SDK not available. Please open this app in Pi Browser.");
     infoAlert("Pi SDK not available. Please open this app in Pi Browser.", "Pi Browser Required");
-    return;
   }
 
   window.Pi.init({ version: "2.0" });
@@ -281,5 +279,4 @@ document.addEventListener("DOMContentLoaded", () => {
       paymentErrorAlert("Something went wrong. Please try again.");
     }
   });
-});
 </script>
