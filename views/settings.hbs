@@ -17,12 +17,13 @@
   </div>
   --}}
 
-  <button type="submit" id="saveBTN" class="btn btn-purple mt-3">{{__ "save"}}t</button>
+  <button type="submit" id="saveBTN" class="btn btn-purple mt-3">{{__ "save"}}</button>
 </form>
 
-<script>
+<script> 
   const token = localStorage.getItem("token");
   const lang = localStorage.getItem("lang");
+document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("send_request").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -71,4 +72,5 @@
       failedAlert("Request failed: " + err.message);
     }
   });
+});
 </script>
