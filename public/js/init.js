@@ -1,4 +1,6 @@
 
+  const lang = localStorage.getItem('lang') ?? 'en';
+  
   document.addEventListener('DOMContentLoaded', function () {
     const token = localStorage.getItem('token');
     const lang = localStorage.getItem('lang');
