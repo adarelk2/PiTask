@@ -17,7 +17,7 @@
   </div>
   --}}
 
-  <button type="submit" id="saveBTN" class="btn btn-purple mt-3">{{__ "save"}}</button>
+  <button type="submit" id="saveBTN" class="btn btn-purple mt-3">{{__ "save"}}t</button>
 </form>
 
 <script>
@@ -26,7 +26,7 @@
 
   document.getElementById("send_request").addEventListener("submit", async (e) => {
     e.preventDefault();
-
+    alert("im here")
     const email = document.getElementById("email_input").value;
     // ננסה לקרוא את wallet רק אם הוא קיים
     const walletInput = document.getElementById("wallet_input");
