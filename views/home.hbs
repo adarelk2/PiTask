@@ -106,9 +106,7 @@
 
 <script>
   const btns = document.querySelectorAll(".taskPull");
-  console.log(btns);
   const token = localStorage.getItem("token");
-  const lang = localStorage.getItem("lang");
 
   btns.forEach((btn)=>{
     btn.addEventListener("click", async(e)=>{

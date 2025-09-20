@@ -184,7 +184,6 @@
       btn.addEventListener("click", async function(e){
       const task_submission_id = e.target.getAttribute("data-id");
       const token = localStorage.getItem("token");
-      const lang = localStorage.getItem("lang");
 
       showLoading();
       const res = await fetch("/profile", {

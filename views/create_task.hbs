@@ -197,7 +197,6 @@
     if (!e.target.checkValidity()) return;
 
     const token = localStorage.getItem("token");
-    const lang = localStorage.getItem("lang");
 
     const payload = {
       method: "create_new_task",

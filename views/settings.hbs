@@ -1,6 +1,7 @@
 <h2>{{__ "settings"}}</h2>
 <p>{{__ "hello_user"}} {{user.username}}</p>
 
+<form id="send_request">
   <div class="form-group">
     <label for="email_input">{{__ "email_address"}}</label>
     <input type="email" required class="form-control" id="email_input" aria-describedby="emailHelp" value="{{user.email}}">
@@ -16,17 +17,14 @@
   </div>
   --}}
 
-  <button id="saveBTN" class="btn btn-purple mt-3">{{__ "save"}}</button>
+  <button type="submit" id="saveBTN" class="btn btn-purple mt-3">{{__ "save"}}</button>
 </form>
 
 <script> 
   const token = localStorage.getItem("token");
-  const lang = localStorage.getItem("lang");
-document.addEventListener("DOMContentLoaded", () => {
 
-  document.getElementById("saveBTN").addEventListener("click", async (e) => {
+  document.getElementById("send_request").addEventListener("submit", async (e) => {
     e.preventDefault();
-    alert("im here")
     const email = document.getElementById("email_input").value;
     // ננסה לקרוא את wallet רק אם הוא קיים
     const walletInput = document.getElementById("wallet_input");
@@ -71,5 +69,4 @@ document.addEventListener("DOMContentLoaded", () => {
       failedAlert("Request failed: " + err.message);
     }
   });
-});
 </script>
