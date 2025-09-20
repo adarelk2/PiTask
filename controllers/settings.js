@@ -18,11 +18,15 @@ class Settings extends BaseController {
 
   async update_details(_params)
   {
+    console.log(this.req);
+    
+    console.log(_params);
+    
     const email = _params.email
-    const pi_wallet_address = _params.wallet_address;
-    if (!userService.isValidPiWallet(pi_wallet_address)) {
-      return this.json({flag:false, errors:[this.errors.VALIDATION.INVALID_WALLET]});
-    }
+    // const pi_wallet_address = _params.wallet_address;
+    // if (!userService.isValidPiWallet(pi_wallet_address)) {
+    //   return this.json({flag:false, errors:[this.errors.VALIDATION.INVALID_WALLET]});
+    // }
     const isValidEmail = typeof _params.email === "string" &&
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(_params.email);
 
@@ -30,7 +34,7 @@ class Settings extends BaseController {
       return this.json({flag:false, errors:[this.errors.VALIDATION.INVALID_EMAIL]});
     }
 
-    const updated = await this.userModel.update({id:this.req.user.id}, {email, pi_wallet_address})
+    const updated = await this.userModel.update({id:this.req.user.id}, {email/*, pi_wallet_address*/})
 
     return this.json({flag:(updated)?true:false, errors:[]});
   }
