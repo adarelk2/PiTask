@@ -24,7 +24,7 @@
   const lang = localStorage.getItem("lang");
 document.addEventListener("DOMContentLoaded", () => {
 
-  document.getElementById("saveBTN").addEventListener("submit", async (e) => {
+  document.getElementById("saveBTN").addEventListener("click", async (e) => {
     e.preventDefault();
     alert("im here")
     const email = document.getElementById("email_input").value;
