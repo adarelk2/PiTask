@@ -1,7 +1,6 @@
 <h2>{{__ "settings"}}</h2>
 <p>{{__ "hello_user"}} {{user.username}}</p>
 
-<form id="send_request">
   <div class="form-group">
     <label for="email_input">{{__ "email_address"}}</label>
     <input type="email" required class="form-control" id="email_input" aria-describedby="emailHelp" value="{{user.email}}">
@@ -17,7 +16,7 @@
   </div>
   --}}
 
-  <button type="submit" id="saveBTN" class="btn btn-purple mt-3">{{__ "save"}}</button>
+  <button id="saveBTN" class="btn btn-purple mt-3">{{__ "save"}}</button>
 </form>
 
 <script> 
@@ -25,7 +24,7 @@
   const lang = localStorage.getItem("lang");
 document.addEventListener("DOMContentLoaded", () => {
 
-  document.getElementById("send_request").addEventListener("submit", async (e) => {
+  document.getElementById("saveBTN").addEventListener("submit", async (e) => {
     e.preventDefault();
     alert("im here")
     const email = document.getElementById("email_input").value;
