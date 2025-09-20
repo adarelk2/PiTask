@@ -7,47 +7,68 @@
     <input type="email" required class="form-control" id="email_input" aria-describedby="emailHelp" value="{{user.email}}">
   </div>
 
-  {{!-- <div class="form-group mt-3">
+  {{!-- אם תרצה להחזיר בעתיד:
+  <div class="form-group mt-3">
     <label for="wallet_input">
       {{__ "wallet_address"}}
       <br><small>{{__ "wallet_note"}}</small>
     </label>
     <input type="text" required class="form-control mt-2" id="wallet_input" value="{{user.pi_wallet_address}}">
-  </div> --}}
+  </div>
+  --}}
 
   <button type="submit" id="saveBTN" class="btn btn-purple mt-3">{{__ "save"}}</button>
 </form>
 
-
 <script>
   const token = localStorage.getItem("token");
   const lang = localStorage.getItem("lang");
+
   document.getElementById("send_request").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const email = document.getElementById("email_input").value;
-  const wallet_address = document.getElementById("wallet_input").value;
-  showLoading();
-  alert(token);
-  const res = await fetch("/settings", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  credentials: "include",
-  body: JSON.stringify({method:"update_details", params:{email/*, wallet_address*/}, token, lang})})
-const text = await res.text();
-  try {
-    response = JSON.parse(text);
-  } catch (jsonErr) {
-    throw new Error("Server returned invalid JSON.");
-  }
+    e.preventDefault();
 
-  Swal.close();
+    const email = document.getElementById("email_input").value;
+    // ננסה לקרוא את wallet רק אם הוא קיים
+    const walletInput = document.getElementById("wallet_input");
+    const wallet_address = walletInput ? walletInput.value : null;
 
-  if (response.flag) {
-    successAlert(response.errors, function(){
-      location.replace("/auth/logout");
-    });
-  } else {
-    failedAlert(response.errors);
-  }
-});
+    showLoading();
+
+    try {
+      const res = await fetch("/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          method: "update_details",
+          params: { email, wallet_address },
+          token,
+          lang
+        })
+      });
+
+      const text = await res.text();
+      let response;
+      try {
+        response = JSON.parse(text);
+      } catch {
+        throw new Error("Server returned invalid JSON.");
+      }
+
+      Swal.close();
+
+      if (response.flag) {
+        successAlert(response.errors, function () {
+          location.replace("/auth/logout");
+        });
+      } else {
+        failedAlert(response.errors);
+      }
+
+    } catch (err) {
+      Swal.close();
+      console.error(err);
+      failedAlert("Request failed: " + err.message);
+    }
+  });
 </script>
