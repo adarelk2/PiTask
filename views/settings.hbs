@@ -27,7 +27,7 @@
   const email = document.getElementById("email_input").value;
   const wallet_address = document.getElementById("wallet_input").value;
   showLoading();
-
+  alert(token);
   const res = await fetch("/settings", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
