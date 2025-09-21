@@ -1,10 +1,9 @@
-const UserModel = require('./models/UserModel');
+const EmailVerificationsModel = require('./models/EmailVerificationsModel');
 
 (async () => {
   try {
-    const userModel = new UserModel();
-    const user = await userModel.findByUsername('bob');
-    console.log("✅ Found user:", user);
+    const emailModel = new EmailVerificationsModel();
+    emailModel.insert({email:"adarelk2@gmail.com",user_id:8});
   } catch (err) {
     console.error("❌ Error in UserModel test:", err);
   }
