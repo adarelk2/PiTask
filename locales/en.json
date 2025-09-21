@@ -153,5 +153,6 @@
 	"TEST": "TEST",
 	"test": "test",
 	"tasks": "tasks",
-	"submissions": "submissions"
+	"submissions": "submissions",	
+	"otp_code_sent_your_email": "A verification code has been sent to your email."
 }

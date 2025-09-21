@@ -11,6 +11,7 @@ async function requireAuth(req, res, next) {
         process.env.JWT_SECRET,
         { expiresIn: '1h' }
       );
+      
       // תוכל להחזיר את זה ב-JSON או לשמור ב-localStorage
       res.cookie('token', token, {
         secure: process.env.NODE_ENV === 'production',
@@ -47,7 +48,7 @@ async function requireAuth(req, res, next) {
       req.user = decoded;
       const isValidEmail = typeof req.user.email === "string" &&
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(req.user.email);
-      if((/*!userService.isValidPiWallet(req.user.pi_wallet_address) || */!isValidEmail) && req.body.method !="update_details")
+      if((/*!userService.isValidPiWallet(req.user.pi_wallet_address) || */!isValidEmail) && (req.body.method !="update_details" && req.body.method !="check_otp"))
       {
         res.render('settings', {user:req.user});
       }

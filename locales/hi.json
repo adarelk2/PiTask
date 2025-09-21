@@ -149,5 +149,6 @@
   "nav_settings": "सेटिंग्स",
   "language": "भाषा:",
   "logout": "लॉगआउट",
-  "login": "लॉगिन"
+  "login": "लॉगिन",
+  "otp_code_sent_your_email": "आपके ईमेल पर एक सत्यापन कोड भेजा गया है।"
 }

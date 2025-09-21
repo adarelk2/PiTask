@@ -149,6 +149,7 @@
     "nav_settings": "Mga Setting",
     "language": "Wika:",
     "logout": "Mag-logout",
-    "login": "Mag-login"
+    "login": "Mag-login",
+    "otp_code_sent_your_email": "Isang verification code ang ipinadala sa iyong email."
   }
   
