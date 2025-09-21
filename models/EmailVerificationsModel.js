@@ -6,6 +6,8 @@ class EmailVerificationsModel extends Model {
       id: ['n', 'id'],
       user_id: ['n', 'user_id'],
       email: ['s', 'new_email'],
+      code:['s','verification_code'],
+      status:['s', 'status']
     });
   }
 

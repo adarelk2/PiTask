@@ -149,6 +149,7 @@
     "nav_settings": "设置",
     "language": "语言：",
     "logout": "退出登录",
-    "login": "登录"
+    "login": "登录",
+    "otp_code_sent_your_email": "验证码已发送到您的邮箱。"
   }
   

@@ -1,7 +1,7 @@
 <h2>{{__ "settings"}}</h2>
 <p>{{__ "hello_user"}} {{user.username}}</p>
 
-<form id="send_request">
+<form id="send_request" class="">
   <div class="form-group">
     <label for="email_input">{{__ "email_address"}}</label>
     <input type="email" required class="form-control" id="email_input" aria-describedby="emailHelp" value="{{user.email}}">
@@ -18,11 +18,30 @@
   --}}
 
   <button type="submit" id="saveBTN" class="btn btn-purple mt-3">{{__ "save"}}</button>
+
+
+  {{!-- אם תרצה להחזיר בעתיד:
+  <div class="form-group mt-3">
+    <label for="wallet_input">
+      {{__ "wallet_address"}}
+      <br><small>{{__ "wallet_note"}}</small>
+    </label>
+    <input type="text" required class="form-control mt-2" id="wallet_input" value="{{user.pi_wallet_address}}">
+  </div>
+  --}}
+
 </form>
 
+<form id="send_approved" class="d-none">
+  <div class="form-group">
+    <label for="email_input">Code: </label>
+    <input type="text" required class="form-control" id="code"  placeholder="XXXX">
+  </div>
+  <button type="submit" id="checkOTP" class="btn btn-purple mt-3">{{__ "save"}}</button>
+
+  </form>
 <script> 
   const token = localStorage.getItem("token");
-
   document.getElementById("send_request").addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("email_input").value;
@@ -31,7 +50,6 @@
     const wallet_address = walletInput ? walletInput.value : null;
 
     showLoading();
-
     try {
       const res = await fetch("/settings", {
         method: "POST",
@@ -54,19 +72,54 @@
       }
 
       Swal.close();
-
       if (response.flag) {
-        successAlert(response.errors, function () {
-          location.replace("/auth/logout");
-        });
+        successAlert("{{__ 'otp_code_sent_your_email'}}")
+        document.getElementById("send_request").classList.add('d-none');
+        document.getElementById("send_approved").classList.remove('d-none');
+  
       } else {
         failedAlert(response.errors);
+        saveBTN.removeAttribute("disabled")
       }
 
     } catch (err) {
       Swal.close();
       console.error(err);
+      saveBTN.removeAttribute("disabled")
+
       failedAlert("Request failed: " + err.message);
     }
   });
+
+  document.getElementById("send_approved").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const code = document.getElementById("code").value;
+    const res = await fetch("/settings", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({
+      method: "check_otp",
+      params: { code },
+      token,
+      lang
+    })
+  });
+    checkOTP.removeAttribute("disabled")
+    const text = await res.text();
+    let response;
+    try {
+      response = JSON.parse(text);
+      if(response.flag)
+      {
+        location.replace("/auth/login")
+      }
+      else
+      {
+        failedAlert(response.errors);
+      }
+    } catch {
+      throw new Error("Server returned invalid JSON.");
+    }
+  })
 </script>

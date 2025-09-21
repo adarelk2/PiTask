@@ -149,6 +149,7 @@
     "nav_settings": "Cài đặt",
     "language": "Ngôn ngữ:",
     "logout": "Đăng xuất",
-    "login": "Đăng nhập"
+    "login": "Đăng nhập",
+    "otp_code_sent_your_email": "Mã xác minh đã được gửi đến email của bạn."
   }
   
