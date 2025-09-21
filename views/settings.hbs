@@ -78,6 +78,7 @@
         document.getElementById("send_approved").classList.remove('d-none');
   
       } else {
+        alert();
         failedAlert(response.errors);
         saveBTN.removeAttribute("disabled")
       }
