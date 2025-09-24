@@ -37,36 +37,12 @@ function filterTasksByLevel(userID, kd, level, tasks) {
   });
 }
 
-async function incrementBalance(id, amount = 1) {
-    const userModel = new UserModel();
-    const user = await userModel.filter({id:id}).then(res=>res[0]);
-    const updated = await userModel.update({id:id}, {balance: user.balance + amount});
-    return updated;
-  }
-  
-
-async function getUserById(id) {
-  const userModel = new UserModel();
-  const users = await userModel.filter({ id });
-  return users[0];
-}
-
-async function getActiveTasks() {
-  const taskModel = new TaskModel();
-  return await taskModel.filter({ status: 'active' });
-}
-
-async function getUserSubmissions(user_id, level) {
-  const taskSubmissionModel = new TaskSubmissionModel();
-  return await taskSubmissionModel.filter({ user_id, level });
-}
-
 async function handleTaskClaim({ userId, taskId, errors}) {
   const userModel = new UserModel();
   const taskModel = new TaskModel();
   const taskSubmissionModel = new TaskSubmissionModel();
 
-  const user = await getUserById(userId);
+  const user = await userModel.getUserById(userId);
   const tasks = await taskModel.filter({ id: taskId, status: 'active' });
   if (!tasks.length) {
     return { flag: false, errors: [ERROR_MESSAGES.TASK.TASK_NOT_FOUND] };
@@ -99,11 +75,7 @@ function isValidPiWallet(address) {
 module.exports = {
   calculatorKD,
   filterTasksByLevel,
-  getUserById,
-  getActiveTasks,
-  getUserSubmissions,
   handleTaskClaim,
   calculatorMaxRewardByLevel,
-  incrementBalance,
   isValidPiWallet
 };

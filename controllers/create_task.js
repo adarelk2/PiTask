@@ -2,7 +2,6 @@ const BaseController = require('../core/BaseController');
 const UserModel = require('../models/UserModel');
 const TaskModel = require('../models/TaskModel');
 const TaskSubmissionModel = require('../models/TaskSubmissionModel');
-const userService = require('../services/userService');
 const taskService = require('../services/taskService');
 
 class Create_Task extends BaseController {
@@ -15,7 +14,7 @@ class Create_Task extends BaseController {
   }
 
   async print() {
-    const user = await userService.getUserById(this.req.user.id);
+    const user = await this.userModel.getUserById(this.req.user.id);
     const fee = parseFloat(process.env.PAYMENT_FEE) - 1;
     const roundedFee = parseFloat(fee.toFixed(2)); 
     this.render('create_task', {

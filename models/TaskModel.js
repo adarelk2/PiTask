@@ -17,14 +17,21 @@ class TaskModel extends Model {
     });
   }
 
-  async findAvailableForLevel(level) {
+  async findAvailableForLevel(level) 
+  {
     return await this.select({ 
       required_level: ['<=', level],
       status: 'active'
     });
   }
 
-  async filter(_params = {}) {
+  async getActiveTasks() 
+  {
+    return await this.filter({ status: 'active' });
+  }
+
+  async filter(_params = {}) 
+  {
     return await this.select(_params);
   }
 }

@@ -50,6 +50,7 @@ hbs.registerHelper('__', function () {
 // Routes
 const authRoutes = require('./routes/auth');
 const indexRoutes = require('./routes/index');
+const otpRoutes = require('./routes/otp');
 
 if (process.env.SERVER_MODE === "off") {
   app.use((req, res) => {
@@ -57,6 +58,7 @@ if (process.env.SERVER_MODE === "off") {
   });
 } else {
   app.use('/auth', authRoutes);
+  app.use('/otp', otpRoutes);
   app.use('/', indexRoutes);
 }
 

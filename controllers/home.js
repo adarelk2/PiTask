@@ -1,17 +1,21 @@
 const BaseController = require('../core/BaseController');
 const userService = require('../services/userService');
+const UserModel = require('../models/UserModel');
+const TaskModel = require('../models/TaskModel');
+const TaskSubmissionModel = require('../models/TaskSubmissionModel');
 
 class Home extends BaseController {
   constructor(req, res) {
     super(req, res);
-
-
+    this.userModel = new UserModel();
+    this.taskModel = new TaskModel();
+    this.taskSubmissionModel = new TaskSubmissionModel();
   }
 
   async print() {
-    const user = await userService.getUserById(this.req.user.id);
-    const tasks = await userService.getActiveTasks();
-    const submissions = await userService.getUserSubmissions(this.req.user.id, user.level);
+    const user = await this.userModel.getUserById(this.req.user.id);
+    const tasks = await this.taskModel.getActiveTasks();
+    const submissions = await this.taskSubmissionModel.getUserSubmissions(this.req.user.id, user.level);
     
     const kd = userService.calculatorKD(this.req.user.id, user.level, submissions);
     const filtered = userService.filterTasksByLevel(user.id, kd, user.level, tasks);

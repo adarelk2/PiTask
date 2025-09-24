@@ -30,6 +30,11 @@ class TaskSubmissionModel extends Model {
   async filter(params = {}) {
     return await this.select(params);
   }
+
+  async getUserSubmissions(user_id, level) 
+  {
+    return await this.filter({ user_id, level });
+  }
 }
 
 module.exports = TaskSubmissionModel;

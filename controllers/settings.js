@@ -11,7 +11,7 @@ class Settings extends BaseController {
   }
 
   async print() {
-    const user = await userService.getUserById(this.req.user.id);
+    const user = await this.userModel.getUserById(this.req.user.id);
     this.render('settings', {
       title: 'TaskPi - Settings',
       user: user,
