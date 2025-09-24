@@ -18,7 +18,8 @@ router.get('/', async(req, res) => {
         const new_email = result[0].new_email;
         await userModel.update({id:user_id}, {email:new_email});
         await email_verifications.update({user_id},{status:'verified'})
-        res.redirect('/auth/login');
+        res.redirect("pi://taskpi.work/auth/login");
+
       }
       else
       {
