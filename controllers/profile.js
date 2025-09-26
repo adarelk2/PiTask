@@ -39,7 +39,6 @@ class Profile extends BaseController {
       if(task.required_level ==1)
       {
         await this.userModel.incrementBalance(this.req.user.id, task.reward);
-        await this.taskModel.update({ id: task.id }, { counter: task.counter + 1 });
         await this.task_submissionModel.update({ id: _params.task_submission_id }, { status: "approved"});
 
         return this.json({flag:true, level:task.required_level, url:task.url});

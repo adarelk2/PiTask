@@ -143,6 +143,7 @@
     "nav_policy": "Patakaran",
     "nav_terms": "Mga Tuntunin",
     "nav_whitepaper": "White Paper",
+    "nav_statistics": "Estadistika",
     "nav_profile": "Aking Profile",
     "nav_buy_pi": "Bumili ng Pi",
     "nav_create_task": "Lumikha ng Gawain",
@@ -150,6 +151,11 @@
     "language": "Wika:",
     "logout": "Mag-logout",
     "login": "Mag-login",
-    "otp_code_sent_your_email": "Isang verification code ang ipinadala sa iyong email."
+    "otp_code_sent_your_email": "Isang verification code ang ipinadala sa iyong email.",
+    "statistics_title": "Estadistika",
+    "Users": "Mga Gumagamit",
+    "tasks_completed": "Natapos na mga Gawain",
+    "tasks_avilable": "Magagamit na mga Gawain",
+    "tasks_avilable_for_me": "Magagamit na mga Gawain para sa Akin"
   }
   

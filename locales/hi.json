@@ -141,6 +141,7 @@
   "conclusion_text": "TaskPi उपयोगकर्ताओं को उनके व्यवहार के अनुसार कार्य देने के लिए AI का उपयोग करेगा। यह भरोसे और आपसी लाभ पर आधारित सूक्ष्म कार्यों की अर्थव्यवस्था बनाएगा।",
   "nav_tasks": "कार्य",
   "nav_policy": "नीति",
+  "nav_statistics": "आंकड़े",
   "nav_terms": "शर्तें",
   "nav_whitepaper": "श्वेतपत्र",
   "nav_profile": "मेरी प्रोफ़ाइल",
@@ -150,5 +151,10 @@
   "language": "भाषा:",
   "logout": "लॉगआउट",
   "login": "लॉगिन",
-  "otp_code_sent_your_email": "आपके ईमेल पर एक सत्यापन कोड भेजा गया है।"
+  "otp_code_sent_your_email": "आपके ईमेल पर एक सत्यापन कोड भेजा गया है।",
+	  "statistics_title": "आंकड़े",
+  "Users": "उपयोगकर्ता",
+  "tasks_completed": "पूर्ण किए गए कार्य",
+  "tasks_avilable": "उपलब्ध कार्य",
+  "tasks_avilable_for_me": "मेरे लिए उपलब्ध कार्य"
 }

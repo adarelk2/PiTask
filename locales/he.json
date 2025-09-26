@@ -145,6 +145,7 @@
 	"nav_whitepaper": "מסמך עקרונות",
 	"nav_profile": "הפרופיל שלי",
 	"nav_buy_pi": "קנה Pi",
+	"nav_statistics": "סטטיסטיקות",
 	"nav_create_task": "צור משימה",
 	"nav_settings": "הגדרות",
 	"language": " :שפה",
@@ -152,5 +153,10 @@
 	"login": "התחברות",
 	"tasks": "tasks",
 	"submissions": "submissions",
-	"otp_code_sent_your_email": "קוד אימות נשלח אל כתובת המייל שלך."
+	"otp_code_sent_your_email": "קוד אימות נשלח אל כתובת המייל שלך.",  
+	"statistics_title": "סטטיסטיקות",
+	"Users": "משתמשים",
+	"tasks_completed": "משימות שהושלמו",
+	"tasks_avilable": "משימות זמינות",
+	"tasks_avilable_for_me": "משימות זמינות עבורי"
 }

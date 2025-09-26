@@ -19,6 +19,11 @@
             </a>
           </li>
           <li class="nav-item">
+            <a class="nav-link menu-link {{#if (eq activePage 'statistics')}}active{{/if}}" href="/statistics">
+              <i class="fa-solid fa-chart-simple me-1"></i>{{__ "nav_statistics"}}
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link menu-link {{#if (eq activePage 'policy')}}active{{/if}}" href="/policy">
               <i class="fas fa-shield-alt me-1"></i>{{__ "nav_policy"}}
             </a>
