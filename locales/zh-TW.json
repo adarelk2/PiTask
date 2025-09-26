@@ -147,9 +147,15 @@
     "nav_buy_pi": "購買 Pi",
     "nav_create_task": "建立任務",
     "nav_settings": "設定",
+    "nav_statistics": "統計",
     "language": "語言：",
     "logout": "登出",
     "login": "登入",
-    "otp_code_sent_your_email": "驗證碼已發送到您的電子郵件。"
+    "otp_code_sent_your_email": "驗證碼已發送到您的電子郵件。",
+    "statistics_title": "統計",
+    "Users": "使用者",
+    "tasks_completed": "已完成的任務",
+    "tasks_avilable": "可用的任務",
+    "tasks_avilable_for_me": "對我可用的任務"
   }
   

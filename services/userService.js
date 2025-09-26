@@ -24,9 +24,18 @@ async function calculatorMaxRewardByLevel(_level)
   return maxReward;
 }
 
-function filterTasksByLevel(userID, kd, level, tasks) {
+async function getAvilableTasksForUser(userID, kd, level, tasks) {
+  const tasks_submission = {};
+  const taskSubmissionModel = new TaskSubmissionModel();
+  await taskSubmissionModel.findByUser(userID).then(res=>{
+    res.map(row=>{
+      tasks_submission[row.task_id] = row.status;
+    })
+  });
+  
   return tasks.filter(task => {
     return (
+      !(task.id in tasks_submission) &&
       task.publisher_id !== userID &&
       (
         ((task.reward <= kd && task.required_level === level) ||
@@ -59,8 +68,9 @@ async function handleTaskClaim({ userId, taskId, errors}) {
 
   const task_submissions_avilable = await taskSubmissionModel.filter({ task_id: task.id, user_id: 0 });
   if (task_submissions_avilable.length) {
+    const new_task_status = (task.counter + 1 == task.maxUsers) ? 'completed' : 'active';
     await taskSubmissionModel.update({ id: task_submissions_avilable[0].id }, { user_id: user.id });
-    await taskModel.update({ id: task.id }, { counter: task.counter + 1 });
+    await taskModel.update({ id: task.id }, { counter: task.counter + 1, status: new_task_status});
     return { flag: true };
   }
 
@@ -74,7 +84,7 @@ function isValidPiWallet(address) {
 
 module.exports = {
   calculatorKD,
-  filterTasksByLevel,
+  getAvilableTasksForUser,
   handleTaskClaim,
   calculatorMaxRewardByLevel,
   isValidPiWallet

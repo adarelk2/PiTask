@@ -18,7 +18,7 @@ class Home extends BaseController {
     const submissions = await this.taskSubmissionModel.getUserSubmissions(this.req.user.id, user.level);
     
     const kd = userService.calculatorKD(this.req.user.id, user.level, submissions);
-    const filtered = userService.filterTasksByLevel(user.id, kd, user.level, tasks);
+    const filtered = await userService.getAvilableTasksForUser(user.id, kd, user.level, tasks);
 
     this.render('home', {
       title: 'TaskPi',

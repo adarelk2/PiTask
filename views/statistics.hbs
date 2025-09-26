@@ -1,0 +1,52 @@
+<h2 class="mb-4">{{__ "statistics_title"}}</h2>
+<hr>
+  <div class="container py-5">
+    <div class="row justify-content-center g-3">
+      
+      <div class="col-lg-6 col-md-8">
+        <div class="card shadow-sm border-0 rounded-3">
+          <div class="card-body d-flex justify-content-between align-items-center">
+            <h5 class="fw-semibold">👤 {{__ "Users"}}</h5>
+            <h5>{{statistics.countUsers}}</h5>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 col-md-8">
+        <div class="card shadow-sm border-0 rounded-3">
+          <div class="card-body d-flex justify-content-between align-items-center">
+            <h5 class="fw-semibold">✅ {{__ "tasks_completed"}}</h5>
+            <h5>{{statistics.TasksCompleted}}</h5>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 col-md-8">
+        <div class="card shadow-sm border-0 rounded-3">
+          <div class="card-body d-flex justify-content-between align-items-center">
+            <h5 class="fw-semibold">📋 {{__ "tasks_avilable"}}</h5>
+            <h5>{{statistics.TasksAvilable}}</h5>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 col-md-8">
+        <div class="card shadow-sm border-0 rounded-3">
+          <div class="card-body d-flex justify-content-between align-items-center">
+            <h5 class="fw-semibold">⭐ {{__ "tasks_avilable_for_me"}}</h5>
+            <h5>{{statistics.countTasksAvilableForUser}}</h5>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 col-md-8">
+        <div class="card shadow-sm border-0 rounded-3">
+          <div class="card-body d-flex justify-content-between align-items-center">
+            <h5 class="fw-semibold">💰 {{__ "balance"}}</h5>
+            <h5>{{statistics.balance}} Pi</h5>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
