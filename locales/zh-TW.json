@@ -171,6 +171,6 @@
 	"testnet.item_more_benefits": "更多福利將由 TaskPi 管理團隊稍後決定。",
 	"testnet.paragraph_goal": "📌 我們的目標是測試和改進系統，讓每個人都能享受到更穩定、公平和更多獎勵的平台。",
 	"testnet.cta": "👉 立即進入 Testnet，成為 TaskPi 未來的一部分！",
-	"testnet.staging_link_label": "pi://staging.taskpi.work",
+	"testnet.staging_link_label": "https://staging.taskpi.work",
 	"tasks": "tasks"
 }
