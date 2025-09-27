@@ -160,5 +160,20 @@
 	"nav_statistics": "Statistics",
 	"tasks_completed": "Tasks completed",
 	"tasks_avilable": "Tasks avilable",
-	"tasks_avilable_for_me": "Tasks avilable for me"
+	"tasks_avilable_for_me": "Tasks avilable for me",
+	"testnetPage": "Testnet Version",
+	"testnet.heading_invite": "🚀 Join TaskPi’s testing period!",
+	"testnet.paragraph_invite": "We invite all users to try our Testnet version and perform actions such as:",
+	"testnet.item_buy_coins": "Buying coins",
+	"testnet.item_create_tasks": "Creating tasks",
+	"testnet.item_click_tasks": "Clicking and completing tasks",
+	"testnet.heading_note": "💡 Good to know:",
+	"testnet.note_text": "On the Testnet, everything is simulated for testing only. Even if you buy coins or complete tasks, no Pi will be deducted from your real wallet on the Mainnet.",
+	"testnet.heading_rewards": "🎁 Rewards for active Testnet participants",
+	"testnet.paragraph_rewards_intro": "Active participants during the testing period may receive unique benefits when moving to the Mainnet, for example:",
+	"testnet.item_validator_level": "Eligibility to become a Validator Level, enabling higher-reward tasks in the future.",
+	"testnet.item_more_benefits": "Additional benefits to be determined by the TaskPi leadership.",
+	"testnet.paragraph_goal": "📌 Our goal is to test and improve the system so everyone enjoys a more stable, fair, and rewarding platform.",
+	"testnet.cta": "👉 Head to the Testnet now and be part of TaskPi’s future!",
+	"testnet.staging_link_label": "https://staging.taskpi.work"
 }
