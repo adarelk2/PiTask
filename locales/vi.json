@@ -157,5 +157,20 @@
 	"tasks_completed": "Nhiệm vụ đã hoàn thành",
 	"tasks_avilable": "Nhiệm vụ có sẵn",
 	"tasks_avilable_for_me": "Nhiệm vụ có sẵn cho tôi",
-	"tasks": "tasks"
+	"tasks": "tasks",
+  "testnetPage": "Phiên bản Testnet",
+  "testnet.heading_invite": "🚀 Tham gia giai đoạn thử nghiệm của TaskPi!",
+  "testnet.paragraph_invite": "Chúng tôi mời tất cả người dùng trải nghiệm phiên bản Testnet và thực hiện các hành động như:",
+  "testnet.item_buy_coins": "Mua coin",
+  "testnet.item_create_tasks": "Tạo nhiệm vụ",
+  "testnet.item_click_tasks": "Nhấp và hoàn thành nhiệm vụ",
+  "testnet.heading_note": "💡 Lưu ý:",
+  "testnet.note_text": "Trên Testnet, mọi thứ chỉ là mô phỏng để thử nghiệm. Ngay cả khi bạn mua coin hoặc hoàn thành nhiệm vụ, sẽ không có Pi nào bị trừ khỏi ví thực của bạn trên Mainnet.",
+  "testnet.heading_rewards": "🎁 Phần thưởng cho người tham gia Testnet tích cực",
+  "testnet.paragraph_rewards_intro": "Những người tham gia tích cực trong giai đoạn thử nghiệm có thể nhận được các lợi ích đặc biệt khi chuyển sang Mainnet, ví dụ:",
+  "testnet.item_validator_level": "Cơ hội trở thành Validator Level, cho phép thực hiện các nhiệm vụ có phần thưởng cao hơn trong tương lai.",
+  "testnet.item_more_benefits": "Các lợi ích bổ sung sẽ do ban quản lý TaskPi quyết định sau.",
+  "testnet.paragraph_goal": "📌 Mục tiêu của chúng tôi là kiểm tra và cải thiện hệ thống để mọi người có thể tận hưởng một nền tảng ổn định, công bằng và nhiều phần thưởng hơn.",
+  "testnet.cta": "👉 Hãy truy cập ngay Testnet và trở thành một phần của tương lai TaskPi!",
+  "testnet.staging_link_label": "https://staging.taskpi.work"
 }
