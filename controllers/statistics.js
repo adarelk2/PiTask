@@ -17,9 +17,12 @@ class Statistics extends BaseController {
         const user = await this.userModel.getUserById(this.req.user.id);
         
         let balance = 0;
-        const countUsers = await this.userModel.filter({}).then(res=>{
+        let countUsers = 0;
+        await this.userModel.filter({}).then(res=>{
             res.map(rowUser=>{
                 balance += rowUser.balance;
+                if(rowUser.email != null)
+                    countUsers++;
             })
             return res.length});
         const TasksAvilable = await this.taskModel.filter({status:'active'})
