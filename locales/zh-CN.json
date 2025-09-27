@@ -156,21 +156,6 @@
     "Users": "用户",
     "tasks_completed": "已完成的任务",
     "tasks_avilable": "可用的任务",
-    "tasks_avilable_for_me": "对我可用的任务",
-    "testnetPage": "Testnet 版本",
-    "testnet.heading_invite": "🚀 加入 TaskPi 的测试阶段！",
-    "testnet.paragraph_invite": "我们邀请所有用户体验我们的 Testnet 版本并执行以下操作：",
-    "testnet.item_buy_coins": "购买代币",
-    "testnet.item_create_tasks": "创建任务",
-    "testnet.item_click_tasks": "点击并完成任务",
-    "testnet.heading_note": "💡 重要提示：",
-    "testnet.note_text": "在 Testnet 上，一切都只是用于测试的模拟。即使您购买代币或完成任务，您的 Mainnet 钱包里也不会扣除任何 Pi。",
-    "testnet.heading_rewards": "🎁 Testnet 活跃参与者的奖励",
-    "testnet.paragraph_rewards_intro": "在测试期间积极参与的用户，在转移到 Mainnet 时可能会获得独特的福利，例如：",
-    "testnet.item_validator_level": "有资格成为 Validator Level，从而在未来可以执行奖励更高的任务。",
-    "testnet.item_more_benefits": "更多福利将由 TaskPi 管理团队稍后决定。",
-    "testnet.paragraph_goal": "📌 我们的目标是测试和改进系统，让每个人都能享受到更稳定、公平和更有奖励的平台。",
-    "testnet.cta": "👉 立即进入 Testnet，成为 TaskPi 未来的一部分！",
-    "testnet.staging_link_label": "https://staging.taskpi.work"
+    "tasks_avilable_for_me": "对我可用的任务"
   }
   

@@ -156,21 +156,6 @@
     "Users": "Mga Gumagamit",
     "tasks_completed": "Natapos na mga Gawain",
     "tasks_avilable": "Magagamit na mga Gawain",
-    "tasks_avilable_for_me": "Magagamit na mga Gawain para sa Akin",
-    "testnetPage": "Bersyon ng Testnet",
-    "testnet.heading_invite": "🚀 Sumali sa panahon ng pagsubok ng TaskPi!",
-    "testnet.paragraph_invite": "Inaanyayahan namin ang lahat ng mga user na subukan ang aming Testnet version at gawin ang mga aksyon gaya ng:",
-    "testnet.item_buy_coins": "Pagbili ng coins",
-    "testnet.item_create_tasks": "Paglikha ng mga tasks",
-    "testnet.item_click_tasks": "Pag-click at pagsasagawa ng mga tasks",
-    "testnet.heading_note": "💡 Mahalaga:",
-    "testnet.note_text": "Sa Testnet, lahat ay simulated para lamang sa testing. Kahit bumili ka ng coins o magsagawa ng tasks, walang Pi na mababawas mula sa iyong tunay na wallet sa Mainnet.",
-    "testnet.heading_rewards": "🎁 Mga gantimpala para sa aktibong kalahok sa Testnet",
-    "testnet.paragraph_rewards_intro": "Ang mga aktibong kalahok sa panahon ng pagsubok ay maaaring makatanggap ng natatanging benepisyo kapag lumipat sa Mainnet, halimbawa:",
-    "testnet.item_validator_level": "Kakayahang maging Validator Level, na magbibigay ng mas mataas na reward sa mga tasks sa hinaharap.",
-    "testnet.item_more_benefits": "Karagdagang mga benepisyo na itatakda ng pamunuan ng TaskPi.",
-    "testnet.paragraph_goal": "📌 Layunin naming subukan at pagandahin ang sistema upang lahat ay makinabang sa mas matatag, patas, at kapaki-pakinabang na platform.",
-    "testnet.cta": "👉 Pumunta na sa Testnet at maging bahagi ng hinaharap ng TaskPi!",
-    "testnet.staging_link_label": "https://staging.taskpi.work"
+    "tasks_avilable_for_me": "Magagamit na mga Gawain para sa Akin"
   }
   
