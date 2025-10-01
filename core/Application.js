@@ -26,7 +26,7 @@ class Application {
       const method = controllerInstance[this.methodName];
       if (typeof method === 'function') {
         await method.call(controllerInstance, this.params);
-        this.logger.insert({user:this.req.user, params:this.req.params, query: this.req.query, body: this.req.body});
+        this.logger.insert({user:this.req.user, params:this.params, method: this.methodName, controller: this.controllerName});
       } else {
         throw new Error(`Method '${this.methodName}' not found on controller '${this.controllerName}'`);
       }
