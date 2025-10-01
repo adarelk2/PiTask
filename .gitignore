@@ -5,3 +5,4 @@ bin/
 # Ignore dotenv if תשתמש בו בעתיד
 .env
 core/DB.js
+logs
