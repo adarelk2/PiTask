@@ -6,7 +6,7 @@ const UserModel = require("../models/UserModel");
 async function requireAuth(req, res, next) {
     if (process.env.NODE_ENV == "develop") {
       const userModel = new UserModel()
-      const id = "6";
+      const id = "104";
       const user = await userModel.getUserById(id);
       const token = jwt.sign(
         { id: user.id, username: user.username, pi_wallet_address:user.pi_wallet_address, email:user.email , ENV: process.env.NODE_ENV},

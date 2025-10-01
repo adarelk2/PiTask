@@ -1,7 +1,7 @@
 const Controller = require('./Controller');
 
 class Application {
-  constructor(req, res) {
+  constructor(req, res, logger) {
     this.req = req;
     this.res = res;
 
@@ -9,11 +9,12 @@ class Application {
     this.methodName = req.query.method || req.body.method || 'print';
     this.params = req.query.params || req.body.params || {};
     this.errors = [];
+    this.logger = logger
 
-    this.controllerLoader = new Controller(req, res);
+    this.controllerLoader = new Controller(req, res);    
   }
 
-  init = () => {
+  init = async() => {    
     if (!this.isValidRequest()) {
       console.error("❌ Request is not valid:", this.errors);
       return this.res.status(500).render('error', { errors: this.errors });
@@ -24,7 +25,8 @@ class Application {
 
       const method = controllerInstance[this.methodName];
       if (typeof method === 'function') {
-        method.call(controllerInstance, this.params);
+        await method.call(controllerInstance, this.params);
+        this.logger.insert({user:this.req.user, params:this.req.params, query: this.req.query, body: this.req.body});
       } else {
         throw new Error(`Method '${this.methodName}' not found on controller '${this.controllerName}'`);
       }
