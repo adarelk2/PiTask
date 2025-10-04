@@ -1,0 +1,26 @@
+<h2>{{title}}</h2>
+
+<div class="table-responsive">
+  <table class="table table-dark table-striped table-hover align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th>Date</th>
+        <th>Controller</th>
+        <th>Method</th>
+        <th>User</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each stats}}
+        {{#each this}}
+          <tr>
+            <td>{{@../key}}</td>
+            <td>{{this.controller}}</td>
+            <td>{{this.method}}</td>
+            <td>{{this.user}}</td>
+          </tr>
+        {{/each}}
+      {{/each}}
+    </tbody>
+  </table>
+</div>

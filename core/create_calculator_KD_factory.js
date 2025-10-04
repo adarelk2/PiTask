@@ -1,6 +1,7 @@
 const KDLevel1 = require('./kd/KD_level_1');
 const KDLevel2 = require('./kd/KD_level_2');
 const KDLevel3 = require('./kd/KD_level_3');
+const KDLevel4 = require('./kd/KD_level_4');
 
 class createCalculatorKDFactory
 {
@@ -22,6 +23,9 @@ class createCalculatorKDFactory
         return new KDLevel2(this.id, this.level, this.tasks);
       case 3:
         return new KDLevel3(this.id, this.level, this.tasks);
+      default:
+        return new KDLevel1(this.id, this.level, this.tasks);
+
 
     }
   }

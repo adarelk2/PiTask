@@ -1,62 +1,80 @@
 const axios = require('axios');
-const UserModel = require('../models/UserModel');
 const jwt = require('jsonwebtoken');
-const userModel = new UserModel();
+const UserModel = require('../models/UserModel');
 require('dotenv').config();
 
-exports.showLogin = (req, res) => {
-  res.render('login');
-};
-
-exports.verifyToken = async (req, res) => {
-  const { piToken } = req.body;
-
-  if (!piToken) {
-    return res.status(400).json({ success: false, message: 'Missing Pi token' });
+class AuthController {
+  constructor() {
+    this.userModel = new UserModel();
   }
 
-  try {
-    const response = await axios.get('https://api.minepi.com/v2/me', {
-      headers: {
-        Authorization: `Bearer ${piToken}`
-      }
-    });
+  // GET /login
+  showLogin(req, res) {
+    res.render('login');
+  }
 
-    console.log("✅ Verified Pi Token:", response.data);
-    let { username, wallet_address } = response.data;
+  // POST /verify-token
+  async verifyToken(req, res) {
+    const { piToken } = req.body;
 
-    if (!wallet_address) {
-      wallet_address = "UNVERIFIED";
+    if (!piToken) {
+      return res.status(400).json({ success: false, message: 'Missing Pi token' });
     }
 
-    let users = await userModel.filter({ username });
-
-    if (users.length === 0) {
-      await userModel.insert({
-        username,
-        pi_wallet_address: wallet_address,
-        level: 1,
-        balance: 0
+    try {
+      // 1. Verify Pi token with Pi Network API
+      const response = await axios.get('https://api.minepi.com/v2/me', {
+        headers: { Authorization: `Bearer ${piToken}` }
       });
-      users = await userModel.filter({ username });
+
+      console.log("✅ Verified Pi Token:", response.data);
+      let { username, wallet_address } = response.data;
+
+      if (!wallet_address) {
+        wallet_address = "UNVERIFIED";
+      }
+
+      // 2. Check if user exists in DB
+      let users = await this.userModel.filter({ username });
+
+      if (users.length === 0) {
+        await this.userModel.insert({
+          username,
+          pi_wallet_address: wallet_address,
+          level: 1,
+          balance: 0
+        });
+        users = await this.userModel.filter({ username });
+      }
+
+      const user = users[0];
+
+      // 3. Create JWT
+      const token = jwt.sign(
+        {
+          id: user.id,
+          username: user.username,
+          pi_wallet_address: user.pi_wallet_address,
+          level:user.level,
+          email: user.email,
+          ENV: process.env.NODE_ENV
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+      );
+
+      res.json({ success: true, token });
+
+    } catch (err) {
+      console.error('❌ Token verification failed or DB error:', err.response?.data || err.message);
+      res.status(401).json({ success: false, message: 'Invalid token or DB error' });
     }
-
-    const user = users[0];
-
-    const token = jwt.sign(
-      { id: user.id, username: user.username, pi_wallet_address:user.pi_wallet_address, email:user.email , ENV: process.env.NODE_ENV},
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
-
-    res.json({ success: true, token });
-
-  } catch (err) {
-    console.error('❌ Token verification failed or DB error:', err.response?.data || err.message);
-    res.status(401).json({ success: false, message: 'Invalid token or DB error' });
   }
-};
 
-exports.authCallback = (req, res) => {
-  res.redirect('/dashboard');
-};
+  // GET /auth/callback
+  authCallback(req, res) {
+    res.redirect('/dashboard');
+  }
+}
+
+module.exports = AuthController;
