@@ -12,7 +12,7 @@ class Buy_Pi extends BaseController {
         const users = await this.userModel.filter({id: this.req.user.id});
 
         const user = users[0];
-        this.render('buy_pi', {
+        this._render('buy_pi', {
             title: 'TaskPi - Buy Pi',
             user: user, // או כל אובייקט משתמש רלוונטי
             headerTitle:"TaskPi"

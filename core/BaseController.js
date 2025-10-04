@@ -1,7 +1,9 @@
 const View = require('./View');
 
-class BaseController {
-  constructor(req, res) {
+class BaseController 
+{
+  constructor(req, res) 
+  {
     this.req = req;
     this.res = res;
     this.view = new View(res);
@@ -29,6 +31,22 @@ class BaseController {
 
   redirect(path) {
     this.res.redirect(path);
+  }
+
+  checkPermissions(_levelRequire, _childClass) 
+  {
+    if (!this.req.user || this.req.user.level < _levelRequire) 
+    {
+      const ownProps = Object.getOwnPropertyNames(_childClass.prototype);
+
+      for (const prop of ownProps) 
+      {
+        if (prop !== 'constructor') 
+          this[prop] = () => {
+            throw new Error('Access denied: insufficient level');
+          };
+      }
+    }
   }
 }
 

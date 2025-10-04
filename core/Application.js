@@ -10,7 +10,7 @@ class Application {
     this.params = req.query.params || req.body.params || {};
     this.errors = [];
     this.logger = logger
-
+    
     this.controllerLoader = new Controller(req, res);    
   }
 
