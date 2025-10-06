@@ -1,12 +1,9 @@
-const View = require('./View');
-
 class BaseController 
 {
   constructor(req, res) 
   {
     this.req = req;
     this.res = res;
-    this.view = new View(res);
     this.user = req.user || null;
 
     let lang_errors = "en";
