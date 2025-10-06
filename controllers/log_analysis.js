@@ -1,6 +1,6 @@
 const BaseController = require('../core/BaseController');
 const LogReader = require('../core/LogReader');
-const {PERMISSIONS} = require('../config/permissions');
+const { PERMISSIONS } = require('../config/permissions');
 
 class LogAnalysis extends BaseController {
     constructor(_req, _res) 

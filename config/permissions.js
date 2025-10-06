@@ -1,5 +1,5 @@
 const PERMISSIONS = {
-    ADMIN:4
-}
+    ADMIN: 4
+};
 
-export {PERMISSIONS };
+module.exports = { PERMISSIONS };
