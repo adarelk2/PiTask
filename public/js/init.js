@@ -5,17 +5,14 @@
     const token = localStorage.getItem('token');
     const lang = localStorage.getItem('lang');
     document.querySelectorAll('.menu-link').forEach(link => {
-      let baseHref = link.getAttribute('href');
-      if (baseHref) {
-        const separator = baseHref.includes('?') ? '&' : '?';
-        link.setAttribute(
-          'href',
-          `${baseHref}${separator}token=${encodeURIComponent(token)}&lang=${lang}`
-        );
+        console.log(link);
+      const baseHref = link.getAttribute('href');
+      if(baseHref)
+      {
+        link.setAttribute('href', `${baseHref}?token=${encodeURIComponent(token)}&lang=${lang}`);
       }
     });
   });
-
 
   function getAllParams(url = window.location.href) {
   const params = {};
