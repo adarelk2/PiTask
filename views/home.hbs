@@ -92,8 +92,8 @@
             <div class="bg-light rounded-circle p-4 mx-auto mb-4 d-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
               <i class="fas fa-inbox text-muted" style="font-size: 3rem;"></i>
             </div>
-            <h4 class="text-muted mb-3 fw-bold">{{__ "no_tasks"}}</h4>
-            <p class="text-muted mb-4 fs-5">Check back later for new tasks to complete!</p>
+            <h4 class="mb-3 fw-bold">{{__ "no_tasks"}}</h4>
+            <p class="mb-4 fs-5">Check back later for new tasks to complete!</p>
             <button class="btn btn-outline-primary px-4 py-2" onclick="location.reload()">
               <i class="fas fa-refresh me-2"></i>Refresh
             </button>
@@ -106,7 +106,6 @@
 
 <script>
   const btns = document.querySelectorAll(".taskPull");
-  const token = localStorage.getItem("token");
 
   btns.forEach((btn)=>{
     btn.addEventListener("click", async(e)=>{
