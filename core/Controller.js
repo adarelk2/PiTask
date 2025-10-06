@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const View = require('./View');
 
 class Controller {
   constructor(_req, _res) {
@@ -8,7 +7,6 @@ class Controller {
     this.res = _res;
     this.errors = [];
     this.model;
-    this.view = new View(_res);
     return this;
   }
 

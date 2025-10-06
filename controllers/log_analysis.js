@@ -9,6 +9,15 @@ class LogAnalysis extends BaseController {
         this.checkPermissions(PERMISSIONS.ADMIN, LogAnalysis)
     }
 
+    print()
+    {
+        this.render('log_analysis', {
+        user: this.req.user,
+        title:"Log analysis",
+        headerTitle: "TaskPi",
+    });
+    }
+
     async usersByControllerAndMethod(_params) {
         const logger = new LogReader("logs");
         await logger.loader();
@@ -58,7 +67,8 @@ class LogAnalysis extends BaseController {
                 : `TaskPi - Users for ${targetController} (all methods)`,
             user: this.req.user,
             stats,
-            headerTitle: "TaskPi"
+            headerTitle: "TaskPi",
+            layout:false
         });
     }
 
@@ -99,7 +109,8 @@ class LogAnalysis extends BaseController {
                 : `TaskPi - Actions (all users)`,
             user: this.req.user,
             stats,
-            headerTitle: "TaskPi"
+            headerTitle: "TaskPi",
+            layout:false
         });
     }
 

@@ -1,0 +1,93 @@
+<h2>{{title}}</h2>
+
+<div class="form-group mb-2">
+  <h4>Search actions by user </h4>
+  <input class="form-control mb-2" id="user" type="text" placeholder="Search by user">
+  <button class="btn btn-dark" id="searchByUserBTN">Search</button>
+</div>
+<hr>
+<div class="form-group mb-2">
+  <h4>Search actions by controller and method </h4>
+  <input class="form-control mb-2" id="controller" type="text" placeholder="Search by controller">
+  <input class="form-control mb-2" id="method" type="text" placeholder="Search by method">
+  <button class="btn btn-dark" id="searchByControllerBTN">Search</button>
+</div>
+
+<div id="show_list">
+  <div class="table-responsive">
+    <table class="table table-dark table-striped table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Date</th>
+          <th>Controller</th>
+          <th>Method</th>
+          <th>User</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each stats}}
+          {{#each this}}
+            <tr>
+              <td>{{@../key}}</td>
+              <td>{{this.controller}}</td>
+              <td>{{this.method}}</td>
+              <td>{{this.user}}</td>
+            </tr>
+          {{/each}}
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<script>
+  const searchByUserBTN = document.getElementById("searchByUserBTN");
+  const searchByControllerBTN = document.getElementById("searchByControllerBTN");
+  
+  const show_list = document.getElementById("show_list");
+
+  searchByUserBTN.addEventListener("click", async()=>
+  {
+    showLoading();
+    const user = document.getElementById("user").value;
+    try 
+    {
+      const res = await fetch("/log_analysis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({method:"actionsByUser", params: {user} }),
+        credentials: "include",
+      });
+      const response = await res.text()
+      show_list.innerHTML = response
+      Swal.close();
+    }
+    catch(e)
+    {
+      console.log(e)
+    }
+  })
+
+  searchByControllerBTN.addEventListener("click", async()=>{
+    showLoading();
+    const controller = document.getElementById("controller").value;
+    const method = document.getElementById("method").value;
+    try 
+    {
+      const res = await fetch("/log_analysis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({method:"usersByControllerAndMethod", params: {page:controller, method} }),
+        credentials: "include",
+      });
+      const response = await res.text()
+      show_list.innerHTML = response
+      Swal.close();
+    }
+    catch(e)
+    {
+      console.log(e)
+    }
+  })
+</script>
