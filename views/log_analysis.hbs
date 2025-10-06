@@ -42,6 +42,7 @@
 
 
 <script>
+  console.log(token);
   const searchByUserBTN = document.getElementById("searchByUserBTN");
   const searchByControllerBTN = document.getElementById("searchByControllerBTN");
   
@@ -56,7 +57,7 @@
       const res = await fetch("/log_analysis", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({method:"actionsByUser", params: {user} }),
+        body: JSON.stringify({method:"actionsByUser", token, params: {user} }),
         credentials: "include",
       });
       const response = await res.text()
@@ -78,7 +79,7 @@
       const res = await fetch("/log_analysis", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({method:"usersByControllerAndMethod", params: {page:controller, method} }),
+        body: JSON.stringify({method:"usersByControllerAndMethod", token, params: {page:controller, method} }),
         credentials: "include",
       });
       const response = await res.text()
