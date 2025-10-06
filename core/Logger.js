@@ -35,7 +35,7 @@ class Logger
 
             batch.reverse();
 
-            const fileName = dayjs().format("DD-MM-YY-HH") + ".json";
+            const fileName = dayjs().format("DD-MM-YY") + ".json";
             const filePath = `./${this.dir}/${fileName}`;
 
             let arr = [];
