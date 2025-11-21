@@ -44,11 +44,6 @@ vi.json
 zh.json
 ```
 
-### 8. **Cron Jobs**
-Background scripts such as KD updates or cleanup tasks.
-
----
-
 ## Final Recommended Folder Hierarchy
 (Using only existing files — reorganized, renamed where necessary)
 
@@ -58,28 +53,25 @@ src/
   server.js
 
   config/
-    config.js
-    database.js
-    env.js
-    production.js
-    development.js
+    permissions.js
+    pi.js
 
   controllers/
     AuthController.js
-    BuyPiController.js
-    CreateTaskController.js
-    HomeController.js
-    LogAnalysisController.js
-    LoginController.js
+    BuyPi.js
+    CreateTask.js
+    Home.js
+    LogAnalysis.js
+    Login.js
     PaymentController.js
-    PolicyController.js
-    ProfileController.js
-    SettingsController.js
-    StatisticsController.js
-    TermsController.js
-    TestnetController.js
-    UserController.js
-    WhitePaperController.js
+    Policy.js
+    Profile.js
+    Settings.js
+    Statistics.js
+    Terms.js
+    Testnet.js
+    User.js
+    WhitePaper.js
 
   services/
     (existing service files)
@@ -89,16 +81,20 @@ src/
 
   middleware/
     auth.js
-    validate_user.js
-    error_handler.js
-    logger_middleware.js
+    languageMiddleware.js
 
-  utils/
-    logger.js
-    log_reader.js
-    db_connection.js
-    helpers.js
-    config_utils.js
+  core/
+    kd
+    Application.js
+    BaseController.js
+    Controller.js
+    CreateCalculatorKDFactory.js
+    CreateValidationFactory.js
+    DB.js
+    Logger.js
+    LogReader.js
+    Model.js
+    Stack.js
 
   routes/
     paymentRoutes.js
@@ -120,10 +116,6 @@ src/
     he.json
     zh.json
     vi.json
-
-  cron/
-    kd_update.js
-    auto_cleanup.js
 
   logs/
     app.log
