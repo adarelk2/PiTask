@@ -2,8 +2,8 @@ const BaseController = require('../core/BaseController');
 const UserModel = require("../models/UserModel");
 const TaskModel = require("../models/TaskModel");
 const TaskSubmissionModel = require("../models/TaskSubmissionModel");
-const userService = require('../services/userService');
-const taskService = require('../services/taskService');
+const userService = require('../services/user.service');
+const taskService = require('../services/task.service');
 
 class Profile extends BaseController {
   constructor(req, res) {

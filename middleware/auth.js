@@ -1,4 +1,4 @@
-const userService = require('../services/userService');
+const userService = require('../services/user.service');
 const jwt = require('jsonwebtoken');
 const UserModel = require("../models/UserModel");
 
@@ -6,8 +6,10 @@ const UserModel = require("../models/UserModel");
 async function requireAuth(req, res, next) {
     if (process.env.NODE_ENV == "develop") {
       const userModel = new UserModel()
-      const id = "19";
+      const id = "104";
       const user = await userModel.getUserById(id);
+      console.log(user);
+      
       const token = jwt.sign(
         { id: user.id, username: user.username, level:user.level, pi_wallet_address:user.pi_wallet_address, email:user.email , ENV: process.env.NODE_ENV},
         process.env.JWT_SECRET,

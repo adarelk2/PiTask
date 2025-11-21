@@ -2,7 +2,7 @@ const BaseController = require('../core/BaseController');
 const UserModel = require('../models/UserModel');
 const TaskModel = require('../models/TaskModel');
 const TaskSubmissionModel = require('../models/TaskSubmissionModel');
-const taskService = require('../services/taskService');
+const taskService = require('../services/task.service');
 
 class Create_Task extends BaseController {
   constructor(req, res) {

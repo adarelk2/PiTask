@@ -54,7 +54,7 @@
     const user = document.getElementById("user").value;
     try 
     {
-      const res = await fetch("/log_analysis", {
+      const res = await fetch("/LogAnalysis", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({method:"actionsByUser", token, params: {user} }),
@@ -76,7 +76,7 @@
     const method = document.getElementById("method").value;
     try 
     {
-      const res = await fetch("/log_analysis", {
+      const res = await fetch("/LogAnalysis", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({method:"usersByControllerAndMethod", token, params: {page:controller, method} }),

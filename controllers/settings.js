@@ -2,7 +2,7 @@ const BaseController = require('../core/BaseController');
 const UserModel = require("../models/UserModel");
 const EmailVerificationsModel = require('../models/EmailVerificationsModel');
 
-const userService = require('../services/userService');
+const userService = require('../services/user.service');
 
 class Settings extends BaseController {
   constructor(req, res) {
