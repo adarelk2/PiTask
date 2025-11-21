@@ -1,154 +1,185 @@
-# PiTask – Project Architecture & Structure
+# TaskPi — Decentralized Micro-Task Platform on Pi Network
 
-This README summarizes the architectural analysis and recommended structure for the PiTask project based on the uploaded source.
+TaskPi is a decentralized micro-task platform built for the **Pi Network Hackathon**.  
+Users complete simple tasks (visit a link, upload proof, download an app, etc.) and earn **Pi**.  
 
-## Project Overview
-PiTask is a full‑stack web application built with Node.js and Express, implementing modular MVC principles, multi‑language support, logging, and user/task management flows. The project demonstrates mid‑level architectural thinking, separation of concerns, and feature‑based controllers/services.
+TaskPi uses reputation, human validation, and anti-fraud logic to create a fair, scalable ecosystem.
 
-## Key Architectural Principles
+---
 
-### 1. **Controllers as Classes (PascalCase)**
-All controllers represent high‑level request handlers and should use class‑based structure. Naming follows:
+## 🚀 Core Features
+
+### 1. Multi-Level User System
+| Level | Description |
+|-------|-------------|
+| **Level 1 – Beginner** | Simple, auto-approved tasks. No validation required. |
+| **Level 2 – Trusted Performer** | Requires proof. Reviewed by validator. Accuracy added. |
+| **Level 3 – Validator** | Trusted users who review & approve/reject others' submissions. |
+
+### 2. Task Lifecycle
+1. Publisher creates a task and deposits Pi  
+2. User claims the task  
+3. User submits proof  
+4. Validator/Admin approves  
+5. User receives Pi  
+
+### 3. Anti-Fraud System
+- No AI auto-review  
+- Human validators only  
+- Accuracy system for every user  
+- Publishers cannot review their own tasks  
+- Audit logs for every action  
+
+---
+
+## 🧩 Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Backend | Node.js + Express |
+| View Engine | Handlebars (HBS) |
+| Database | MySQL |
+| Sessions | SQL-backed express-session |
+| Localization | JSON under `/locales` |
+| Security | Validation Factory, custom middleware |
+| Payments | Pi SDK (Testnet) |
+
+---
+
+## 📁 Project Structure
+
 ```
-AuthController.js
-UserController.js
-PaymentController.js
-```
-
-### 2. **Service Layer (Business Logic)**
-Services contain logic not tied to HTTP or routing. Each feature has a matching service:
-```
-AuthService.js
-TaskService.js
-ProfileService.js
-```
-
-### 3. **Model Layer**
-Holds DB logic or data access responsibilities.
-
-### 4. **Middleware**
-Auth, language, validation, and logging layers applied between request and controller.
-
-### 5. **Utils & Core Helpers**
-Shared utilities for logging, config parsing, date utilities, or helper functions.
-
-### 6. **Views & Public Assets**
-Static files in `public/` and templates in `views/`.
-
-### 7. **Locales**
-Multi‑language JSON definitions:
-```
-en.json
-he.json
-vi.json
-zh.json
-```
-
-## Final Recommended Folder Hierarchy
-(Using only existing files — reorganized, renamed where necessary)
-
-```
-src/
-  app.js
-  server.js
-
-  config/
-    permissions.js
-    pi.js
-
-  controllers/
-    AuthController.js
-    BuyPi.js
-    CreateTask.js
-    Home.js
-    LogAnalysis.js
-    Login.js
-    PaymentController.js
-    Policy.js
-    Profile.js
-    Settings.js
-    Statistics.js
-    Terms.js
-    Testnet.js
-    User.js
-    WhitePaper.js
-
-  services/
-    (existing service files)
-
-  models/
-    (existing models)
-
-  middleware/
-    auth.js
-    languageMiddleware.js
-
-  core/
-    kd
-    Application.js
-    BaseController.js
-    Controller.js
-    CreateCalculatorKDFactory.js
-    CreateValidationFactory.js
-    DB.js
-    Logger.js
-    LogReader.js
-    Model.js
-    Stack.js
-
-  routes/
-    paymentRoutes.js
-    authRoutes.js
-    userRoutes.js
-    taskRoutes.js
-
-  views/
-    (existing templates)
-
-  public/
-    css/
-    js/
-    images/
-    assets/
-
-  locales/
-    en.json
-    he.json
-    zh.json
-    vi.json
-
-  logs/
-    app.log
-    errors.log
-    payments.log
-
-package.json
-README.md
+TaskPi/
+│── bin/
+│── config/
+│── constants/
+│── core/
+│   ├── Application.js
+│   ├── Controller.js
+│   ├── Model.js
+│   ├── DB.js
+│   ├── Logger.js
+│   ├── LogReader.js
+│   └── validations/
+│── locales/
+│── middleware/
+│── models/
+│── public/
+│── routes/
+│── views/
+│── package.json
+└── README.md
 ```
 
 ---
 
-## SOLID Notes
-### **Liskov Substitution Principle**
-Avoid placing methods in a parent class that *not all* children can meaningfully implement.
+## ⚙️ Installation
 
-**Example:**  
-A `Bird` class must not contain `fly()` if `Penguin` cannot fly.  
-Use either:
-- `Flyable` interface  
-- `FlyingBird` subclass  
-- or remove the method from the parent
+### 1. Clone
+```
+git clone https://github.com/<your-user>/TaskPi.git
+cd TaskPi
+```
+
+### 2. Install
+```
+npm install
+```
+
+### 3. Create `.env`
+```
+PORT=3000
+DB_HOST=...
+DB_USER=...
+DB_PASS=...
+DB_NAME=TaskPi
+PI_API_KEY=...
+PI_APP_ID=...
+SESSION_SECRET=your-secret
+```
+
+### 4. Run
+```
+npm start
+```
 
 ---
 
-## Missing Components (for future mid‑level quality)
-- Automated testing (unit + integration)
-- Mock DB layer
-- Route-level validation consistency
-- Naming standardization
+## 🌐 Multi-Language Support
+
+Supported languages:  
+**English, Hebrew, Simplified Chinese, Traditional Chinese, Vietnamese**
+
+Translations stored in:
+```
+/locales/en.json
+/locales/he.json
+/locales/zh-CN.json
+/locales/zh-TW.json
+/locales/vi.json
+```
 
 ---
 
-## Conclusion
-PiTask demonstrates strong modularity and mid‑level architectural patterns.  
-With improved naming consistency, complete class‑based controllers, and a test suite, the project aligns fully with professional production standards.
+## 🔒 Anti-Fraud & Security
+
+- Proof review: manual or validator-based  
+- Accuracy score:  
+  ```
+  accuracy = approved / total
+  ```
+- Validator restrictions  
+- Session security: HTTP-only, secure cookies  
+- Review logs stored in SQL  
+
+---
+
+## 🔧 Custom MVC Framework
+
+TaskPi uses a **custom-built MVC engine**:
+
+- `Application.js` — routes, middleware, bootstrapping  
+- `Controller.js` / `BaseController.js` — main controller logic  
+- `Model.js` — database wrapper  
+- `CreateValidationFactory.js` — dynamic validation rules  
+- `CreateCalculatorKDFactory.js` — performance scoring engine  
+
+---
+
+## 🔁 Task Flow
+
+```
+Publisher → Task created → User claims → User submits proof
+        ↓                             ↓
+      Escrow locked            Validator reviews
+        ↓                             ↓
+       Approved → Pi released to user
+```
+
+---
+
+## 🗄️ Database (from SQL dump)
+
+- `users` — wallet, level, accuracy, balance  
+- `tasks` — reward, level, proof type  
+- `task_submissions` — proof, status, reviewer  
+- `completed_payments` — Pi transaction log  
+- `sessions` — login/session store  
+
+---
+
+## 🏆 Roadmap
+
+- Mainnet transition  
+- Community-powered validation  
+- UI redesign  
+- AI-based task recommendations  
+- Decentralized validator reputation  
+- Proof-of-Humanity enhancements  
+
+---
+
+## 👥 Team
+
+TaskPi is actively developed for the Pi Network Hackathon.  
+Team invitations and Join Codes will be enabled by Pi once available.
