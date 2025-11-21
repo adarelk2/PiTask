@@ -1,8 +1,8 @@
 const UserModel = require('../models/UserModel');
 const TaskModel = require('../models/TaskModel');
 const TaskSubmissionModel = require('../models/TaskSubmissionModel');
-const createValidationFactory = require("../core/create_validation_factory");
-const userService = require('../services/userService');
+const createValidationFactory = require("../core/CreateValidationFactory");
+const userService = require('./user.service');
 
 async function createNewTask(userId, params) {
   const userModel = new UserModel();

@@ -1,5 +1,5 @@
 const BaseController = require('../core/BaseController');
-const userService = require('../services/userService');
+const userService = require('../services/user.service');
 const UserModel = require('../models/UserModel');
 const TaskModel = require('../models/TaskModel');
 const TaskSubmissionModel = require('../models/TaskSubmissionModel');

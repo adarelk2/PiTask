@@ -1,8 +1,8 @@
 const UserModel = require('../models/UserModel');
 const TaskModel = require('../models/TaskModel');
 const TaskSubmissionModel = require('../models/TaskSubmissionModel');
-const createCalculatorKDFactory = require('../core/create_calculator_KD_factory');
-const createValidationFactory = require('../core/create_validation_factory');
+const createCalculatorKDFactory = require('../core/CreateCalculatorKDFactory');
+const createValidationFactory = require('../core/CreateValidationFactory');
 const ERROR_MESSAGES = require('../constants/errors_en');
 
 function calculatorKD(user_id, user_level, tasks) {

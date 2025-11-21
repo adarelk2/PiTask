@@ -1,5 +1,5 @@
-const create_new_task_validation = require('./validations/create_new_task_validation');
-const claim_task_validation = require('./validations/claim_task_validation');
+const create_new_task_validation = require('./validations/CreateNewTaskValidation');
+const claim_task_validation = require('./validations/ClaimTaskValidation');
 
 
 class createValidationFactory

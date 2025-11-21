@@ -219,7 +219,7 @@
   const create_request = async (_params) => {
     showLoading();
     try {
-      const res = await fetch("/create_task", {
+      const res = await fetch("/CreateTask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -249,6 +249,6 @@
 
   const reload = () => {
     let token = localStorage.getItem("token");
-    window.location.href = `/create_task?token=${token}`;
+    window.location.href = `/CreateTask?token=${token}`;
   };
 </script>
