@@ -61,8 +61,11 @@ TaskPi/
 │   ├── Logger.js
 │   ├── LogReader.js
 │   └── validations/
+│   └── kd/
+
 │── locales/
 │── middleware/
+│── controllers/
 │── models/
 │── public/
 │── routes/
@@ -77,7 +80,7 @@ TaskPi/
 
 ### 1. Clone
 ```
-git clone https://github.com/<your-user>/TaskPi.git
+git clone https://github.com/adarelk2/TaskPi.git
 cd TaskPi
 ```
 
